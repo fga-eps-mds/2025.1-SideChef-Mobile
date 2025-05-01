@@ -1,50 +1,49 @@
-# Welcome to your Expo app 👋
+## SideChefe 2025.1
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+O SideChef é um aplicativo mobile que disponibiliza diversas receitas, acessível para tanto para usuários mais experientes quanto inexperientes. Possui funcionalidades como: busca de receitas com base em ingredientes disponíveis pelo usuário; identificação de ingredientes pela embalagem usando a câmera do celular; e criação de receitas pelos usuários.
 
-## Get started
+## Integrantes 
 
-1. Install dependencies
+### EPS 
+| **Foto** | **Nome** | **Matrícula** |
+|----------|----------|---------------|
+| <img src="https://github.com/brun0sk.png" width=100 height=100 alt="Bruno Seiji Kishibe" class="img-thumbnail image"> | Bruno Seiji Kishibe| 200072854 |
+| <img src="https://github.com/diogjunior100.png" width=100 height=100 alt="Diógenes Dantas Lélis Júnior" class="img-thumbnail image"> | Diógenes Dantas Lélis Júnior  | 190105267 |
+| <img src="https://github.com/felipecdmoura.png" width=100 height=100 alt="Felipe Candido de Moura" class="img-thumbnail image"> | Felipe Candido de Moura | 200030469 |
+
+
+### MDS
+
+| **Foto** | **Nome** | **Matrícula** |
+|----------|----------|---------------|
+| <img src="https://github.com/davinegreiros.png" width=100 height=100 alt="Davi Monteiro de Negreiros" class="img-thumbnail image"> | Davi Monteiro de Negreiros | 232013971 |
+| <img src="https://github.com/guin409.png" width=100 height=100 alt="Guilherme Negrerios Pereira" class="img-thumbnail image"> | Guilherme Negrerios Pereira | 232014001 |
+| <img src="https://github.com/JoaoMarcelogcn.png" width=100 height=100 alt="João Marcelo Guimarães Costa Naves" class="img-thumbnail image"> | João Marcelo Guimarães Costa Naves | 232014709 |
+| <img src="https://github.com/joaoepdro.png" width=100 height=100 alt="João Pedro Silveira dos Santos" class="img-thumbnail image"> | João Pedro Silveira dos Santos | 232014718 |
+| <img src="https://github.com/leonardoabezerra.png" width=100 height=100 alt="Leonardo Alves Bezerra" class="img-thumbnail image"> | Leonardo Alves Bezerra | 231011604 |
+| <img src="https://github.com/pedrobamaral.png" width=100 height=100 alt="Pedro Barreto Cavalcante do Amaral" class="img-thumbnail image"> | Pedro Barreto Cavalcante do Amaral | 232038433 |
+| <img src="https://github.com/Pietrocv.png" width=100 height=100 alt="Pietro Calegari Visentin" class="img-thumbnail image"> | Pietro Calegari Visentin | 232014754 |
+| <img src="https://github.com/daisha19.png" width=100 height=100 alt="Raissa Silva de Oliveira" class="img-thumbnail image"> |  Raissa Silva de Oliveira | 232014763 |
+| <img src="https://github.com/UnderwaterVillager.png" width=100 height=100 alt="Vinícius de Jesus Bessa Fernandes" class="img-thumbnail image"> | Vinícius de Jesus Bessa Fernandes | 222006490 |
+| <img src="https://github.com/yasmindayrell.png" width=100 height=100 alt="Yasmin Dayrell Albuquerque" class="img-thumbnail image"> | Yasmin Dayrell Albuquerque | 232014226 |
+
+## Configurando repositório local
+
+1. Instalar dependências
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Iniciar Aplicação
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+Opções de desenvolvimento e visualização do app:
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
