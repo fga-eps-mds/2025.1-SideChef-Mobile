@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Animated, Easing, Image, Modal, Text, TouchableOpacity, View } from 'react-native';
 
 export default function Login() {
@@ -110,7 +110,7 @@ export default function Login() {
       transform: [{ translateY: translateYAnim }],
     }}>
       <Text style={{fontSize: 20}} >Como deseja continuar?</Text>
-      <TouchableOpacity onPress={() => console.log('Continuar com Google')} style={{flexDirection: 'row', backgroundColor: '#3b5998', width: 300, height: 50, borderRadius: 10, justifyContent: 'flex-start', alignItems: 'center', marginTop: 20, paddingHorizontal: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5}}>
+      <TouchableOpacity onPress={() => console.log('Facebook')} style={{flexDirection: 'row', backgroundColor: '#3b5998', width: 300, height: 50, borderRadius: 10, justifyContent: 'flex-start', alignItems: 'center', marginTop: 20, paddingHorizontal: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5}}>
         <View style={{backgroundColor: '#3b5998', justifyContent: 'center', alignItems: 'center', marginRight: 5, borderRadius: 10, height: 30, width: 30}}>
         <Image style={{height: 25, width: 25}} source={require('../assets/images/Facebook.png')}/>
         </View>
