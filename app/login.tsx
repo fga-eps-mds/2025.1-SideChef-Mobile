@@ -43,7 +43,7 @@ export default function Login() {
      <View
           style={{
             flex: 1,
-            backgroundColor: '#D3D3D3',
+            backgroundColor: '#ffffff',
           }}
             >
            
@@ -51,7 +51,7 @@ export default function Login() {
             paddingTop: 30,
 
             }}> 
-<Image source={require('../assets/images/logoInteiro.png')} 
+<Image source={require('../assets/images/LogoVermelha.png')} 
           style={{width: 200, height: 200 }}
           resizeMode='contain'
           /> 
