@@ -6,6 +6,7 @@ export default function Layout() {
       screenOptions={{
         animation: "fade", 
         animationDuration: 500,
+        headerShown: false
       }}
     />
   );

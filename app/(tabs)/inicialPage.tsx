@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const DATA = [
   { id: '1', name: 'Banana' },
@@ -13,7 +13,7 @@ export default function inicialPage() {
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(DATA);
 
-  const handleSearch = (text) => {
+  const handleSearch = (text: string) => {
     setQuery(text);
     const filtered = DATA.filter(item =>
       item.name.toLowerCase().includes(text.toLowerCase())

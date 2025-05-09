@@ -1,7 +1,9 @@
+import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Animated, Easing, Image, Modal, Text, TouchableOpacity, View } from 'react-native';
 
 export default function Login() {
+    const router = useRouter();
     const [showOptions, setShowOptions] = useState(false);
     const opacityAnim = useRef(new Animated.Value(0)).current;
     const translateYAnim = useRef(new Animated.Value(50)).current;
@@ -84,7 +86,7 @@ export default function Login() {
     </TouchableOpacity>
 
 
-    <TouchableOpacity onPress={() => console.log('Continuar sem login')}>
+    <TouchableOpacity onPress={() => router.navigate('/(tabs)/inicialPage')}>
     <Text style={{fontSize: 16, fontWeight: 'light', color: '#A9A9A9', marginTop: 30, marginHorizontal: 40, textAlign: 'center'}}>
             Continuar sem salvar minhas receitas
             </Text>
