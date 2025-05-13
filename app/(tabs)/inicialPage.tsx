@@ -1,4 +1,7 @@
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
@@ -37,9 +40,13 @@ export default function inicialPage() {
     alert('Ir para Receitas');
   };
 
-  const handleEstoquePress = () => {
-    alert('Ir para Estoque');
+  const handlePerfilPress = () => {
+    alert('Ir para Perfil');
   };
+
+  const handleFlutuntePress = () => {
+    alert ('Adicionar Receita');
+  }
 
   //cam
 //permissao da cam
@@ -88,17 +95,21 @@ async function openCam() {
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={handleReceitasPress}>
-          <Text style={styles.sideText}>Receitas</Text>
+          <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
-          <Text style={styles.cameraIcon}>📷</Text>
+          <FontAwesome name="camera" size={24} color="#D62626" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleEstoquePress}>
-          <Text style={styles.sideText}>Estoque</Text>
+        <TouchableOpacity onPress={handlePerfilPress}>
+          <MaterialCommunityIcons name="account" size={36} color="#FFF" />
         </TouchableOpacity>
       </View>
+
+        <TouchableOpacity onPress={handleFlutuntePress} style={styles.flutuanteButton}>
+        <FontAwesome5 name="plus" size={24} color="#FFF" />
+        </TouchableOpacity>
 
       <StatusBar style="auto" />
     </View>
@@ -145,7 +156,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingTop: 10,
     paddingBottom: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#D62626',
     elevation: 8,
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -166,6 +177,24 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
   },
+
+  flutuanteButton: {
+  position: 'absolute',
+  bottom: 100, // Ajuste para ficar acima do footer
+  right: 18,
+  width: 60,
+  height: 60,
+  borderRadius: 30,
+  backgroundColor: '#D62626',
+  justifyContent: 'center',
+  alignItems: 'center',
+  elevation: 8,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.3,
+  shadowRadius: 4,
+},
+
   cameraIcon: {
     fontSize: 28,
   },
