@@ -2,6 +2,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
@@ -18,6 +19,11 @@ const DATA = [
 ];
 
 export default function inicialPage() {
+  const [fontsLoaded] = useFonts({
+  'Comfortaa-Regular': require('../../assets/fonts/Comfortaa-Regular.ttf'),
+  'Comfortaa-Bold': require('../../assets/fonts/Comfortaa-Bold.ttf'),
+  'Comfortaa-Light': require('../../assets/fonts/Comfortaa-Light.ttf'),
+});
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(DATA);
 
@@ -77,6 +83,34 @@ async function openCam() {
 
 //camEnd
 
+//uploadImage
+const uploadImage = async () => {
+  if (!imageUri) return;
+
+  const fileName = imageUri.split('/').pop() as string;;
+  const fileType = fileName.split('.').pop();
+
+  const formData = new FormData();
+  formData.append('file', {
+    uri: imageUri,
+    name: fileName,
+    type: `image/${fileType}`,
+  }as any);
+
+  try {
+    const response = await fetch('/run-ocr/', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const result = await response.json();
+    console.log(result);
+  } catch (error) {
+    console.error('Erro ao enviar imagem:', error);
+  }
+};
+//uploadImage END
+
   return (
     <View style={styles.container}>
       <View style={[styles.header, { flexDirection: 'row', alignItems: 'center' }]}>
@@ -84,13 +118,15 @@ async function openCam() {
           placeholder="Pesquisar..."
           value={query}
           onChangeText={handleSearch}
-          style={[styles.searchInput, { flex: 1 }]}
+          style={[styles.searchInput, { flex: 1, fontFamily: 'Comfortaa-Light', fontSize: 13 }]}
         />
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
+        
+
       </View>
 
       <View style={styles.footer}>
@@ -144,8 +180,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Comfortaa-Bold',
+    fontSize: 15,
     textAlign: 'center',
     color: '#555',
   },
