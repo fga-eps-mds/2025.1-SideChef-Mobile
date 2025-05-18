@@ -4,12 +4,30 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
+import axios from 'axios';
 
+interface Recipe {
+    id: string
+    name: string
+    type: string
+    difficulty: string
+    ingredients: string
+    preparation: string
+}
 
+interface RecipeViewProp{
+    recipe: Recipe
+}
+
+interface RecipeListViewProp{
+    recipes: Recipe[]
+}
+
+// Para teste
 const DATA = [
   { id: '1', name: 'Banana' },
   { id: '2', name: 'Maçã' },
@@ -17,12 +35,75 @@ const DATA = [
   { id: '4', name: 'Abacaxi' },
 ];
 
+//// Componentes de lista de receita
+
+const RecipePreview = ({recipe}: RecipeViewProp) => {
+
+    return(
+        <View style={styles.recipePreviewBox} >
+            <Text style={styles.RecipePreviewTitle}>{recipe.name}</Text>
+            <Text style={styles.RecipePreviewText}>{recipe.type}</Text>
+            <Text style={styles.RecipePreviewText}>{recipe.difficulty}</Text>
+            <Text style={styles.RecipePreviewText}>{recipe.ingredients}</Text>
+        </View>
+    )
+}
+
+// Ainda não implementado
+const RecipeView = ({recipe}: RecipeViewProp) => {
+    return(
+        <View>
+            <Text>{recipe.name}</Text>
+            <Text>{recipe.type}</Text>
+            <Text>{recipe.difficulty}</Text>
+            <Text>{recipe.ingredients}</Text>
+            <Text>{recipe.preparation}</Text>
+        </View>
+    )
+}
+
+const RecipeList = ({recipes}: RecipeListViewProp) =>{
+    return(
+        <View>
+            {recipes.length == 0 ? null :
+                <FlatList
+                    data={recipes}
+                    renderItem={({item}) => <RecipePreview recipe={item}/>}
+                    keyExtractor={item => item.id}
+                />
+            }
+        </View>
+    )
+}
+
+////
+
 export default function inicialPage() {
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(DATA);
 
+  // state de receitas recuperadas
+   const [recipes, setRecipes] = useState([])
+
   //state pra guardar o uri da imagem
   const [imageUri, setImageUri] = useState<string | null>(null);
+
+  //fetch receitas
+  //(?)Colocar função para uma pasta de hooks
+  //(!)URL HARDCODED
+  //(!)Melhorar tratamento de erro
+    const fetchData = async () => {
+      try {
+          const response = await axios.get('http://192.168.1.12:8000/recipes');
+          setRecipes(response.data)
+      } catch (error) {
+          console.log(error)
+      }
+    }
+
+      useEffect(() =>{          
+        fetchData()
+      }, [])
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -89,9 +170,15 @@ async function openCam() {
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
-      </View>
+      
+      {recipes.length == 0 ?
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
+        </View> :
+        <View style={styles.emptyContainer}>
+          <RecipeList recipes={recipes}/>
+        </View>
+      }
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={handleReceitasPress}>
@@ -179,23 +266,38 @@ const styles = StyleSheet.create({
   },
 
   flutuanteButton: {
-  position: 'absolute',
-  bottom: 100, // Ajuste para ficar acima do footer
-  right: 18,
-  width: 60,
-  height: 60,
-  borderRadius: 30,
-  backgroundColor: '#D62626',
-  justifyContent: 'center',
-  alignItems: 'center',
-  elevation: 8,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 4,
-},
+    position: 'absolute',
+    bottom: 100, // Ajuste para ficar acima do footer
+    right: 18,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#D62626',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
 
   cameraIcon: {
     fontSize: 28,
   },
+//// Estilos de lista de receita
+  recipePreviewBox: {
+    backgroundColor: 'red'
+  },
+
+  RecipePreviewTitle:{
+    color: 'white',
+    fontSize: 25,
+    fontFamily: 'Coolvetica-Rg'
+  },
+
+  RecipePreviewText: {
+    color: 'white',
+
+  }
 });
