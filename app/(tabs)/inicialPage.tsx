@@ -28,7 +28,8 @@ interface RecipeViewProp{
 }
 
 interface RecipeListViewProp{
-    recipes: Recipe[]
+    recipes: Recipe[],
+    onSelect: (recipe: Recipe) => void
 }
 
 // Para teste
@@ -51,7 +52,7 @@ const RecipePreview = ({recipe}: RecipeViewProp) => {
             
             <FlatList
                 data={recipe.ingredients}
-                renderItem={({item}) => <Text>{item}</Text>}
+                renderItem={({item}) => <Text style={styles.RecipePreviewText}>{item}</Text>}
                 keyExtractor={item => `${item}`}
               />
   
@@ -60,25 +61,36 @@ const RecipePreview = ({recipe}: RecipeViewProp) => {
 }
 
 // Ainda não implementado
-const RecipeView = ({recipe}: RecipeViewProp) => {
+const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: ()=> void}) => {
     return(
-        <View>
-            <Text>{recipe.name}</Text>
-            <Text>{recipe.type}</Text>
-            <Text>{recipe.difficulty}</Text>
-            <Text>{recipe.ingredients}</Text>
-            <Text>{recipe.preparation}</Text>
+        <View style={styles.RecipeViewBox}>
+            <TouchableOpacity style={styles.RecipeViewGoBack}onPress={onBack}>
+              <Ionicons name='arrow-back-outline'/>
+              <Text style={styles.RecipeViewText}>Voltar</Text>
+            </TouchableOpacity>
+            <Text style={styles.RecipeViewTitle}>{recipe.name}</Text>
+            <Text style={styles.RecipeViewText}>{recipe.type}</Text>
+            <Text style={styles.RecipeViewText}>{recipe.difficulty}</Text>
+            <FlatList
+              data={recipe.ingredients}
+              renderItem={({item}) => <Text style={styles.RecipeViewText}>{item}</Text>}
+              keyExtractor={item => `${item}`}
+            />
+            <Text style={styles.RecipeViewText}>{recipe.preparation}</Text>
         </View>
     )
 }
 
-const RecipeList = ({recipes}: RecipeListViewProp) =>{
+const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
     return(
-        <View>
+        <View style={styles.recipeListBox}>
             {recipes.length == 0 ? null :
                 <FlatList
                     data={recipes}
-                    renderItem={({item}) => <RecipePreview recipe={item}/>}
+                    renderItem={({item}) => 
+                      <TouchableOpacity onPress={() => onSelect(item)}>
+                        <RecipePreview recipe={item}/>
+                      </TouchableOpacity>}
                     keyExtractor={item => item._id}
                 />
             }
@@ -93,7 +105,8 @@ export default function inicialPage() {
   const [filteredData, setFilteredData] = useState(DATA);
 
   // state de receitas recuperadas
-   const [recipes, setRecipes] = useState([])
+  const [recipes, setRecipes] = useState([])
+  const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null) 
 
   //state pra guardar o uri da imagem
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -184,11 +197,13 @@ async function openCam() {
       {recipes.length == 0 ?
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
-        </View> :
+        </View> : (selectedRecipe ? (
+          <View style={styles.emptyContainer}>
+            <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipes(null)}/>
+          </View>) :
         <View style={styles.emptyContainer}>
-          <RecipeList recipes={recipes}/>
-          <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
-        </View>
+          <RecipeList recipes={recipes} onSelect={setSelectedRecipes}/>
+        </View>)
       }
 
       <View style={styles.footer}>
@@ -297,11 +312,22 @@ const styles = StyleSheet.create({
     fontSize: 28,
   },
 //// Estilos de lista de receita
-  recipePreviewBox: {
-    backgroundColor: 'red'
+  recipeListBox: {
+    display: 'flex',
+    margin: 20
   },
 
-  RecipePreviewTitle:{
+  recipePreviewBox: {
+    backgroundColor: 'red',
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+
+  RecipePreviewTitle: {
     color: 'white',
     fontSize: 25,
     fontFamily: 'Coolvetica-Rg'
@@ -310,5 +336,32 @@ const styles = StyleSheet.create({
   RecipePreviewText: {
     color: 'white',
 
+  },
+
+  RecipeViewBox: {
+    backgroundColor: 'red',
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+
+  RecipeViewTitle: {
+
+  },
+
+  RecipeViewGoBack: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: 'white',
+    color: 'black'
+  },
+   
+  RecipeViewText: {
+    fontSize: 15,
   }
 });
