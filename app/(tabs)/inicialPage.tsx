@@ -7,15 +7,19 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+import Constants from 'expo-constants';
 
 import axios from 'axios';
 
+// (!)Colocar em arquivo separado
+const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
+
 interface Recipe {
-    id: string
+    _id: string
     name: string
     type: string
     difficulty: string
-    ingredients: string
+    ingredients: string[]
     preparation: string
 }
 
@@ -44,7 +48,13 @@ const RecipePreview = ({recipe}: RecipeViewProp) => {
             <Text style={styles.RecipePreviewTitle}>{recipe.name}</Text>
             <Text style={styles.RecipePreviewText}>{recipe.type}</Text>
             <Text style={styles.RecipePreviewText}>{recipe.difficulty}</Text>
-            <Text style={styles.RecipePreviewText}>{recipe.ingredients}</Text>
+            
+            <FlatList
+                data={recipe.ingredients}
+                renderItem={({item}) => <Text>{item}</Text>}
+                keyExtractor={item => `${item}`}
+              />
+  
         </View>
     )
 }
@@ -69,7 +79,7 @@ const RecipeList = ({recipes}: RecipeListViewProp) =>{
                 <FlatList
                     data={recipes}
                     renderItem={({item}) => <RecipePreview recipe={item}/>}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item._id}
                 />
             }
         </View>
@@ -88,13 +98,13 @@ export default function inicialPage() {
   //state pra guardar o uri da imagem
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  //fetch receitas
-  //(?)Colocar função para uma pasta de hooks
-  //(!)URL HARDCODED
-  //(!)Melhorar tratamento de erro
+  // fetch receitas
+  // (?)Colocar função para uma pasta de hooks
+  // (!)URL HARDCODED
+  // (!)Melhorar tratamento de erro
     const fetchData = async () => {
       try {
-          const response = await axios.get('http://192.168.1.12:8000/recipes');
+          const response = await axios.get(`${apiUrl}/recipes`);
           setRecipes(response.data)
       } catch (error) {
           console.log(error)
@@ -177,6 +187,7 @@ async function openCam() {
         </View> :
         <View style={styles.emptyContainer}>
           <RecipeList recipes={recipes}/>
+          <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
         </View>
       }
 
