@@ -1,3 +1,4 @@
+import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, View } from "react-native";
@@ -8,8 +9,6 @@ export default function Index() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const springAnim = useRef(new Animated.Value(0)).current;
   const router = useRouter();
-
-
 
   useEffect(() => {
     //efeito de mola
@@ -35,6 +34,12 @@ export default function Index() {
   }, []);
   
 
+  const [fontsLoaded] = useFonts({
+    'Coolvetica-Rg': require('../assets/fonts/Coolvetica-Rg.otf'),
+  })
+  if (!fontsLoaded) {
+    return null; // ou um loading indicator
+  }
   
   return (
     
