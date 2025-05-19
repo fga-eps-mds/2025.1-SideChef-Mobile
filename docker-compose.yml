@@ -1,0 +1,21 @@
+services:
+  expo:
+    build: .
+    container_name: expo-app
+    ports:
+      - "19000:19000"   # Metro bundler (app)
+      - "19001:19001"   # Debugger
+      - "19002:19002"   # DevTools (web UI)
+    volumes:
+      - .:/app           # Monta seu projeto local no container
+      - /app/node_modules  # Garante que os node_modules do container não sobrescrevam os locais
+    environment:
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - REACT_NATIVE_PACKAGER_HOSTNAME=host.docker.internal
+    stdin_open: true     # Permite input interativo
+    tty: true            # Mantém o terminal aberto
+    x-develop:
+      watch:
+        - ignore:
+            - "**/*"
+  
