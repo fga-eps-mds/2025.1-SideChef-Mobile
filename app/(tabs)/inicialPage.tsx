@@ -2,6 +2,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
@@ -17,9 +18,16 @@ const DATA = [
   { id: '4', name: 'Abacaxi' },
 ];
 
+
+
 export default function inicialPage() {
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(DATA);
+
+  //para pegar ip 
+  const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
+  const localIp = debuggerHost?.split(':')[0];
+
 
   //state pra guardar o uri da imagem
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -92,7 +100,7 @@ async function openCam() {
     } as any);
 
     try {
-      const response = await fetch('http://IP:8000/run-ocr/', {
+      const response = await fetch(`http://${localIp}:8000/run-ocr/`, {
         method: 'POST',
         body: formData,
         headers: {
