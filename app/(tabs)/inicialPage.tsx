@@ -29,7 +29,7 @@ export default function inicialPage() {
   const localIp = debuggerHost?.split(':')[0];
 
 
-  //state pra guardar o uri da imagem
+  //state pra guardar o uri da imagem (pode ser útil no futuro )
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handleSearch = (text: string) => {
