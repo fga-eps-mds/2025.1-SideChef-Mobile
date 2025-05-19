@@ -9,6 +9,9 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "Este app precisa acessar a câmera."
+      },
       "supportsTablet": true
     },
     "android": {
