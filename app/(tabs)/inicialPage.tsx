@@ -69,9 +69,8 @@ async function openCam() {
   if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
       console.log(uri);
-      setImageUri(uri);
 
-       await uploadImage();
+       await uploadImage(uri);
     }
 }
 
@@ -81,34 +80,32 @@ async function openCam() {
 
 
 //uploadImage
-const uploadImage = async () => {
-  if (!imageUri) return;
+  const uploadImage = async (uri: string) => {
+    const fileName = uri.split('/').pop() as string;
+    const fileType = fileName.split('.').pop();
 
-  const fileName = imageUri.split('/').pop() as string;;
-  const fileType = fileName.split('.').pop();
+    const formData = new FormData();
+    formData.append('file', {
+      uri,
+      name: fileName,
+      type: `image/${fileType}`,
+    } as any);
 
-  const formData = new FormData();
-  formData.append('file', {
-    uri: imageUri,
-    name: fileName,
-    type: `image/${fileType}`,
-  }as any);
+    try {
+      const response = await fetch('http://IP:8000/run-ocr/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-  try {
-    const response = await fetch('http://IP:8000/run-ocr/', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    const result = await response.json();
-    console.log(result);
-  } catch (error) {
-    console.error('Erro ao enviar imagem:', error);
-  }
-};
+      const result = await response.json();
+      console.log('Resultado do OCR:', result);
+    } catch (error) {
+      console.error('Erro ao enviar imagem:', error);
+    }
+  };
 //uploadImage END
 
 
