@@ -2,6 +2,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
@@ -46,7 +47,12 @@ export default function inicialPage() {
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(receitas);
 
-  //state pra guardar o uri da imagem
+  //para pegar ip 
+  const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
+  const localIp = debuggerHost?.split(':')[0];
+
+
+  //state pra guardar o uri da imagem (pode ser útil no futuro )
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handleSearch = (text: string) => {
@@ -94,11 +100,43 @@ async function openCam() {
   if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
       console.log(uri);
-      setImageUri(uri);
+
+       await uploadImage(uri);
     }
 }
 
 //camEnd
+
+
+//uploadImage
+  const uploadImage = async (uri: string) => {
+    const fileName = uri.split('/').pop() as string;
+    const fileType = fileName.split('.').pop();
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri,
+      name: fileName,
+      type: `image/${fileType}`,
+    } as any);
+
+    try {
+      const response = await fetch(`http://${localIp}:8000/run-ocr/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const result = await response.json();
+      console.log('Resultado do OCR:', result);
+    } catch (error) {
+      console.error('Erro ao enviar imagem:', error);
+    }
+  };
+//uploadImage END
+
 
   return (
     <View style={styles.container}>
