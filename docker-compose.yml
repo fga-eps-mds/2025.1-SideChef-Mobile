@@ -1,0 +1,34 @@
+services:
+  expo:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+      - "19006:19006"
+      - "8081:8081"
+    volumes:
+      - ./:/app
+      - node_modules:/app/node_modules
+    working_dir: /app
+    environment:
+      - EXPO_DEBUG=true
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.1.24
+      - EXPO_HOST=192.168.1.24
+      - USE_WATCHMAN=false
+      - CHOKIDAR_USEPOLLING=true
+      - METRO_ENABLE_POLLING=true
+      - EXPO_USE_DEV_SERVER=true
+    command: ["npx", "expo", "start", "--localhost", "-c"]
+
+    networks:
+      - app-network
+
+volumes:
+  node_modules:
+
+networks:
+  app-network:

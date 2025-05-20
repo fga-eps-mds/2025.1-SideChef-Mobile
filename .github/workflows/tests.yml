@@ -1,0 +1,38 @@
+name: Test React Native App
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: 'Run tests'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '23'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
