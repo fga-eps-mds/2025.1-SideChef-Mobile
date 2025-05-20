@@ -3,20 +3,35 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
-import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { FlatList, Image } from 'react-native';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+import Constants from 'expo-constants';
+
+import axios from "axios";
+
+const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
 const router = useRouter();
 
-type Receita = {
-  id: string;
-  title: string;
-  ingredients: string[];
-  image: any;
+interface Recipe {
+  _id: string;
+  Nome: string;
+  Ingredientes: string[];
+  Dificuldade: string;
+  Preparo: string;
 };
+
+interface RecipeViewProp{
+    recipe: Recipe
+}
+
+interface RecipeListViewProp{
+    recipes: Recipe[],
+    onSelect: (recipe: Recipe) => void
+}
 
   //cards pagina
 const receitas = [
@@ -40,14 +55,101 @@ const receitas = [
   },
 ];
 
+const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: ()=> void}) => {
+  return(
+     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView contentContainerStyle={stylesDetails.scroll}>
+    
+        <TouchableOpacity style={stylesDetails.backButton} onPress={() => onBack()}>
+          <Ionicons name="arrow-back" size={24} color="#D62626" />
+          <Text style={stylesDetails.backText}>{recipe.Nome}</Text>
+        </TouchableOpacity>
 
+        <View style={stylesDetails.card}>
+            {/* Ainda não há imagem */}
+            <Text style={stylesDetails.title}>{recipe.Nome}</Text>
+            {/* <View style={styles.timeRow}>
+              <Ionicons name="time-outline" size={20} color="#fff" />
+              <Text style={styles.timeText}>{receita.time}</Text>
+            </View> */}
+            <Text style={stylesDetails.sectionTitle}>Ingredientes:</Text>
+            {recipe.Ingredientes.map((ing, i) => (
+              <Text key={i} style={stylesDetails.ingredient}>- {ing}</Text>
+            ))}
+            <Text style={stylesDetails.sectionTitle}>Modo de Preparo:</Text>
+            <Text style={stylesDetails.preparo}>{recipe.Preparo}</Text>
+            
+          <View style={stylesDetails.actions}>
+            <FontAwesome name="thumbs-up" size={28} color="#fff" />
+            <FontAwesome name="thumbs-down" size={28} color="#fff" />
+            <Ionicons name="bookmark-outline" size={28} color="#fff" />
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  )
+}
+
+const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
+  return(
+    <FlatList
+      data={recipes}
+      keyExtractor={(item) => item._id}
+      contentContainerStyle={{ padding: 16, flexGrow: 1 }}
+      ListEmptyComponent={
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
+        </View>
+      }
+      renderItem={({ item }) => (
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#D62626',
+            padding: 16,
+            marginBottom: 12,
+            borderRadius: 8,
+            elevation: 3,
+          }}
+        
+        onPress={() => onSelect(item)}
+        >
+          {/* <Image source={item.image} style={{ width: '100%', height: 150, borderRadius: 8 }} /> */}
+          <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
+            {item.Nome}
+          </Text>
+          <Text style={{ fontSize: 14, color: '#000', marginTop: 4 }}>
+            Ingredientes: {item.Ingredientes}
+          </Text>
+        </TouchableOpacity>
+      )}
+    />
+  )
+}
 
 export default function inicialPage() {
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(receitas);
 
+  // state receitas
+  const [recipes, setRecipes] = useState([])
+  const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null) 
+
   //state pra guardar o uri da imagem
   const [imageUri, setImageUri] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    try {
+        const response = await axios.get(`${apiUrl}/recipe/getRecipes`);
+        console.log(response)
+        setRecipes(response.data)
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
+  useEffect(() =>{          
+    fetchData()
+    }, [])
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -112,42 +214,22 @@ async function openCam() {
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
-    {/* Lista de receitas */}
-      <FlatList
-        data={filteredData}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16, flexGrow: 1 }}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
-          </View>
-        }
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#D62626',
-              padding: 16,
-              marginBottom: 12,
-              borderRadius: 8,
-              elevation: 3,
-            }}
-          
-          onPress={() => router.push({
-                  pathname: '/detalhes',
-                  params: { id: item.id },
-                  })}
 
-          >
-            <Image source={item.image} style={{ width: '100%', height: 150, borderRadius: 8 }} />
-            <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
-              {item.title}
-            </Text>
-            <Text style={{ fontSize: 14, color: '#000', marginTop: 4 }}>
-              Ingredientes: {item.ingredients.join(', ')}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
+    {/* Alterações */}
+      {recipes.length == 0 ?
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
+        </View> : (selectedRecipe ? (
+          <View style={styles.emptyContainer}>
+            <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipes(null)}/>
+          </View>) :
+        <View style={styles.emptyContainer}>
+          <RecipeList recipes={recipes} onSelect={setSelectedRecipes}/>
+        </View>)
+      }
+
+
+    {/* Lista de receitas */}
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={handleReceitasPress}>
@@ -254,4 +336,93 @@ const styles = StyleSheet.create({
   cameraIcon: {
     fontSize: 28,
   },
+});
+
+const stylesDetails = StyleSheet.create({
+  container: {
+    padding: 16,
+    backgroundColor: '#D62626',
+    flexGrow: 1,
+  },
+scroll: {
+  flexGrow: 1,
+  paddingVertical: 24,
+  paddingHorizontal: 16,
+  backgroundColor: '#fff',
+},
+card: {
+  backgroundColor: '#D62626',
+  borderRadius: 16,
+  padding: 20,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.3,
+  shadowRadius: 4,
+  elevation: 6,
+},
+backButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 16,
+},
+backText: {
+  color: '#000',
+  fontWeight: 'bold',
+  fontSize: 16,
+  marginLeft: 8,
+},
+image: {
+  width: '100%',
+  height: 180,
+  borderTopLeftRadius: 16,
+  borderTopRightRadius: 16,
+  marginBottom: 16,
+},
+title: {
+  color: '#fff',
+  fontSize: 20,
+  fontWeight: 'bold',
+  textAlign: 'center',
+  marginBottom: 12,
+},
+timeRow: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 12,
+},
+timeText: {
+  marginLeft: 8,
+  color: '#fff',
+},
+sectionTitle: {
+  fontWeight: 'bold',
+  color: '#fff',
+  fontSize: 16,
+  marginTop: 12,
+  marginBottom: 4,
+},
+ingredient: {
+  color: '#fff',
+  fontSize: 14,
+  marginLeft: 10,
+  marginTop: 2,
+},
+preparo: {
+  color: '#fff',
+  marginTop: 6,
+  lineHeight: 20,
+},
+actions: {
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+  marginTop: 24,
+},
+emptyText: {
+  textAlign: 'center',
+  color: '#555',
+  fontSize: 16,
+  fontWeight: '500',
+  marginTop: 40,
+},
 });
