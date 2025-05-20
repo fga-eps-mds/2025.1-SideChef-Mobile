@@ -7,22 +7,45 @@ import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image } from 'react-native';
+import { useRouter } from 'expo-router';
 
+const router = useRouter();
 
+type Receita = {
+  id: string;
+  title: string;
+  ingredients: string[];
+  image: any;
+};
 
-
-const DATA = [
-  { id: '1', name: 'Banana' },
-  { id: '2', name: 'Maçã' },
-  { id: '3', name: 'Laranja' },
-  { id: '4', name: 'Abacaxi' },
+  //cards pagina
+const receitas = [
+  {
+    id: 'card1',
+    title: 'STROGONOFF DE TROLLFACE', 
+    ingredients: ['Trollface', 'Creme de Leite', 'Ketchup', 'Mostarda'],
+    image: require('../../assets/images/trollface.png'),
+  },
+  {
+    id: 'card2',
+    title: 'LASANHA DE TROLLFACE',
+    ingredients: ['Trollface', 'Massa', 'Molho de tomate', 'Queijo'],
+    image: require('../../assets/images/trollface2.png'),
+  },
+  {
+    id: 'card3',
+    title: 'TROLLFACE EMPANADO',
+    ingredients: ['Trollface', 'Farinha Panko', 'Ovos'],
+    image: require('../../assets/images/trollface3.png'),
+  },
 ];
 
 
 
 export default function inicialPage() {
   const [query, setQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(DATA);
+  const [filteredData, setFilteredData] = useState(receitas);
 
   //para pegar ip 
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
@@ -34,8 +57,8 @@ export default function inicialPage() {
 
   const handleSearch = (text: string) => {
     setQuery(text);
-    const filtered = DATA.filter(item =>
-      item.name.toLowerCase().includes(text.toLowerCase())
+    const filtered = receitas.filter(item =>
+      item.title.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredData(filtered);
   };
@@ -82,8 +105,6 @@ async function openCam() {
     }
 }
 
-
-
 //camEnd
 
 
@@ -129,9 +150,42 @@ async function openCam() {
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
-      </View>
+    {/* Lista de receitas */}
+      <FlatList
+        data={filteredData}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 16, flexGrow: 1 }}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
+          </View>
+        }
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#D62626',
+              padding: 16,
+              marginBottom: 12,
+              borderRadius: 8,
+              elevation: 3,
+            }}
+          
+          onPress={() => router.push({
+                  pathname: '/detalhes',
+                  params: { id: item.id },
+                  })}
+
+          >
+            <Image source={item.image} style={{ width: '100%', height: 150, borderRadius: 8 }} />
+            <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
+              {item.title}
+            </Text>
+            <Text style={{ fontSize: 14, color: '#000', marginTop: 4 }}>
+              Ingredientes: {item.ingredients.join(', ')}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={handleReceitasPress}>
