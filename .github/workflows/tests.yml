@@ -21,6 +21,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -34,5 +35,4 @@ jobs:
         run: npm install
 
       - name: Run tests
-        if: github.event.inputs.run_tests == 'true'
         run: npm test
