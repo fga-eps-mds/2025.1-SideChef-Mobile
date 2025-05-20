@@ -1,7 +1,6 @@
-import { useLocalSearchParams } from 'expo-router';
-import { Text, View, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Ionicons, FontAwesome } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -12,38 +11,38 @@ const { id } = useLocalSearchParams();
 const receitas = [
   {
     id: 'card1',
-    title: 'STROGONOFF DE TROLLFACE',
+    title: 'STROGONOFF DE FRANGO',
     time: '50-60 minutos',
     ingredients: [
-      'trollfaces cortados em cubos',
+      'Frango cortado em cubos',
       'cebola picada',
       'colher de manteiga',
       'mostarda',
       'creme de leite',
       'ketchup',
     ],
-    preparo: `Em uma panela, misture o trollface, o alho, a maionese.
+    preparo: `Em uma panela, misture o frango, o alho, a maionese.
 Em uma frigideira grande, derreta a manteiga e doure a cebola.
-Junte o trollface temperado até que esteja dourado.
+Junte o frango temperado até que esteja dourado.
 Adicione o ketchup e a mostarda.
 Incorpore o creme de leite e retire do fogo antes de ferver.`,
-    image: require('../../assets/images/trollface.png'),
+    image: require('../../assets/images/strogonoff.png'),
   },
   {
     id: 'card2',
-    title: 'LASANHA DE MEME',
+    title: 'LASANHA A BOLONHESA',
     time: '40 minutos',
-    ingredients: ['massa de lasanha', 'molho de tomate', 'queijo', 'presunto', 'meme moído'],
+    ingredients: ['massa de lasanha', 'molho de tomate', 'queijo', 'presunto', 'CARNE moída'],
     preparo: 'Monte as camadas da lasanha e asse por 40 minutos.',
-    image: require('../../assets/images/trollface2.png'),
+    image: require('../../assets/images/lasanha.jpg'),
   },
   {
     id: 'card3',
-    title: 'COXINHA DO CHUCK NORRIS',
+    title: 'COXINHA DE FRANGO',
     time: '30 minutos',
-    ingredients: ['massa de coxinha', 'frango desfiado', 'força bruta'],
-    preparo: 'Recheie, modele e frite com coragem.',
-    image: require('../../assets/images/trollface3.png'),
+    ingredients: ['massa de coxinha', 'frango desfiado'],
+    preparo: 'Recheie, modele e frite.',
+    image: require('../../assets/images/coxinha.jpeg'),
   },
 ];
 

@@ -2,12 +2,12 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { FlatList, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const router = useRouter();
 
@@ -22,21 +22,21 @@ type Receita = {
 const receitas = [
   {
     id: 'card1',
-    title: 'STROGONOFF DE TROLLFACE', 
-    ingredients: ['Trollface', 'Creme de Leite', 'Ketchup', 'Mostarda'],
-    image: require('../../assets/images/trollface.png'),
+    title: 'STROGONOFF DE Frango', 
+    ingredients: ['Frango', 'Creme de Leite', 'Ketchup', 'Mostarda'],
+    image: require('../../assets/images/strogonoff.png'),
   },
   {
     id: 'card2',
-    title: 'LASANHA DE TROLLFACE',
-    ingredients: ['Trollface', 'Massa', 'Molho de tomate', 'Queijo'],
-    image: require('../../assets/images/trollface2.png'),
+    title: 'LASANHA Bolonhesa',
+    ingredients: ['Carne', 'Massa', 'Molho de tomate', 'Queijo'],
+    image: require('../../assets/images/lasanha.jpg'),
   },
   {
     id: 'card3',
-    title: 'TROLLFACE EMPANADO',
-    ingredients: ['Trollface', 'Farinha Panko', 'Ovos'],
-    image: require('../../assets/images/trollface3.png'),
+    title: 'Coxinha de Frango',
+    ingredients: ['Frango', 'Farinha Panko', 'Ovos'],
+    image: require('../../assets/images/coxinha.jpeg'),
   },
 ];
 
@@ -46,7 +46,12 @@ export default function inicialPage() {
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(receitas);
 
-  //state pra guardar o uri da imagem
+  //para pegar ip 
+  const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
+  const localIp = debuggerHost?.split(':')[0];
+
+
+  //state pra guardar o uri da imagem (pode ser útil no futuro )
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handleSearch = (text: string) => {
@@ -94,11 +99,43 @@ async function openCam() {
   if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
       console.log(uri);
-      setImageUri(uri);
+
+       await uploadImage(uri);
     }
 }
 
 //camEnd
+
+
+//uploadImage
+  const uploadImage = async (uri: string) => {
+    const fileName = uri.split('/').pop() as string;
+    const fileType = fileName.split('.').pop();
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri,
+      name: fileName,
+      type: `image/${fileType}`,
+    } as any);
+
+    try {
+      const response = await fetch(`http://${localIp}:8000/run-ocr/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const result = await response.json();
+      console.log('Resultado do OCR:', result);
+    } catch (error) {
+      console.error('Erro ao enviar imagem:', error);
+    }
+  };
+//uploadImage END
+
 
   return (
     <View style={styles.container}>
