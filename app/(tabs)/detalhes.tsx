@@ -46,7 +46,7 @@ Incorpore o creme de leite e retire do fogo antes de ferver.`,
   },
 ];
 
-export default function DetalhesPage() {
+export default function detailsPage() {
   const { id } = useLocalSearchParams();
 
   const receita = receitas.find(r => r.id === id);

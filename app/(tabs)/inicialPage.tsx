@@ -18,8 +18,8 @@ type Receita = {
   image: any;
 };
 
-  //cards pagina
-const receitas = [
+  //cards page
+const recipes = [
   {
     id: 'card1',
     title: 'STROGONOFF DE Frango', 
@@ -44,19 +44,19 @@ const receitas = [
 
 export default function inicialPage() {
   const [query, setQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(receitas);
+  const [filteredData, setFilteredData] = useState(recipes);
 
-  //para pegar ip 
+  //to get ip
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
   const localIp = debuggerHost?.split(':')[0];
 
 
-  //state pra guardar o uri da imagem (pode ser útil no futuro )
+  //state to store the image uri (may be useful in the future)
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handleSearch = (text: string) => {
     setQuery(text);
-    const filtered = receitas.filter(item =>
+    const filtered = recipes.filter(item =>
       item.title.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredData(filtered);
@@ -66,8 +66,8 @@ export default function inicialPage() {
     alert('Abrir câmera (simulado)');
   };
 
-  const handleReceitasPress = () => {
-    alert('Ir para Receitas');
+  const handlerecipesPress = () => {
+    alert('Ir para recipes');
   };
 
   const handlePerfilPress = () => {
@@ -79,7 +79,7 @@ export default function inicialPage() {
   }
 
   //cam
-//permissao da cam
+//camera permission
 async function getCameraPermission() {
   const { status } = await ImagePicker.requestCameraPermissionsAsync();
   if (status !== 'granted') {
@@ -89,13 +89,13 @@ async function getCameraPermission() {
 
 
 
-//função pra abrir a camera
+//funtion to open the camera
 async function openCam() {
   let result = await ImagePicker.launchCameraAsync({
-    aspect: [4, 3],      // Configuração da proporção da imagem (opcional)
-    quality: 1,          // Qualidade máxima da imagem
+    aspect: [4, 3],      //Image aspect ratio setting (optional)
+    quality: 1,          //Maximum image quality
   });
-  //if que verifica se o usuário fechou a camera
+  //if that checks if the user closed the camera
   if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
       console.log(uri);
@@ -149,14 +149,14 @@ async function openCam() {
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
-    {/* Lista de receitas */}
+    {/* Recipe list */}
       <FlatList
         data={filteredData}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ padding: 16, flexGrow: 1 }}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
+            <Text style={styles.emptyText}>Ainda não há recipes registradas :(</Text>
           </View>
         }
         renderItem={({ item }) => (
@@ -187,7 +187,7 @@ async function openCam() {
       />
 
       <View style={styles.footer}>
-        <TouchableOpacity onPress={handleReceitasPress}>
+        <TouchableOpacity onPress={handlerecipesPress}>
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
 
   flutuanteButton: {
   position: 'absolute',
-  bottom: 100, // Ajuste para ficar acima do footer
+  bottom: 100, //Adjust to be above the footer
   right: 18,
   width: 60,
   height: 60,

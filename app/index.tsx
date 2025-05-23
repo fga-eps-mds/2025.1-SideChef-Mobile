@@ -12,24 +12,24 @@ export default function Index() {
 
 
   useEffect(() => {
-    //efeito de mola
+    //spring effect
     Animated.spring(springAnim, {
       toValue: 1,
       useNativeDriver: true,
-      friction: 3, //o quão forte o efeito de mola "pula"
+      friction: 3, //how strong the spring effect "bounces"
 
     }).start();
 
-    //efeito de fade
+    //fade effect
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 800,
       useNativeDriver: true,
     }).start();
-    //transição para a próxima tela após delay
+    //transition to the next screen after delay
     const timeout = setTimeout(() => {
       router.push('/login'); 
-    }, 3000); // delay em segundos até a próxima tela
+    }, 3000); //delay in seconds until next screen
   
     return () => clearTimeout(timeout);
   }, []);
