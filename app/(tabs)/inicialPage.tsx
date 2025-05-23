@@ -24,10 +24,6 @@ interface Recipe {
   Preparo: string;
 };
 
-interface RecipeViewProp{
-    recipe: Recipe
-}
-
 interface RecipeListViewProp{
     recipes: Recipe[],
     onSelect: (recipe: Recipe) => void
@@ -55,7 +51,7 @@ const receitas = [
   },
 ];
 
-const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: ()=> void}) => {
+const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   return(
      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={stylesDetails.scroll}>
@@ -73,9 +69,9 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: ()=> void}) => {
               <Text style={styles.timeText}>{receita.time}</Text>
             </View> */}
             <Text style={stylesDetails.sectionTitle}>Ingredientes:</Text>
-            {recipe.Ingredientes.map((ing, i) => (
-              <Text key={i} style={stylesDetails.ingredient}>- {ing}</Text>
-            ))}
+            {
+              <Text style={stylesDetails.ingredient}>{recipe.Ingredientes}</Text>
+            }
             <Text style={stylesDetails.sectionTitle}>Modo de Preparo:</Text>
             <Text style={stylesDetails.preparo}>{recipe.Preparo}</Text>
             
@@ -117,7 +113,7 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
           <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
             {item.Nome}
           </Text>
-          <Text style={{ fontSize: 14, color: '#000', marginTop: 4 }}>
+          <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
             Ingredientes: {item.Ingredientes}
           </Text>
         </TouchableOpacity>
@@ -140,7 +136,6 @@ export default function inicialPage() {
   const fetchData = async () => {
     try {
         const response = await axios.get(`${apiUrl}/recipe/getRecipes`);
-        console.log(response)
         setRecipes(response.data)
     } catch (error) {
         console.log(error)
@@ -215,10 +210,9 @@ async function openCam() {
       </View>
 
 
-    {/* Alterações */}
       {recipes.length == 0 ?
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
+          <Text style={styles.emptyText}>Ainda não há receitas registradas :{recipes}(</Text>
         </View> : (selectedRecipe ? (
           <View style={styles.emptyContainer}>
             <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipes(null)}/>
@@ -227,9 +221,6 @@ async function openCam() {
           <RecipeList recipes={recipes} onSelect={setSelectedRecipes}/>
         </View>)
       }
-
-
-    {/* Lista de receitas */}
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={handleReceitasPress}>
