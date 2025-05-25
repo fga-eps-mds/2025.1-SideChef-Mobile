@@ -57,9 +57,6 @@ export default function inicialPage() {
   const handleSearch = (text: string) => {
   setQuery(text);
 
- const handleSearch = (text: string) => {
-  setQuery(text);
-
   const filtered = receitas.filter(item =>
     item.title.toLowerCase().includes(text.toLowerCase()) ||
     item.ingredients.some(ingredient =>
