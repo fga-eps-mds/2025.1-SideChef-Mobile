@@ -134,6 +134,7 @@ export default function inicialPage() {
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const fetchData = async () => {
+    // Pode ser guardada em um hook
     try {
         const response = await axios.get(`${apiUrl}/recipe/getRecipes`);
         setRecipes(response.data)
