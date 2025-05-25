@@ -55,12 +55,16 @@ export default function inicialPage() {
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handleSearch = (text: string) => {
-    setQuery(text);
-    const filtered = receitas.filter(item =>
-      item.title.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
-  };
+  setQuery(text);
+
+  const filtered = receitas.filter(item =>
+    item.ingredients.some(ingredient =>
+      ingredient.toLowerCase().includes(text.toLowerCase())
+    )
+  );
+
+  setFilteredData(filtered);
+};
 
   const handleCameraPress = () => {
     alert('Abrir câmera (simulado)');
