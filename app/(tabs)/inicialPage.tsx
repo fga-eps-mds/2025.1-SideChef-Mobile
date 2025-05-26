@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const router = useRouter();
@@ -18,11 +18,10 @@ type Receita = {
   image: any;
 };
 
-  //cards pagina
-const receitas = [
+const receitas: Receita[] = [
   {
     id: 'card1',
-    title: 'STROGONOFF DE Frango', 
+    title: 'STROGONOFF DE Frango',
     ingredients: ['Frango', 'Creme de Leite', 'Ketchup', 'Mostarda'],
     image: require('../../assets/images/strogonoff.png'),
   },
@@ -40,79 +39,69 @@ const receitas = [
   },
 ];
 
-
-
 export default function inicialPage() {
   const [query, setQuery] = useState('');
   const [filteredData, setFilteredData] = useState(receitas);
+  const [filterMode, setFilterMode] = useState<'title' | 'ingredients' | 'all'>('all');
 
-  //para pegar ip 
+  useEffect(() => {
+  handleSearch(query);
+  }, [filterMode]);
+
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
   const localIp = debuggerHost?.split(':')[0];
 
-
-  //state pra guardar o uri da imagem (pode ser útil no futuro )
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const handleSearch = (text: string) => {
-  setQuery(text);
+    setQuery(text);
+    const lowered = text.toLowerCase();
 
-  const filtered = receitas.filter(item =>
-    item.title.toLowerCase().includes(text.toLowerCase()) ||
-    item.ingredients.some(ingredient =>
-      ingredient.toLowerCase().includes(text.toLowerCase())
-    )
-  );
-
-  setFilteredData(filtered);
-};
-
-  const handleCameraPress = () => {
-    alert('Abrir câmera (simulado)');
+    const filtered = receitas.filter(item => {
+      if (filterMode === 'title') {
+        return item.title.toLowerCase().includes(lowered);
+      }
+      if (filterMode === 'ingredients') {
+        return item.ingredients.some(ingredient =>
+          ingredient.toLowerCase().includes(lowered)
+        );
+      }
+      return (
+        item.title.toLowerCase().includes(lowered) ||
+        item.ingredients.some(ingredient =>
+          ingredient.toLowerCase().includes(lowered)
+        )
+      );
+    });
+    
+    setFilteredData(filtered);
   };
+  
 
-  const handleReceitasPress = () => {
-    alert('Ir para Receitas');
-  };
+  const handleReceitasPress = () => alert('Ir para Receitas');
+  const handlePerfilPress = () => alert('Ir para Perfil');
+  const handleFlutuntePress = () => alert('Adicionar Receita');
 
-  const handlePerfilPress = () => {
-    alert('Ir para Perfil');
-  };
-
-  const handleFlutuntePress = () => {
-    alert ('Adicionar Receita');
+  async function getCameraPermission() {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permita o acesso a câmera para poder usufruir dessa funcionalidade.');
+    }
   }
 
-  //cam
-//permissao da cam
-async function getCameraPermission() {
-  const { status } = await ImagePicker.requestCameraPermissionsAsync();
-  if (status !== 'granted') {
-    alert('Permita o acesso a câmera para poder usufruir dessa funcionalidade.');
-  }
-}
+  async function openCam() {
+    let result = await ImagePicker.launchCameraAsync({
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-
-
-//função pra abrir a camera
-async function openCam() {
-  let result = await ImagePicker.launchCameraAsync({
-    aspect: [4, 3],      // Configuração da proporção da imagem (opcional)
-    quality: 1,          // Qualidade máxima da imagem
-  });
-  //if que verifica se o usuário fechou a camera
-  if (!result.canceled && result.assets && result.assets.length > 0) {
+    if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
       console.log(uri);
-
-       await uploadImage(uri);
+      await uploadImage(uri);
     }
-}
+  }
 
-//camEnd
-
-
-//uploadImage
   const uploadImage = async (uri: string) => {
     const fileName = uri.split('/').pop() as string;
     const fileType = fileName.split('.').pop();
@@ -139,8 +128,6 @@ async function openCam() {
       console.error('Erro ao enviar imagem:', error);
     }
   };
-//uploadImage END
-
 
   return (
     <View style={styles.container}>
@@ -154,7 +141,28 @@ async function openCam() {
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
-    {/* Lista de receitas */}
+      {/* Filtros de Busca */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[styles.filterButton, filterMode === 'title' && styles.selected]}
+          onPress={() => setFilterMode('title')}
+        >
+          <Text style={styles.filterText}>Título</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filterMode === 'ingredients' && styles.selected]}
+          onPress={() => setFilterMode('ingredients')}
+        >
+          <Text style={styles.filterText}>Ingredientes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filterMode === 'all' && styles.selected]}
+          onPress={() => setFilterMode('all')}
+        >
+          <Text style={styles.filterText}>Todos</Text>
+        </TouchableOpacity>
+      </View>
+
       <FlatList
         data={filteredData}
         keyExtractor={(item) => item.id}
@@ -173,12 +181,12 @@ async function openCam() {
               borderRadius: 8,
               elevation: 3,
             }}
-          
-          onPress={() => router.push({
-                  pathname: '/detalhes',
-                  params: { id: item.id },
-                  })}
-
+            onPress={() =>
+              router.push({
+                pathname: '/detalhes',
+                params: { id: item.id },
+              })
+            }
           >
             <Image source={item.image} style={{ width: '100%', height: 150, borderRadius: 8 }} />
             <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
@@ -195,19 +203,17 @@ async function openCam() {
         <TouchableOpacity onPress={handleReceitasPress}>
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
-
         <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
           <FontAwesome name="camera" size={24} color="#D62626" />
         </TouchableOpacity>
-
         <TouchableOpacity onPress={handlePerfilPress}>
           <MaterialCommunityIcons name="account" size={36} color="#FFF" />
         </TouchableOpacity>
       </View>
 
-        <TouchableOpacity onPress={handleFlutuntePress} style={styles.flutuanteButton}>
+      <TouchableOpacity onPress={handleFlutuntePress} style={styles.flutuanteButton}>
         <FontAwesome5 name="plus" size={24} color="#FFF" />
-        </TouchableOpacity>
+      </TouchableOpacity>
 
       <StatusBar style="auto" />
     </View>
@@ -236,6 +242,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
   },
+  filterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  filterButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    marginHorizontal: 6,
+    backgroundColor: '#eee',
+    borderRadius: 20,
+  },
+  selected: {
+    backgroundColor: '#D62626',
+  },
+  filterText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -261,10 +287,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -2 },
     shadowRadius: 4,
   },
-  sideText: {
-    fontSize: 16,
-    color: '#333',
-  },
   cameraButton: {
     backgroundColor: '#fff',
     borderRadius: 35,
@@ -275,25 +297,20 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
   },
-
   flutuanteButton: {
-  position: 'absolute',
-  bottom: 100, // Ajuste para ficar acima do footer
-  right: 18,
-  width: 60,
-  height: 60,
-  borderRadius: 30,
-  backgroundColor: '#D62626',
-  justifyContent: 'center',
-  alignItems: 'center',
-  elevation: 8,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 4,
-},
-
-  cameraIcon: {
-    fontSize: 28,
+    position: 'absolute',
+    bottom: 100,
+    right: 18,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#D62626',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
 });
