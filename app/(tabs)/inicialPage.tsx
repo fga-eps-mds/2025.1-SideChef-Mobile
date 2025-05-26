@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import styles from './inicialPage.styles';
 
 const router = useRouter();
 
@@ -220,97 +221,3 @@ export default function inicialPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 50,
-    backgroundColor: '#fff',
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingBottom: 10,
-    backgroundColor: '#fff',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  },
-  searchInput: {
-    height: 40,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  filterButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    marginHorizontal: 6,
-    backgroundColor: '#eee',
-    borderRadius: 20,
-  },
-  selected: {
-    backgroundColor: '#D62626',
-  },
-  filterText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#555',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 10,
-    paddingBottom: 20,
-    backgroundColor: '#D62626',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: -2 },
-    shadowRadius: 4,
-  },
-  cameraButton: {
-    backgroundColor: '#fff',
-    borderRadius: 35,
-    padding: 18,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-  },
-  flutuanteButton: {
-    position: 'absolute',
-    bottom: 100,
-    right: 18,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#D62626',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-});
