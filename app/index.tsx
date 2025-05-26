@@ -1,60 +1,47 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, View } from "react-native";
-
-
+import { styles } from './index.styles';
 
 export default function Index() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const springAnim = useRef(new Animated.Value(0)).current;
   const router = useRouter();
 
-
-
   useEffect(() => {
-    //spring effect
+    // efeito de mola (spring)
     Animated.spring(springAnim, {
       toValue: 1,
       useNativeDriver: true,
-      friction: 3, //how strong the spring effect "bounces"
-
+      friction: 3,
     }).start();
 
-    //fade effect
+    // efeito de fade-in
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 800,
       useNativeDriver: true,
     }).start();
-    //transition to the next screen after delay
+
+    // navegação para a próxima tela após 3 segundos
     const timeout = setTimeout(() => {
-      router.push('/login'); 
-    }, 3000); //delay in seconds until next screen
-  
+      router.push('/login');
+    }, 3000);
+
     return () => clearTimeout(timeout);
   }, []);
-  
 
-  
   return (
-    
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "flex-start",
-        alignItems: "center",
-        backgroundColor: '#D62626',
-        paddingTop: 100,
-      }}
->
-      <Animated.Image source={require('../assets/images/logoInteiro.png')} 
-      style={{transform: [{ scale: springAnim }], opacity: fadeAnim, width: 300, height: 300 }}
-      resizeMode='contain'
-
-/>
-      
-
+    <View style={styles.container}>
+      <Animated.Image
+        source={require('../assets/images/logoInteiro.png')}
+        style={{
+          transform: [{ scale: springAnim }],
+          opacity: fadeAnim,
+          ...styles.logo,
+        }}
+        resizeMode="contain"
+      />
     </View>
-  
-);
+  );
 }

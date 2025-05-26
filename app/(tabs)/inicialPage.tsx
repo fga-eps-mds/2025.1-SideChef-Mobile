@@ -170,7 +170,7 @@ async function openCam() {
             }}
           
           onPress={() => router.push({
-                  pathname: '/detalhes',
+                  pathname: '/details',
                   params: { id: item.id },
                   })}
 
