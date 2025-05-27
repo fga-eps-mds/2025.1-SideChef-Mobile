@@ -29,28 +29,6 @@ interface RecipeListViewProp{
     onSelect: (recipe: Recipe) => void
 }
 
-  //cards pagina
-const receitas = [
-  {
-    id: 'card1',
-    title: 'STROGONOFF DE Frango', 
-    ingredients: ['Frango', 'Creme de Leite', 'Ketchup', 'Mostarda'],
-    image: require('../../assets/images/strogonoff.png'),
-  },
-  {
-    id: 'card2',
-    title: 'LASANHA Bolonhesa',
-    ingredients: ['Carne', 'Massa', 'Molho de tomate', 'Queijo'],
-    image: require('../../assets/images/lasanha.jpg'),
-  },
-  {
-    id: 'card3',
-    title: 'TROLLFACE EMPANADO',
-    ingredients: ['Trollface', 'Farinha Panko', 'Ovos'],
-    image: require('../../assets/images/trollface3.png'),
-  },
-];
-
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   return(
      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -124,7 +102,7 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
 
 export default function inicialPage() {
   const [query, setQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(receitas);
+  const [filteredData, setFilteredData] = useState([]);
 
   // state receitas
   const [recipes, setRecipes] = useState([])
@@ -153,13 +131,14 @@ export default function inicialPage() {
     fetchData()
     }, [])
 
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    const filtered = receitas.filter(item =>
-      item.title.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
-  };
+  // (!) Função dependente de mock hardcoded, corrigir
+  // const handleSearch = (text: string) => {
+  //   setQuery(text);
+  //   const filtered = receitas.filter(item =>
+  //     item.title.toLowerCase().includes(text.toLowerCase())
+  //   );
+  //   setFilteredData(filtered);
+  // };
 
   const handleCameraPress = () => {
     alert('Abrir câmera (simulado)');
@@ -235,14 +214,14 @@ async function openCam() {
   };
 //uploadImage END
 
-
+// (!) Barra de pesquisa altera por função dependente de mock haardcoded, corrigir
   return (
     <View style={styles.container}>
       <View style={[styles.header, { flexDirection: 'row', alignItems: 'center' }]}>
         <TextInput
           placeholder="Pesquisar..."
           value={query}
-          onChangeText={handleSearch}
+          onChangeText={() => {console.log("Mudei o texto de pesquisa")}}
           style={[styles.searchInput, { flex: 1 }]}
         />
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
