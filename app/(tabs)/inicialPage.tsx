@@ -29,27 +29,10 @@ interface RecipeListViewProp{
     onSelect: (recipe: Recipe) => void
 }
 
-  //cards pagina
-const receitas = [
-  {
-    id: 'card1',
-    title: 'STROGONOFF DE TROLLFACE', 
-    ingredients: ['Trollface', 'Creme de Leite', 'Ketchup', 'Mostarda'],
-    image: require('../../assets/images/trollface.png'),
-  },
-  {
-    id: 'card2',
-    title: 'LASANHA DE TROLLFACE',
-    ingredients: ['Trollface', 'Massa', 'Molho de tomate', 'Queijo'],
-    image: require('../../assets/images/trollface2.png'),
-  },
-  {
-    id: 'card3',
-    title: 'TROLLFACE EMPANADO',
-    ingredients: ['Trollface', 'Farinha Panko', 'Ovos'],
-    image: require('../../assets/images/trollface3.png'),
-  },
-];
+interface RecipeListViewProp{
+    recipes: Recipe[],
+    onSelect: (recipe: Recipe) => void
+}
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   return(
@@ -129,8 +112,19 @@ export default function inicialPage() {
   // state receitas
   const [recipes, setRecipes] = useState([])
   const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null) 
+  const [filteredData, setFilteredData] = useState([]);
 
-  //state pra guardar o uri da imagem
+  // state receitas
+  const [recipes, setRecipes] = useState([])
+  const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null) 
+
+
+  //para pegar ip 
+  const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
+  const localIp = debuggerHost?.split(':')[0];
+
+
+  //state pra guardar o uri da imagem (pode ser útil no futuro )
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -192,19 +186,51 @@ async function openCam() {
   if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
       console.log(uri);
-      setImageUri(uri);
+
+       await uploadImage(uri);
     }
 }
 
 //camEnd
 
+
+//uploadImage
+  const uploadImage = async (uri: string) => {
+    const fileName = uri.split('/').pop() as string;
+    const fileType = fileName.split('.').pop();
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri,
+      name: fileName,
+      type: `image/${fileType}`,
+    } as any);
+
+    try {
+      const response = await fetch(`http://${localIp}:8000/run-ocr/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const result = await response.json();
+      console.log('Resultado do OCR:', result);
+    } catch (error) {
+      console.error('Erro ao enviar imagem:', error);
+    }
+  };
+//uploadImage END
+
+// (!) Barra de pesquisa altera por função dependente de mock haardcoded, corrigir
   return (
     <View style={styles.container}>
       <View style={[styles.header, { flexDirection: 'row', alignItems: 'center' }]}>
         <TextInput
           placeholder="Pesquisar..."
           value={query}
-          onChangeText={handleSearch}
+          onChangeText={() => {console.log("Mudei o texto de pesquisa")}}
           style={[styles.searchInput, { flex: 1 }]}
         />
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
