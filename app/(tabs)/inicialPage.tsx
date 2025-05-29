@@ -111,12 +111,12 @@ export default function inicialPage() {
   const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null)
   const [query, onChangeText] = useState('');
 
-  //para pegar ip 
+  //to get ip
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
   const localIp = debuggerHost?.split(':')[0];
 
 
-  //state pra guardar o uri da imagem (pode ser útil no futuro )
+  //state to store the image uri (may be useful in the future)
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -133,9 +133,12 @@ export default function inicialPage() {
     fetchData()
     }, [])
 
+  const handleCameraPress = () => {
+    alert('Abrir câmera (simulado)');
+  };
 
-  const handleReceitasPress = () => {
-    alert('Ir para Receitas');
+  const handlerecipesPress = () => {
+    alert('Ir para recipes');
   };
 
   const handlePerfilPress = () => {
@@ -147,7 +150,7 @@ export default function inicialPage() {
   }
 
   //cam
-//permissao da cam
+//camera permission
 async function getCameraPermission() {
   const { status } = await ImagePicker.requestCameraPermissionsAsync();
   if (status !== 'granted') {
@@ -155,13 +158,15 @@ async function getCameraPermission() {
   }
 }
 
-//função pra abrir a camera
+
+
+//funtion to open the camera
 async function openCam() {
   let result = await ImagePicker.launchCameraAsync({
-    aspect: [4, 3],      // Configuração da proporção da imagem (opcional)
-    quality: 1,          // Qualidade máxima da imagem
+    aspect: [4, 3],      //Image aspect ratio setting (optional)
+    quality: 1,          //Maximum image quality
   });
-  //if que verifica se o usuário fechou a camera
+  //if that checks if the user closed the camera
   if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
       console.log(uri);
@@ -232,7 +237,7 @@ async function openCam() {
       }
 
       <View style={styles.footer}>
-        <TouchableOpacity onPress={handleReceitasPress}>
+        <TouchableOpacity onPress={handlerecipesPress}>
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
@@ -318,7 +323,7 @@ const styles = StyleSheet.create({
 
   flutuanteButton: {
   position: 'absolute',
-  bottom: 100, // Ajuste para ficar acima do footer
+  bottom: 100, //Adjust to be above the footer
   right: 18,
   width: 60,
   height: 60,
