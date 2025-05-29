@@ -106,18 +106,10 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
 }
 
 export default function inicialPage() {
-  const [query, setQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(receitas);
-
   // state receitas
   const [recipes, setRecipes] = useState([])
-  const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null) 
-  const [filteredData, setFilteredData] = useState([]);
-
-  // state receitas
-  const [recipes, setRecipes] = useState([])
-  const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null) 
-
+  const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null)
+  const [query, onChangeText] = useState('');
 
   //para pegar ip 
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
@@ -141,17 +133,6 @@ export default function inicialPage() {
     fetchData()
     }, [])
 
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    const filtered = receitas.filter(item =>
-      item.title.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
-  };
-
-  const handleCameraPress = () => {
-    alert('Abrir câmera (simulado)');
-  };
 
   const handleReceitasPress = () => {
     alert('Ir para Receitas');
@@ -173,8 +154,6 @@ async function getCameraPermission() {
     alert('Permita o acesso a câmera para poder usufruir dessa funcionalidade.');
   }
 }
-
-
 
 //função pra abrir a camera
 async function openCam() {
@@ -207,7 +186,7 @@ async function openCam() {
     } as any);
 
     try {
-      const response = await fetch(`http://${localIp}:8000/run-ocr/`, {
+      const response = await fetch(`${apiUrl}/ocr/run-ocr/`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -223,6 +202,7 @@ async function openCam() {
   };
 //uploadImage END
 
+
 // (!) Barra de pesquisa altera por função dependente de mock haardcoded, corrigir
   return (
     <View style={styles.container}>
@@ -230,7 +210,9 @@ async function openCam() {
         <TextInput
           placeholder="Pesquisar..."
           value={query}
-          onChangeText={() => {console.log("Mudei o texto de pesquisa")}}
+          onChangeText={() => {
+            onChangeText;
+            console.log("Mudei o texto de pesquisa")}}
           style={[styles.searchInput, { flex: 1 }]}
         />
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
