@@ -45,6 +45,7 @@ export default function Login() {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
+          testID="red-logo"
           source={require('../assets/images/LogoVermelha.png')}
           style={styles.logo}
           resizeMode="contain"
@@ -65,6 +66,7 @@ export default function Login() {
         >
           <View style={styles.googleIconContainer}>
             <Image
+            testID='google-icon'
               style={styles.googleIcon}
               source={require('../assets/images/Google.png')}
             />
@@ -72,11 +74,16 @@ export default function Login() {
           <Text style={styles.googleText}>Continuar com o Google</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={openModal} style={styles.otherButton}>
+        <TouchableOpacity onPress={openModal}
+         style={styles.otherButton}
+         testID="other-options-button"
+         >
           <Text style={styles.otherText}>Outras opções</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.navigate('/(tabs)/inicialPage')}>
+        <TouchableOpacity 
+        testID="continuar-sem-salvar"
+        onPress={() => router.push('/(tabs)/inicialPage')}>
           <Text style={styles.continueText}>
             Continuar sem salvar minhas receitas
           </Text>
@@ -85,6 +92,7 @@ export default function Login() {
 
       <Modal visible={showOptions} transparent={true} onRequestClose={closeModal}>
         <TouchableOpacity
+          testID='modal-overlay'
           onPress={closeModal}
           style={styles.modalOverlay}
           activeOpacity={1}
@@ -101,6 +109,7 @@ export default function Login() {
             <Text style={styles.modalTitle}>Como deseja continuar?</Text>
 
             <TouchableOpacity
+              testID='facebook-button'
               onPress={() => console.log('Facebook')}
               style={styles.facebookButton}
             >
@@ -115,6 +124,7 @@ export default function Login() {
 
             <View style={styles.rowButtons}>
               <TouchableOpacity
+              testID='celular-button'
                 onPress={() => console.log('Celular')}
                 style={styles.smallButton}
               >
@@ -122,6 +132,7 @@ export default function Login() {
               </TouchableOpacity>
 
               <TouchableOpacity
+                testID='email-button'
                 onPress={() => console.log('Email')}
                 style={styles.smallButton}
               >
