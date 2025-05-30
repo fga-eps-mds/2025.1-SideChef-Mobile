@@ -16,6 +16,8 @@ describe('Tela de Login', () => {
   it('deve redirecionar para a inicialPage"', () => {
     //using the testID to find the button
     cy.get('[data-testid="continuar-sem-salvar"]', { timeout: 10000 }).click();
+    
+    cy.contains('Ainda não há receitas registradas :(', { timeout: 10000 }).should('exist');
 
     //Verify if the URL is correct after clicking the button
     cy.url({ timeout: 10000 }).should('include', '/inicialPage');
@@ -27,7 +29,6 @@ describe('Tela de Login', () => {
   it('deve abrir o modal de opções ao clicar no botão "Outras opções"', () => { //testing the modal opening
 
     cy.get('[data-testid="other-options-button"]').click(); //using the testID to find the button and click it
-    cy.get('[data-testid="modal-overlay"]').should('exist'); //verify if the modal overlay is present
     cy.get('[data-testid="modal-overlay"]').should('exist'); //verify if the modal content is present
     cy.get('[data-testid="facebook-button"]').should('exist'); //verify if the Facebook button is present
     cy.get('[data-testid="celular-button"]').should('exist'); //verify if the Cellphone button is present
