@@ -107,8 +107,9 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
 
 export default function inicialPage() {
   // state receitas
-  const [recipes, setRecipes] = useState([])
-  const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null)
+  const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
+  const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);  // Currently shown recipes
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [query, onChangeText] = useState('');
 
   //to get ip
@@ -123,7 +124,8 @@ export default function inicialPage() {
     // Pode ser guardada em um hook
     try {
         const response = await axios.get(`${apiUrl}/recipe/getRecipes`);
-        setRecipes(response.data)
+        setAllRecipes(response.data)
+        setDisplayedRecipes(response.data)  // Initially, same as allRecipes
     } catch (error) {
         console.log(error)
     }
@@ -132,6 +134,17 @@ export default function inicialPage() {
   useEffect(() =>{          
     fetchData()
     }, [])
+
+  // Shows desired list of recipes on screen
+  const showCustomRecipeList = (customList: Recipe[]) => {
+    setDisplayedRecipes(customList);
+    setSelectedRecipe(null);
+    console.log(`Showing custom list of ${customList.length} recipes.`);
+  };
+
+  const handleSelectRecipe = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+  };
 
   const handleCameraPress = () => {
     alert('Abrir câmera (simulado)');
@@ -201,6 +214,9 @@ async function openCam() {
 
       const result = await response.json();
       console.log('Resultado do OCR:', result);
+
+      showCustomRecipeList(result)  // Shows recipes compatible to OCR output
+
     } catch (error) {
       console.error('Erro ao enviar imagem:', error);
     }
@@ -223,18 +239,11 @@ async function openCam() {
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
-
-      {recipes.length == 0 ?
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Ainda não há receitas registradas :{recipes}(</Text>
-        </View> : (selectedRecipe ? (
-          <View style={styles.emptyContainer}>
-            <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipes(null)}/>
-          </View>) :
-        <View style={styles.emptyContainer}>
-          <RecipeList recipes={recipes} onSelect={setSelectedRecipes}/>
-        </View>)
-      }
+      {selectedRecipe ? (
+        <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />
+      ) : (
+        <RecipeList recipes={displayedRecipes} onSelect={handleSelectRecipe} />
+      )}
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={handlerecipesPress}>
