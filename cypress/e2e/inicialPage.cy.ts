@@ -27,20 +27,22 @@ describe('Inicial Page', () => {
   statusCode: 200,                            //this is what the backend would return
   body: [
     {
-      _id: '1',
       Nome: 'Pizza de Calabresa', 
-      Ingredientes: ['calabresa', 'queijo', 'molho'],   //this var's are in portuguese because in "RECIPE_SERVICE" it is also in portuguese. Need to change it!
+      tipo: 'Salgado',
       Dificuldade: 'Fácil',
+      Ingredientes: ['calabresa', 'queijo', 'molho'],   //this var's are in portuguese because in "RECIPE_SERVICE" it is also in portuguese. Need to change it!
       Preparo: 'Asse por 30 minutos.'
     },
+
     {
-      _id: '2',
       Nome: 'Arroz com Pequi',
-      Ingredientes: ['arroz', 'pequi', 'alho'],
+      tipo: 'Salgado',
       Dificuldade: 'Médio',
+      Ingredientes: ['arroz', 'pequi', 'alho'],
       Preparo: 'Cozinhe por 20 minutos.'
     }
   ]
+  
 }).as('getRecipes'); 
  
 
