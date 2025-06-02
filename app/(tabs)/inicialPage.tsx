@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import Constants from 'expo-constants';
 
@@ -193,10 +193,76 @@ async function openCam() {
 
 //uploadImage
   const uploadImage = async (uri: string) => {
-    const fileName = uri.split('/').pop() as string;
-    const fileType = fileName.split('.').pop();
+    let finalUri = uri;
+    let tempFilePath: string | null = null;
+    
+    let fileName = '';
+    let fileType = '';
+    let mimeType = '';
+    
+    console.log('Original URI:', uri);
 
     const formData = new FormData();
+    if (uri.startsWith('data:')) {  // data URI file (usually when testing via web)
+      try {
+        const mimeTypeMatch = uri.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/);
+        const base64 = uri.split("base64,")[1];
+
+        if (!base64 || !mimeTypeMatch) {
+          console.log("Failed to format data URI: ", uri);
+          return;
+        }
+
+        mimeType = mimeTypeMatch[0];  // image/jpeg
+        fileType = mimeType.split('/')[1]  // jpeg
+        fileName = `temp_img_${Date.now()}.${fileType}`;
+        
+        if (Platform.OS === 'web') {
+          const byteChar = atob(base64);
+          const byteNum = new Array(byteChar.length);
+          for (let i = 0; i < byteChar.length; i++) {
+            byteNum[i] = byteChar.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNum);
+          const blob = new Blob([byteArray], {type: mimeType});
+
+          formData.append('file', blob, fileName);
+          console.log('Web blob created as formData: ', fileName, blob.type)
+        } else {
+          console.error('data URI while platform != web');
+          return;
+        }
+
+      } catch (err) {
+        console.error("Error at processing data URI: ", err);
+        return;
+      }
+
+    } else {  // Regular uri file (file://...)
+      
+      const extractedFileName = uri.split('/').pop();
+      if (extractedFileName) {
+        fileName = extractedFileName;
+        const extractedFileType = fileName.split('.').pop()?.toLowerCase();
+        if (extractedFileType) {
+          fileType = extractedFileType;
+          mimeType = `image/${fileType}`;
+        } else {
+          console.error('URI invalid file type: ', extractedFileType);
+          return;
+        }
+      } else {
+        console.error('URI invalid file name: ', extractedFileName);
+        return;
+      }
+
+      console.log('FileName:', fileName, 'FileType:', fileType);
+  
+      if (!fileType || !fileName) {
+        console.error('Could not determine file type/name: ', {processedUri: finalUri, fileName, fileType});
+        return;
+      }
+
     formData.append('file', {
       uri,
       name: fileName,
@@ -207,10 +273,13 @@ async function openCam() {
       const response = await fetch(`${apiUrl}/ocr/run-ocr/`, {
         method: 'POST',
         body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
       });
+
+      if (!response.ok) {
+        const fetchError = await response.text();
+        console.error('OCR API error: ', response.status, fetchError);
+        return;
+      }
 
       const result = await response.json();
       console.log('Resultado do OCR:', result);
@@ -218,7 +287,7 @@ async function openCam() {
       showCustomRecipeList(result)  // Shows recipes compatible to OCR output
 
     } catch (error) {
-      console.error('Erro ao enviar imagem:', error);
+      console.error('Error sending image: ', error);
     }
   };
 //uploadImage END
