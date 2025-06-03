@@ -217,9 +217,8 @@ export default function inicialPage() {
       } 
       else{
         return (
-          item.Nome.toLocaleLowerCase().includes(lowered) ||
-          item.Ingredientes.some(ingObj => 
-          ingObj.ingrediente.toLocaleLowerCase().includes(lowered))
+          item.Nome.toLocaleLowerCase().includes(lowered) //||
+          //ingredientes
         )
       }
     })
@@ -395,33 +394,36 @@ async function openCam() {
 
 // (!) Barra de pesquisa altera por função dependente de mock haardcoded, corrigir
   return (
-    <View style={styles.container}>
+    <View style={stylesDetails.container2}>
       <View style={[styles.header, { flexDirection: 'row', alignItems: 'center' }]}>
         <TextInput
           placeholder="Pesquisar..."
           value={query}
           onChangeText={handleSearch}
-          style={[styles.searchInput, { flex: 1 }]}
+          style={[stylesDetails.searchInput, { flex: 1 }]}
         />
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
       {/* Filtros de busca */}
-      <View >
+      <View style={stylesDetails.filterContainer}>
         <TouchableOpacity
+          style={[stylesDetails.filterButton, filterMode === 'title' && stylesDetails.selected]}
           onPress={() => setFilterMode("title")}
         >
-          <Text> Tiítulo </Text>
+          <Text style={stylesDetails.filterText} > Tiítulo </Text>
         </TouchableOpacity>
         <TouchableOpacity
+          style={[stylesDetails.filterButton, filterMode === 'ingredients' && stylesDetails.selected]}
           onPress={() => setFilterMode("ingredients")}
         >
-          <Text> Ingredientes </Text>
+          <Text style={stylesDetails.filterText}> Ingredientes </Text>
         </TouchableOpacity>
         <TouchableOpacity
+          style={[stylesDetails.filterButton, filterMode === 'all' && stylesDetails.selected]}
           onPress={() => setFilterMode("all")}
         >
-          <Text> Todos </Text>
+          <Text style={stylesDetails.filterText}> Todos </Text>
         </TouchableOpacity>
       </View>
 
