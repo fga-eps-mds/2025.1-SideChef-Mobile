@@ -213,13 +213,13 @@ export default function inicialPage() {
         return item.Nome.toLocaleLowerCase().includes(lowered);
       }
       else if (filterMode === 'ingredients') {
-        return // ingredientes
+        return item.Ingredientes.toString().toLocaleLowerCase().includes(lowered);
       } 
       else{
         return (
-          item.Nome.toLocaleLowerCase().includes(lowered) //||
-          //ingredientes
-        )
+          item.Nome.toLocaleLowerCase().includes(lowered) ||
+          item.Ingredientes.toString().toLocaleLowerCase().includes(lowered)
+        );
       }
     })
     setDisplayedRecipes(filtered);
