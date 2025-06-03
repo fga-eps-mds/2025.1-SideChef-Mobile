@@ -22,7 +22,7 @@ interface Ingredients {
 }
 
 interface Recipe {
-  _id: string;
+  id: string;
   Nome: string;
   Dificuldade: string;
   Ingredientes: Ingredients[];
@@ -40,7 +40,18 @@ interface RecipeListViewProp{
 }
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
+  let ingredientsDisplay = '';
+        if (Array.isArray(recipe.Ingredientes)) {
+          if (recipe.Ingredientes.length > 0 && typeof recipe.Ingredientes[0] === 'string') {
+            ingredientsDisplay = recipe.Ingredientes.join(', ');
+          } else if (recipe.Ingredientes.length === 0) {
+            ingredientsDisplay = 'Nenhum ingrediente cadastrado.';
+          }
+        } else if (recipe.Ingredientes) {
+            ingredientsDisplay = String(recipe.Ingredientes); 
+        }
   return(
+    
      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={stylesDetails.scroll}>
     
@@ -57,13 +68,9 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
               <Text style={styles.timeText}>{receita.time}</Text>
             </View> */}
             <Text style={stylesDetails.sectionTitle}>Ingredientes:</Text>
-            {
-              recipe.Ingredientes.map((ing, index) => (
-                <Text key={index} style={stylesDetails.ingredient}>
-                  {`${ing.quantidade || ''} ${ing.ingrediente || ''}`.trim()}
-                </Text>
-              ))
-            }
+            <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
+            { ingredientsDisplay }
+            </Text>
             <Text style={stylesDetails.sectionTitle}>Modo de Preparo:</Text>
             <Text style={stylesDetails.preparo}>{recipe.Preparo}</Text>
             
@@ -82,40 +89,58 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
   return(
     <FlatList
       data={recipes}
-      keyExtractor={(item) => item._id}
-      contentContainerStyle={{ padding: 16, flexGrow: 1 }}
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
-        </View>
-      }
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          style={{
+      keyExtractor={(item) => item.id} 
+      
+      renderItem={({ item }) => {
+        
+        console.log(`Displaying recipe: ${item.Nome}, Ingredients:`, item.Ingredientes);
+
+        let ingredientsDisplay = '';
+        if (Array.isArray(item.Ingredientes)) {
+          if (item.Ingredientes.length > 0) {
+            if (typeof item.Ingredientes[0] === 'string') {
+              ingredientsDisplay = item.Ingredientes.join(', ');
+
+            } else if (typeof item.Ingredientes[0] === 'object') {
+              ingredientsDisplay = item.Ingredientes.map((ing: Ingredients) => 
+                `${ing.quantidade || ''} ${ing.ingrediente || ''}`.trim()
+              ).filter(s => s.length > 0).join('; ');
+              
+              if (!ingredientsDisplay) { 
+                ingredientsDisplay = 'Ingredient formating fail';
+              }
+            } else {
+              ingredientsDisplay = 'Unknown ingredient format';
+            }
+          } else {
+            ingredientsDisplay = 'Nenhum ingrediente cadastrado :(';
+          }
+        } else if (item.Ingredientes) {
+          ingredientsDisplay = 'Invalid data'; 
+        }
+
+        return (
+          <TouchableOpacity
+            style={{
             backgroundColor: '#D62626',
             padding: 16,
             marginBottom: 12,
             borderRadius: 8,
             elevation: 3,
           }}
-        
-        onPress={() => onSelect(item)}
-        >
-          {/* <Image source={item.image} style={{ width: '100%', height: 150, borderRadius: 8 }} /> */}
-          <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
-            {item.Nome}
-          </Text>
-          <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
-            Ingredientes {
-              item.Ingredientes.map((ing, index) => (
-                `${ing.quantidade || ''} ${ing.ingrediente}`.trim()
-              )).join(', ') || '[Não especificado]'
-            }
-          </Text>
-        </TouchableOpacity>
-      )}
+            onPress={() => onSelect(item)}
+          >
+            <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
+              {item.Nome}
+            </Text>
+            <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
+              Ingredientes: {ingredientsDisplay}
+            </Text>
+          </TouchableOpacity>
+        );
+      }}
     />
-  )
+  );
 }
 
 export default function inicialPage() {
@@ -136,7 +161,9 @@ export default function inicialPage() {
   const fetchData = async () => {
     // Pode ser guardada em um hook
     try {
-        const response = await axios.get(`${apiUrl}/recipe/getRecipes`);
+        const response = await axios.get(`${apiUrl}/recipe/getRecipes/`);
+        console.log("/recipe/getRecipes/ JSON data: ", JSON.stringify(response.data, null, 2));
+
         setAllRecipes(response.data);
         setDisplayedRecipes(response.data);  // Initially, same as allRecipes
     } catch (error) {
@@ -206,9 +233,6 @@ async function openCam() {
 
 //uploadImage
   const uploadImage = async (uri: string) => {
-    let finalUri = uri;
-    let tempFilePath: string | null = null;
-    
     let fileName = '';
     let fileType = '';
     let mimeType = '';
@@ -272,12 +296,12 @@ async function openCam() {
       console.log('FileName:', fileName, 'FileType:', fileType);
   
       if (!fileType || !fileName) {
-        console.error('Could not determine file type/name: ', {processedUri: finalUri, fileName, fileType});
+        console.error('Could not determine file type/name: ', {processedUri: uri, fileName, fileType});
         return;
       }
 
       formData.append('file', {
-        uri: finalUri,
+        uri: uri,
         name: fileName,
         type: `image/${fileType}`,
       } as any);
