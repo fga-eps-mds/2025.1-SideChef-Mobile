@@ -41,15 +41,28 @@ interface RecipeListViewProp{
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   let ingredientsDisplay = '';
-        if (Array.isArray(recipe.Ingredientes)) {
-          if (recipe.Ingredientes.length > 0 && typeof recipe.Ingredientes[0] === 'string') {
-            ingredientsDisplay = recipe.Ingredientes.join(', ');
-          } else if (recipe.Ingredientes.length === 0) {
-            ingredientsDisplay = 'Nenhum ingrediente cadastrado.';
+    if (Array.isArray(recipe.Ingredientes)) {
+      if (recipe.Ingredientes.length > 0) {
+        if (typeof recipe.Ingredientes[0] === 'string') {
+          ingredientsDisplay = recipe.Ingredientes.join(', ');
+
+        } else if (typeof recipe.Ingredientes[0] === 'object') {
+          ingredientsDisplay = recipe.Ingredientes.map((ing: Ingredients) => 
+            `${ing.quantidade || ''} ${ing.ingrediente || ''}`.trim()
+          ).filter(s => s.length > 0).join('; ');
+          
+          if (!ingredientsDisplay) { 
+            ingredientsDisplay = 'Ingredient formating fail';
           }
-        } else if (recipe.Ingredientes) {
-            ingredientsDisplay = String(recipe.Ingredientes); 
+        } else {
+          ingredientsDisplay = 'Unknown ingredient format';
         }
+      } else {
+        ingredientsDisplay = 'Nenhum ingrediente cadastrado :(';
+      }
+    } else if (recipe.Ingredientes) {
+      ingredientsDisplay = 'Invalid data'; 
+    }
   return(
     
      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
