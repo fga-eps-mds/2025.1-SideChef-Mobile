@@ -16,11 +16,16 @@ const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
 const router = useRouter();
 
+interface Ingredients {
+  quantidade: string;
+  ingrediente: string;
+}
+
 interface Recipe {
   _id: string;
   Nome: string;
-  Ingredientes: string[];
   Dificuldade: string;
+  Ingredientes: Ingredients[];
   Preparo: string;
 };
 
@@ -53,7 +58,11 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
             </View> */}
             <Text style={stylesDetails.sectionTitle}>Ingredientes:</Text>
             {
-              <Text style={stylesDetails.ingredient}>{recipe.Ingredientes}</Text>
+              recipe.Ingredientes.map((ing, index) => (
+                <Text key={index} style={stylesDetails.ingredient}>
+                  {`${ing.quantidade || ''} ${ing.ingrediente || ''}`.trim()}
+                </Text>
+              ))
             }
             <Text style={stylesDetails.sectionTitle}>Modo de Preparo:</Text>
             <Text style={stylesDetails.preparo}>{recipe.Preparo}</Text>
@@ -97,7 +106,11 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
             {item.Nome}
           </Text>
           <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
-            Ingredientes: {item.Ingredientes}
+            Ingredientes {
+              item.Ingredientes.map((ing, index) => (
+                `${ing.quantidade || ''} ${ing.ingrediente}`.trim()
+              )).join(', ') || '[Não especificado]'
+            }
           </Text>
         </TouchableOpacity>
       )}
@@ -124,10 +137,10 @@ export default function inicialPage() {
     // Pode ser guardada em um hook
     try {
         const response = await axios.get(`${apiUrl}/recipe/getRecipes`);
-        setAllRecipes(response.data)
-        setDisplayedRecipes(response.data)  // Initially, same as allRecipes
+        setAllRecipes(response.data);
+        setDisplayedRecipes(response.data);  // Initially, same as allRecipes
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
   }
 
@@ -201,7 +214,7 @@ async function openCam() {
     let mimeType = '';
     
     console.log('Original URI:', uri);
-
+    
     const formData = new FormData();
     if (uri.startsWith('data:')) {  // data URI file (usually when testing via web)
       try {
@@ -229,7 +242,7 @@ async function openCam() {
           formData.append('file', blob, fileName);
           console.log('Web blob created as formData: ', fileName, blob.type)
         } else {
-          console.error('data URI while platform != web');
+          console.error('data URI while platform !== web');
           return;
         }
 
@@ -263,11 +276,12 @@ async function openCam() {
         return;
       }
 
-    formData.append('file', {
-      uri,
-      name: fileName,
-      type: `image/${fileType}`,
-    } as any);
+      formData.append('file', {
+        uri: finalUri,
+        name: fileName,
+        type: `image/${fileType}`,
+      } as any);
+    }
 
     try {
       const response = await fetch(`${apiUrl}/ocr/run-ocr/`, {
@@ -282,9 +296,25 @@ async function openCam() {
       }
 
       const result = await response.json();
-      console.log('Resultado do OCR:', result);
+      console.log('OCR result: ', result);
 
-      showCustomRecipeList(result)  // Shows recipes compatible to OCR output
+      if (result && result.recipes) {
+        const ocrRecipes: Recipe[] = result.recipes.map((recipe: any) => ({
+          id: recipe.id,
+          Nome: recipe.Nome,
+          Dificuldade: recipe.Dificuldade,
+          Ingredientes: recipe.Ingredientes.map((ingredient: any) => ({
+            quantidade: ingredient.quantidade || '',
+            ingrediente: ingredient.ingrediente || ''
+          })),
+          Preparo: recipe.Preparo,
+        }));
+        
+        showCustomRecipeList(ocrRecipes);  // Shows recipes compatible to OCR output
+
+      } else {
+        console.error('OCR result is not a valid recipe list and/or is empty.');
+      }
 
     } catch (error) {
       console.error('Error sending image: ', error);
