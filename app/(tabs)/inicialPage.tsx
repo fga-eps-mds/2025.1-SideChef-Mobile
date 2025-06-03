@@ -39,6 +39,9 @@ interface RecipeListViewProp{
     onSelect: (recipe: Recipe) => void
 }
 
+
+
+
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   let ingredientsDisplay = '';
     if (Array.isArray(recipe.Ingredientes)) {
@@ -161,7 +164,8 @@ export default function inicialPage() {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);  // Currently shown recipes
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
-  const [query, onChangeText] = useState('');
+  const [query, setQuery] = useState('');
+  const [filterMode, setFilterMode] = useState<'title' | 'ingredients' | 'all'>('all');
 
   //to get ip
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
@@ -188,6 +192,10 @@ export default function inicialPage() {
     fetchData()
     }, [])
 
+  useEffect(() => {
+    handleSearch(query);
+  }, [filterMode]);
+
   // Shows desired list of recipes on screen
   const showCustomRecipeList = (customList: Recipe[]) => {
     setDisplayedRecipes(customList);
@@ -195,6 +203,28 @@ export default function inicialPage() {
     console.log(`Showing custom list of ${customList.length} recipes.`);
   };
 
+  const handleSearch = (text: string) => {
+    setQuery(text);
+    const lowered = text.toLocaleLowerCase();
+
+    const filtered = receitas.filter(item => {
+
+      if (filterMode === 'title') {
+        return item.Nome.toLocaleLowerCase().includes(lowered);
+      }
+      else if (filterMode === 'ingredients') {
+        return // ingredientes
+      } 
+      else{
+        return (
+          item.Nome.toLocaleLowerCase().includes(lowered) ||
+          item.Ingredientes.some(ingObj => 
+          ingObj.ingrediente.toLocaleLowerCase().includes(lowered))
+        )
+      }
+    })
+    setDisplayedRecipes(filtered);
+  }
   const handleSelectRecipe = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
   };
@@ -214,6 +244,9 @@ export default function inicialPage() {
   const handleFlutuntePress = () => {
     alert ('Adicionar Receita');
   }
+
+const receitas: Recipe[] = allRecipes;
+
 
   //cam
 //camera permission
@@ -367,12 +400,29 @@ async function openCam() {
         <TextInput
           placeholder="Pesquisar..."
           value={query}
-          onChangeText={() => {
-            onChangeText;
-            console.log("Mudei o texto de pesquisa")}}
+          onChangeText={handleSearch}
           style={[styles.searchInput, { flex: 1 }]}
         />
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
+      </View>
+
+      {/* Filtros de busca */}
+      <View >
+        <TouchableOpacity
+          onPress={() => setFilterMode("title")}
+        >
+          <Text> Tiítulo </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setFilterMode("ingredients")}
+        >
+          <Text> Ingredientes </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setFilterMode("all")}
+        >
+          <Text> Todos </Text>
+        </TouchableOpacity>
       </View>
 
       {selectedRecipe ? (
