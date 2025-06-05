@@ -220,7 +220,9 @@ async function openCam() {
             console.log("Mudei o texto de pesquisa")}}
           style={[styles.searchInput, { flex: 1 }]}
         />
-        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
+        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }}
+        testID='search-icon' 
+         />
       </View>
 
 
@@ -238,19 +240,19 @@ async function openCam() {
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={handlerecipesPress}>
-          <Ionicons name="receipt" size={30} color="#FFF" />
+          <Ionicons name="receipt" size={30} color="#FFF" testID='receipt-icon'/>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
+        <TouchableOpacity onPress={openCam} style={styles.cameraButton} testID='camera-icon'>
           <FontAwesome name="camera" size={24} color="#D62626" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handlePerfilPress}>
+        <TouchableOpacity onPress={handlePerfilPress} testID='perfil-icon'>
           <MaterialCommunityIcons name="account" size={36} color="#FFF" />
         </TouchableOpacity>
       </View>
 
-        <TouchableOpacity onPress={handleFlutuntePress} style={styles.flutuanteButton}>
+        <TouchableOpacity onPress={handleFlutuntePress} style={styles.flutuanteButton} testID='flutunte-icon'>
         <FontAwesome5 name="plus" size={24} color="#FFF" />
         </TouchableOpacity>
 
