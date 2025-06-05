@@ -1,7 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -142,10 +141,10 @@ export default function inicialPage() {
   };
 
   const handlePerfilPress = () => {
-    alert('Ir para Perfil');
+    router.push('/(tabs)/addUser');
   };
 
-  const handleFlutuntePress = () => {
+  const handleFloatPress = () => {
     alert ('Adicionar Receita');
   }
 
@@ -236,21 +235,23 @@ async function openCam() {
         </View>)
       }
 
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={handlerecipesPress}>
+      <SafeAreaView style={styles.footer}>
+        <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}>
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
+        <View style= {styles.cameraPadding}>
         <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
-          <FontAwesome name="camera" size={24} color="#D62626" />
+          <FontAwesome name="camera" size={25} color="#D62626" />
         </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity onPress={handlePerfilPress}>
-          <MaterialCommunityIcons name="account" size={36} color="#FFF" />
+        <TouchableOpacity onPress={handlePerfilPress} style={styles.iconWrapper}>
+          <FontAwesome5 name="user-alt" size={24} color="#FFF" />
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
 
-        <TouchableOpacity onPress={handleFlutuntePress} style={styles.flutuanteButton}>
+        <TouchableOpacity onPress={handleFloatPress} style={styles.floatButton}>
         <FontAwesome5 name="plus" size={24} color="#FFF" />
         </TouchableOpacity>
 
@@ -294,11 +295,10 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 10,
-    paddingBottom: 20,
+    paddingHorizontal: 40,
+    position: 'relative',
     backgroundColor: '#D62626',
     elevation: 8,
     shadowColor: '#000',
@@ -310,21 +310,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  iconWrapper: {
+    padding: 10,
+  },
   cameraButton: {
     backgroundColor: '#fff',
     borderRadius: 35,
-    padding: 18,
+    padding: 16,
     elevation: 6,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
   },
-
-  flutuanteButton: {
+cameraPadding: {
+    padding: 5
+},
+  floatButton: {
   position: 'absolute',
-  bottom: 100, //Adjust to be above the footer
-  right: 18,
+  bottom: 110, //Adjust to be above the footer
+  right: 17,
   width: 60,
   height: 60,
   borderRadius: 30,
