@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { styles } from './loginUser.styles';
+import { Image } from 'react-native';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -14,6 +15,13 @@ export default function LoginPage() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.logoContainer}>
+              <Image
+                source={require('../assets/images/LogoVermelha.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+        </View>
       <Text style={styles.title}>Login</Text>
 
       <TextInput

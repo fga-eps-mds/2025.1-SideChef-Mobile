@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { styles } from './addUser.styles';
-
+import { Image } from 'react-native';
 
 export default function CadastroUsuario() {
   const [cpf, setCpf] = useState('');
@@ -61,7 +61,14 @@ export default function CadastroUsuario() {
 
   return (
 <View style={styles.container}>
-  <Text style={styles.title}>Cadastro de Usuário</Text>
+  <View style={styles.logoContainer}>
+                <Image
+                  source={require('../assets/images/LogoVermelha.png')}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+          </View>
+ 
 
   <View style={styles.form}>
     <TextInput
@@ -122,13 +129,13 @@ export default function CadastroUsuario() {
       <Text style={styles.buttonText}>Cadastrar</Text>
     </TouchableOpacity>
 
-    <TouchableOpacity onPress={() => router.push('/login')}>
+    <TouchableOpacity onPress={() => router.push('/loginUser')}>
       <Text style={styles.footerText}>
         Já possui uma conta?
       <Text style={styles.link}> Entre!</Text>
       </Text>
     </TouchableOpacity>
-    <TouchableOpacity onPress={() => router.push('/login')}>
+    <TouchableOpacity onPress={() => router.push('/inicialPage')}>
             <Text style={styles.footerText}>
               <Text style={styles.link}>Voltar</Text>
             </Text>

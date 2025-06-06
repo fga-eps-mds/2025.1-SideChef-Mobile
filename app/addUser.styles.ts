@@ -46,7 +46,16 @@ export const styles = StyleSheet.create({
     color: '#555',
   },
   link: {
-    fontWeight: 'bold',
     color: '#000',
+    textDecorationLine: 'underline',
+  },
+  logoContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingTop: 30,
+  },
+  logo: {
+    width: 200,
+    height: 200,
   },
 })

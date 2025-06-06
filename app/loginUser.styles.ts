@@ -44,4 +44,13 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
   },
+  logoContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingTop: 30,
+  },
+  logo: {
+    width: 200,
+    height: 200,
+  },
 });
