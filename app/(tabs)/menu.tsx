@@ -1,12 +1,12 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { styles } from '../styles/menu.styles';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { styles } from '../styles/menu.styles';
 
 import Constants from 'expo-constants';
 
@@ -220,7 +220,8 @@ async function openCam() {
             console.log("Mudei o texto de pesquisa")}}
           style={[styles.searchInput, { flex: 1 }]}
         />
-        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
+        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }}
+        testID="search-icon" />
       </View>
 
 
@@ -237,22 +238,26 @@ async function openCam() {
       }
 
       <SafeAreaView style={styles.footer}>
-        <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}>
+        <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}
+          testID="receipt-icon">
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
         <View style= {styles.cameraPadding}>
         <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
-          <FontAwesome name="camera" size={25} color="#D62626" />
+          <FontAwesome name="camera" size={25} color="#D62626"
+          testID='camera-icon' />
         </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={handlePerfilPress} style={styles.iconWrapper}>
+        <TouchableOpacity onPress={handlePerfilPress} style={styles.iconWrapper}
+          testID="perfil-icon">
           <FontAwesome5 name="user-alt" size={24} color="#FFF" />
         </TouchableOpacity>
       </SafeAreaView>
 
-        <TouchableOpacity onPress={handleFloatPress} style={styles.floatButton}>
+        <TouchableOpacity onPress={handleFloatPress} style={styles.floatButton}
+        testID="flutunte-icon">
         <FontAwesome5 name="plus" size={24} color="#FFF" />
         </TouchableOpacity>
 

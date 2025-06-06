@@ -61,7 +61,8 @@ export default function Login() {
       </View>
       
         <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => router.push('/loginUser')}style={styles.otherButton}>
+        <TouchableOpacity onPress={() => router.push('/loginUser')}style={styles.otherButton} 
+          testID = "entrar-button">
           <Text style={styles.otherText}>Entrar</Text>
         </TouchableOpacity>
 
@@ -70,6 +71,7 @@ export default function Login() {
           <Text style={styles.otherText}>Cadastrar</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}></View>
+
         <TouchableOpacity
         testID="continuar-sem-salvar" 
         onPress={() => router.push('/menu')}>
@@ -78,6 +80,7 @@ export default function Login() {
           </Text>
         </TouchableOpacity>
       </View>
+
       <Modal visible={showOptions} transparent={true} onRequestClose={closeModal}>
         <TouchableOpacity
           testID='modal-overlay'

@@ -35,6 +35,7 @@ import { styles } from '../styles/index.styles';
     <View style={styles.container}>
       <Animated.Image
         source={require('../../assets/images/logoInteiro.png')}
+        testID="splash-logo"
         style={{
           transform: [{ scale: springAnim }],
           opacity: fadeAnim,

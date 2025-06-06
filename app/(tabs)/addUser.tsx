@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from '../styles/addUser.styles';
-import { Image } from 'react-native';
 
 export default function CadastroUsuario() {
   const [cpf, setCpf] = useState('');
@@ -64,6 +63,7 @@ export default function CadastroUsuario() {
   <View style={styles.logoContainer}>
                 <Image
                   source={require('../../assets/images/LogoVermelha.png')}
+                  testID="logo-icon"
                   style={styles.logo}
                   resizeMode="contain"
                 />
@@ -73,6 +73,7 @@ export default function CadastroUsuario() {
   <View style={styles.form}>
     <TextInput
       style={styles.input}
+      testID='input-name'
       placeholder="Nome completo"
       placeholderTextColor="rgba(0, 0, 0, 0.4)"
       value={name}
@@ -81,6 +82,7 @@ export default function CadastroUsuario() {
 
     <TextInput
       style={styles.input}
+      testID='input-CPF'
       placeholder="CPF"
       placeholderTextColor="rgba(0, 0, 0, 0.4)"
       keyboardType="numeric"
@@ -91,6 +93,7 @@ export default function CadastroUsuario() {
 
     <TextInput
       style={styles.input}
+      testID='input-email'
       placeholder="E-mail"
       placeholderTextColor="rgba(0, 0, 0, 0.4)"
       keyboardType="email-address"
@@ -100,6 +103,7 @@ export default function CadastroUsuario() {
 
     <TextInput
       style={styles.input}
+      testID='input-check-email'
       placeholder="Confirmar e-mail"
       placeholderTextColor="rgba(0, 0, 0, 0.4)"
       keyboardType="email-address"
@@ -109,6 +113,7 @@ export default function CadastroUsuario() {
 
     <TextInput
       style={styles.input}
+      testID='input-password'
       placeholder="Senha"
       placeholderTextColor="rgba(0, 0, 0, 0.4)"
       secureTextEntry
@@ -118,6 +123,7 @@ export default function CadastroUsuario() {
 
     <TextInput
       style={styles.input}
+      testID='input-check-password'
       placeholder="Confirmar senha"
       placeholderTextColor="rgba(0, 0, 0, 0.4)"
       secureTextEntry
@@ -125,7 +131,8 @@ export default function CadastroUsuario() {
       onChangeText={setPasswordCheck}
     />
 
-    <TouchableOpacity style={styles.button} onPress={handleCadastro}>
+    <TouchableOpacity style={styles.button} onPress={handleCadastro}
+      testID='cadastrar-button'>
       <Text style={styles.buttonText}>Cadastrar</Text>
     </TouchableOpacity>
 

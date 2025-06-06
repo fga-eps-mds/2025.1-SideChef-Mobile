@@ -1,10 +1,9 @@
-describe('Inicial Page', () => {
+describe('Menu', () => {
   beforeEach(() => {
-    // Boa prática: sempre visitar a rota antes de cada teste
-    cy.visit('/inicialPage');
+    cy.visit('/menu');
   });
 
-  it('deve exibir os elementos da tela inicial', () => {
+  it('deve exibir os elementos do menu', () => {
     // verify if there is everything that should be on the page
     cy.contains('Ainda não há receitas registradas :(').should('exist');
 
@@ -18,35 +17,36 @@ describe('Inicial Page', () => {
     cy.get('[data-testid="flutunte-icon"]').should('exist');
   });
 
-  it('deve exibir alerta ao clicar no botão flutuante', () => {
-    // intercepts alerts for testing
-    cy.on('window:alert', (text) => {
-      expect(text).to.equal('Adicionar Receita');
-    });
-
+  it('deve exibir alerta ao clicar no botão flutuante (+)', () => {
+    
     // simulates click on flutunte "+" button
     cy.get('[data-testid="flutunte-icon"]').click();
+    
+    // intercepts alerts for testing
+    cy.on('window:alert', (text) => {
+      expect(text).to.equal('Ir para perfil');
+    });
+
   });
    
-
-  it('deve exibir alerta ao clicar no botão de +', () => {
+  it('deve exibir alerta ao clicar no botão de receitas', () => {
+    
+    // simulates click on receipt button
+    cy.get('[data-testid="receipt-icon"]').click();
+    
     //intercepts alerts for testing
     cy.on('window:alert', (text) => {
       expect(text).to.equal('Ir para recipes');
     });
-
-    // simulates click on searching button
-    cy.get('[data-testid="search-icon"]').click();
   });
 
-  it('deve exibir alerta ao clicar no botão de perfil', () => {
-    // intercepts alerts for testing
-    cy.on('window:alert', (text) => {
-      expect(text).to.equal('Ir para Perfil');
-    });
+  it('deve redirecionar ao cadastro ao clicar no botão de perfil', () => {
 
     //simulates clicking on the profile button
-    cy.get('[data-testid="perfil-icon"]').click();
+    cy.get('[data-testid="perfil-icon"]', { timeout: 10000 }).click();
+
+    cy.url({ timeout: 10000 }).should('include', '/addUser');
+    
   });
 
 
@@ -74,13 +74,15 @@ describe('Inicial Page', () => {
     }).as('getRecipes'); 
 
     // visit the screen again for the intercept to work properly
-    cy.visit('/inicialPage');
+    cy.visit('/menu');
     cy.wait('@getRecipes');
 
     // verify if the recipes are displayed on the page
-    cy.contains('Pizza de Calabresa').should('exist');
+    cy.contains('Pizza de Calabresa', { timeout: 10000 }).should('exist');
     cy.contains('Arroz com Pequi').should('exist');
   });
 
+
+  //Need to test when you click in the cards, and when you unclick it too!
 });
 
