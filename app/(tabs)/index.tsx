@@ -23,7 +23,7 @@ import { styles } from '../styles/index.styles';
         useNativeDriver: true,
       }).start();
 
-    // navegação para a próxima tela após 3 segundos
+    // next screen navigation in three seconds
     const timeout = setTimeout(() => {
       router.push('/inicialPage');
     }, 3000);

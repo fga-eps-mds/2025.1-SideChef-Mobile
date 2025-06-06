@@ -1,0 +1,175 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    paddingTop: 50,
+    backgroundColor: '#fff',
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    backgroundColor: '#fff',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  searchInput: {
+    height: 40,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#555',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+    position: 'relative',
+    backgroundColor: '#D62626',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: -2 },
+    shadowRadius: 4,
+  },
+  sideText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  iconWrapper: {
+    padding: 10,
+  },
+  cameraButton: {
+    backgroundColor: '#fff',
+    borderRadius: 35,
+    padding: 16,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+  },
+  cameraPadding: {
+    padding: 5
+  },
+  floatButton: {
+    position: 'absolute',
+    bottom: 110, //Adjust to be above the footer
+    right: 17,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#D62626',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+},
+
+  cameraIcon: {
+    fontSize: 28,
+  },
+  containerDetails: {
+    padding: 16,
+    backgroundColor: '#D62626',
+    flexGrow: 1,
+  },
+  scrollDetails: {
+    flexGrow: 1,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+  },
+  cardDetails: {
+    backgroundColor: '#D62626',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+    },
+  backButtonDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  backTextDetails: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginLeft: 8,
+  },
+  imageDetails: {
+    width: '100%',
+    height: 180,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    marginBottom: 16,
+  },
+  titleDetails: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  timeRowDetails: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  timeTextDetails: {
+    marginLeft: 8,
+    color: '#fff', 
+  },
+  sectionTitleDetails: {
+    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  ingredientDetails: {
+    color: '#fff',
+    fontSize: 14,
+    marginLeft: 10,
+    marginTop: 2,
+  },
+  preparoDetails: {
+    color: '#fff',
+    marginTop: 6,
+    lineHeight: 20,
+  },
+  actionsDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 24,
+  },
+  emptyTextDetails: {
+    textAlign: 'center',
+    color: '#555',
+    fontSize: 16,
+    fontWeight: '500',
+    marginTop: 40,
+}});

@@ -14,7 +14,7 @@ export default function LoginPage() {
   };
 
   return (
-    <View style={styles.containerMenu}>
+    <View style={styles.container}>
       <View style={styles.logoContainer}>
               <Image
                 source={require('../../assets/images/LogoVermelha.png')}

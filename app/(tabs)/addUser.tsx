@@ -55,7 +55,7 @@ export default function CadastroUsuario() {
 
       console.log('Todos os dados são válidos');
       (Alert. alert('Sucesso', 'Usuario cadastrado com sucesso'));
-      router.push('/(tabs)/inicialPage');
+      router.push('/(tabs)/loginUser');
 
   };
 
