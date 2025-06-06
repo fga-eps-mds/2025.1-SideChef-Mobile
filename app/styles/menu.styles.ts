@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    paddingTop: 50,
+    paddingTop: 15,
     backgroundColor: '#fff',
   },
   header: {
@@ -69,7 +69,7 @@ export const styles = StyleSheet.create({
   },
   floatButton: {
     position: 'absolute',
-    bottom: 110, //Adjust to be above the footer
+    bottom: 80, //Adjust to be above the footer
     right: 17,
     width: 60,
     height: 60,
