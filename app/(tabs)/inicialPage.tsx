@@ -46,6 +46,7 @@ export default function Login() {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
+        testID="red-logo"
           source={require('../../assets/images/LogoVermelha.png')}
           style={styles.logo}
           resizeMode="contain"
@@ -69,7 +70,9 @@ export default function Login() {
           <Text style={styles.otherText}>Cadastrar</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}></View>
-        <TouchableOpacity onPress={() => router.push('/menu')}>
+        <TouchableOpacity
+        testID="continuar-sem-salvar" 
+        onPress={() => router.push('/menu')}>
           <Text style={styles.continueText}>
             Continuar sem salvar minhas receitas
           </Text>
@@ -77,6 +80,7 @@ export default function Login() {
       </View>
       <Modal visible={showOptions} transparent={true} onRequestClose={closeModal}>
         <TouchableOpacity
+          testID='modal-overlay'
           onPress={closeModal}
           style={styles.modalOverlay}
           activeOpacity={1}
