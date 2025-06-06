@@ -57,8 +57,18 @@ export default function Login() {
         </Text>
         <Text style={styles.subtitleText}>Como deseja continuar?</Text>
       </View>
+      
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={openModal} style={styles.otherButton}>
+          <Text style={styles.otherText}>Entar</Text>
+        </TouchableOpacity>
 
-      <View style={styles.buttonContainer}>
+        <View style={styles.buttonContainer}></View>
+        <TouchableOpacity onPress={() => router.push('/addUser')} style={styles.otherButton}>
+          <Text style={styles.otherText}>Cadastrar</Text>
+        </TouchableOpacity>
+        <View style={styles.buttonContainer}></View>
+
         <TouchableOpacity
           onPress={() => console.log('Continuar com Google')}
           style={styles.googleButton}
@@ -70,10 +80,6 @@ export default function Login() {
             />
           </View>
           <Text style={styles.googleText}>Continuar com o Google</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={openModal} style={styles.otherButton}>
-          <Text style={styles.otherText}>Outras opções</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.navigate('/(tabs)/inicialPage')}>

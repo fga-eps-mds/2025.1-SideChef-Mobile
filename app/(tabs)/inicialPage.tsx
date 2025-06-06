@@ -141,11 +141,11 @@ export default function inicialPage() {
   };
 
   const handlePerfilPress = () => {
-    router.push('/(tabs)/addUser');
+    router.push('/addUser');
   };
 
   const handleFloatPress = () => {
-    alert ('Adicionar Receita');
+    alert('Ir para perfil');
   }
 
   //cam
