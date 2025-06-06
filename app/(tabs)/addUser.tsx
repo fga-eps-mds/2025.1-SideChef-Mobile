@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { styles } from './addUser.styles';
+import { styles } from '../styles/addUser.styles';
 import { Image } from 'react-native';
 
 export default function CadastroUsuario() {
@@ -63,7 +63,7 @@ export default function CadastroUsuario() {
 <View style={styles.container}>
   <View style={styles.logoContainer}>
                 <Image
-                  source={require('../assets/images/LogoVermelha.png')}
+                  source={require('../../assets/images/LogoVermelha.png')}
                   style={styles.logo}
                   resizeMode="contain"
                 />

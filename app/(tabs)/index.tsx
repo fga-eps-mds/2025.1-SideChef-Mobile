@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, View } from "react-native";
-import { styles } from './index.styles';
+import { styles } from '../styles/index.styles';
 
 export default function Index() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -34,7 +34,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={require('../assets/images/logoInteiro.png')}
+        source={require('../../assets/images/logoInteiro.png')}
         style={{
           transform: [{ scale: springAnim }],
           opacity: fadeAnim,

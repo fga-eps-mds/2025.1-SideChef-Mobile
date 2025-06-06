@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Animated, Easing, Image, Modal, Text, TouchableOpacity, View, } from 'react-native';
-import { styles } from './login.styles';
+import { styles } from '../styles/login.styles';
 
 
 export default function Login() {
@@ -46,7 +46,7 @@ export default function Login() {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
-          source={require('../assets/images/LogoVermelha.png')}
+          source={require('../../assets/images/LogoVermelha.png')}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -69,7 +69,7 @@ export default function Login() {
           <Text style={styles.otherText}>Cadastrar</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}></View>
-        <TouchableOpacity onPress={() => router.navigate('/(tabs)/menu')}>
+        <TouchableOpacity onPress={() => router.push('/menu')}>
           <Text style={styles.continueText}>
             Continuar sem salvar minhas receitas
           </Text>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { styles } from './loginUser.styles';
+import { styles } from '../styles/loginUser.styles';
 import { Image } from 'react-native';
 
 export default function LoginPage() {
@@ -14,10 +14,10 @@ export default function LoginPage() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.containerMenu}>
       <View style={styles.logoContainer}>
               <Image
-                source={require('../assets/images/LogoVermelha.png')}
+                source={require('../../assets/images/LogoVermelha.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />

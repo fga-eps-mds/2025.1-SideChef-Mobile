@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
+  containerMenu: {
     flex: 1,
     paddingTop: 60,
     paddingHorizontal: 24,
