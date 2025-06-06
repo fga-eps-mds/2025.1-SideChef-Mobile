@@ -25,7 +25,7 @@ export default function Index() {
 
     // navegação para a próxima tela após 3 segundos
     const timeout = setTimeout(() => {
-      router.push('/login');
+      router.push('/inicialPage');
     }, 3000);
 
     return () => clearTimeout(timeout);

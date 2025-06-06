@@ -128,6 +128,11 @@ export default function CadastroUsuario() {
       <Text style={styles.link}> Entre!</Text>
       </Text>
     </TouchableOpacity>
+    <TouchableOpacity onPress={() => router.push('/login')}>
+            <Text style={styles.footerText}>
+              <Text style={styles.link}>Voltar</Text>
+            </Text>
+    </TouchableOpacity>
   </View>
 </View>
   );

@@ -69,7 +69,7 @@ export default function Login() {
           <Text style={styles.otherText}>Cadastrar</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}></View>
-        <TouchableOpacity onPress={() => router.navigate('/(tabs)/inicialPage')}>
+        <TouchableOpacity onPress={() => router.navigate('/(tabs)/menu')}>
           <Text style={styles.continueText}>
             Continuar sem salvar minhas receitas
           </Text>

@@ -44,6 +44,11 @@ export default function LoginPage() {
           Ainda não tem conta? <Text style={styles.link}>Cadastre-se!</Text>
         </Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push('/inicialPage')}>
+        <Text style={styles.footerText}>
+          <Text style={styles.link}>Voltar</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
