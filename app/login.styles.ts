@@ -180,5 +180,35 @@ export const styles = StyleSheet.create({
   color: '#000000',
   marginBottom: 10,
 },
+input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: '#fff',
+    marginBottom: 12,
+  },
+  button: {
+    backgroundColor: '#D62626',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  footerText: {
+    marginTop: 20,
+    textAlign: 'center',
+    color: '#555',
+  },
+  link: {
+    fontWeight: 'bold',
+    color: '#000',
+  },
 
 });

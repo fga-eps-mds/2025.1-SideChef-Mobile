@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { styles } from './login.styles';
+import { styles } from './loginUser.styles';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

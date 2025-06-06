@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { Animated, Easing, Image, Modal, Text, TouchableOpacity, View, } from 'react-native';
 import { styles } from './login.styles';
 
+
 export default function Login() {
   const router = useRouter();
   const [showOptions, setShowOptions] = useState(false);
@@ -59,8 +60,8 @@ export default function Login() {
       </View>
       
         <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={openModal} style={styles.otherButton}>
-          <Text style={styles.otherText}>Entar</Text>
+        <TouchableOpacity onPress={() => router.push('/loginUser')}style={styles.otherButton}>
+          <Text style={styles.otherText}>Entrar</Text>
         </TouchableOpacity>
 
         <View style={styles.buttonContainer}></View>
@@ -68,27 +69,12 @@ export default function Login() {
           <Text style={styles.otherText}>Cadastrar</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}></View>
-
-        <TouchableOpacity
-          onPress={() => console.log('Continuar com Google')}
-          style={styles.googleButton}
-        >
-          <View style={styles.googleIconContainer}>
-            <Image
-              style={styles.googleIcon}
-              source={require('../assets/images/Google.png')}
-            />
-          </View>
-          <Text style={styles.googleText}>Continuar com o Google</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity onPress={() => router.navigate('/(tabs)/inicialPage')}>
           <Text style={styles.continueText}>
             Continuar sem salvar minhas receitas
           </Text>
         </TouchableOpacity>
       </View>
-
       <Modal visible={showOptions} transparent={true} onRequestClose={closeModal}>
         <TouchableOpacity
           onPress={closeModal}
@@ -102,38 +88,8 @@ export default function Login() {
                 opacity: opacityAnim,
                 transform: [{ translateY: translateYAnim }],
               },
-            ]}
-          >
-            <Text style={styles.modalTitle}>Como deseja continuar?</Text>
-
-            <TouchableOpacity
-              onPress={() => console.log('Facebook')}
-              style={styles.facebookButton}
-            >
-              <View style={styles.facebookIconContainer}>
-                <Image
-                  style={styles.facebookIcon}
-                  source={require('../assets/images/Facebook.png')}
-                />
-              </View>
-              <Text style={styles.facebookText}>Continuar com o Facebook</Text>
-            </TouchableOpacity>
-
-            <View style={styles.rowButtons}>
-              <TouchableOpacity
-                onPress={() => console.log('Celular')}
-                style={styles.smallButton}
-              >
-                <Text style={styles.smallButtonText}>Celular</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => console.log('Email')}
-                style={styles.smallButton}
-              >
-                <Text style={styles.smallButtonText}>Email</Text>
-              </TouchableOpacity>
-            </View>
+            ]}>
+            <Text style={styles.modalTitle}>Logue com sua conta!</Text>  
           </Animated.View>
         </TouchableOpacity>
       </Modal>
