@@ -22,7 +22,7 @@ interface Ingredients {
 }
 
 interface Recipe {
-  id: string;
+  _id: string;
   Nome: string;
   Dificuldade: string;
   Ingredientes: Ingredients[];
@@ -105,7 +105,7 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
   return(
     <FlatList
       data={recipes}
-      keyExtractor={(item) => item.id} 
+      keyExtractor={(item) => item._id} 
       
       renderItem={({ item }) => {
         
@@ -369,7 +369,7 @@ async function openCam() {
 
       if (result && result.recipes) {
         const ocrRecipes: Recipe[] = result.recipes.map((recipe: any) => ({
-          id: recipe.id,
+          _id: recipe.id,
           Nome: recipe.Nome,
           Dificuldade: recipe.Dificuldade,
           Ingredientes: recipe.Ingredientes.map((ingredient: any) => ({
