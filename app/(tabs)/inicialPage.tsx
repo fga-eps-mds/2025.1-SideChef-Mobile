@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import Constants from 'expo-constants';
 
@@ -16,11 +16,16 @@ const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
 const router = useRouter();
 
+interface Ingredients {
+  quantidade: string;
+  ingrediente: string;
+}
+
 interface Recipe {
   _id: string;
   Nome: string;
-  Ingredientes: string[];
   Dificuldade: string;
+  Ingredientes: Ingredients[];
   Preparo: string;
 };
 
@@ -34,8 +39,35 @@ interface RecipeListViewProp{
     onSelect: (recipe: Recipe) => void
 }
 
+
+
+
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
+  let ingredientsDisplay = '';
+    if (Array.isArray(recipe.Ingredientes)) {
+      if (recipe.Ingredientes.length > 0) {
+        if (typeof recipe.Ingredientes[0] === 'string') {
+          ingredientsDisplay = recipe.Ingredientes.join(', ');
+
+        } else if (typeof recipe.Ingredientes[0] === 'object') {
+          ingredientsDisplay = recipe.Ingredientes.map((ing: Ingredients) => 
+            `${ing.quantidade || ''} ${ing.ingrediente || ''}`.trim()
+          ).filter(s => s.length > 0).join('; ');
+          
+          if (!ingredientsDisplay) { 
+            ingredientsDisplay = 'Ingredient formating fail';
+          }
+        } else {
+          ingredientsDisplay = 'Unknown ingredient format';
+        }
+      } else {
+        ingredientsDisplay = 'Nenhum ingrediente cadastrado :(';
+      }
+    } else if (recipe.Ingredientes) {
+      ingredientsDisplay = 'Invalid data'; 
+    }
   return(
+    
      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={stylesDetails.scroll}>
     
@@ -52,9 +84,9 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
               <Text style={styles.timeText}>{receita.time}</Text>
             </View> */}
             <Text style={stylesDetails.sectionTitle}>Ingredientes:</Text>
-            {
-              <Text style={stylesDetails.ingredient}>{recipe.Ingredientes}</Text>
-            }
+            <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
+            { ingredientsDisplay }
+            </Text>
             <Text style={stylesDetails.sectionTitle}>Modo de Preparo:</Text>
             <Text style={stylesDetails.preparo}>{recipe.Preparo}</Text>
             
@@ -73,43 +105,67 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
   return(
     <FlatList
       data={recipes}
-      keyExtractor={(item) => item._id}
-      contentContainerStyle={{ padding: 16, flexGrow: 1 }}
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
-        </View>
-      }
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          style={{
+      keyExtractor={(item) => item._id} 
+      
+      renderItem={({ item }) => {
+        
+        console.log(`Displaying recipe: ${item.Nome}, Ingredients:`, item.Ingredientes);
+
+        let ingredientsDisplay = '';
+        if (Array.isArray(item.Ingredientes)) {
+          if (item.Ingredientes.length > 0) {
+            if (typeof item.Ingredientes[0] === 'string') {
+              ingredientsDisplay = item.Ingredientes.join(', ');
+
+            } else if (typeof item.Ingredientes[0] === 'object') {
+              ingredientsDisplay = item.Ingredientes.map((ing: Ingredients) => 
+                `${ing.quantidade || ''} ${ing.ingrediente || ''}`.trim()
+              ).filter(s => s.length > 0).join('; ');
+              
+              if (!ingredientsDisplay) { 
+                ingredientsDisplay = 'Ingredient formating fail';
+              }
+            } else {
+              ingredientsDisplay = 'Unknown ingredient format';
+            }
+          } else {
+            ingredientsDisplay = 'Nenhum ingrediente cadastrado :(';
+          }
+        } else if (item.Ingredientes) {
+          ingredientsDisplay = 'Invalid data'; 
+        }
+
+        return (
+          <TouchableOpacity
+            style={{
             backgroundColor: '#D62626',
             padding: 16,
             marginBottom: 12,
             borderRadius: 8,
             elevation: 3,
           }}
-        
-        onPress={() => onSelect(item)}
-        >
-          {/* <Image source={item.image} style={{ width: '100%', height: 150, borderRadius: 8 }} /> */}
-          <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
-            {item.Nome}
-          </Text>
-          <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
-            Ingredientes: {item.Ingredientes}
-          </Text>
-        </TouchableOpacity>
-      )}
+            onPress={() => onSelect(item)}
+          >
+            <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
+              {item.Nome}
+            </Text>
+            <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
+              Ingredientes: {ingredientsDisplay}
+            </Text>
+          </TouchableOpacity>
+        );
+      }}
     />
-  )
+  );
 }
 
 export default function inicialPage() {
   // state receitas
-  const [recipes, setRecipes] = useState([])
-  const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null)
-  const [query, onChangeText] = useState('');
+  const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
+  const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);  // Currently shown recipes
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
+  const [query, setQuery] = useState('');
+  const [filterMode, setFilterMode] = useState<'title' | 'ingredients' | 'all'>('all');
 
   //to get ip
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
@@ -122,16 +178,55 @@ export default function inicialPage() {
   const fetchData = async () => {
     // Pode ser guardada em um hook
     try {
-        const response = await axios.get(`${apiUrl}/recipe/getRecipes`);
-        setRecipes(response.data)
+        const response = await axios.get(`${apiUrl}/recipe/getRecipes/`);
+        console.log("/recipe/getRecipes/ JSON data: ", JSON.stringify(response.data, null, 2));
+
+        setAllRecipes(response.data);
+        setDisplayedRecipes(response.data);  // Initially, same as allRecipes
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
   }
 
   useEffect(() =>{          
     fetchData()
     }, [])
+
+  useEffect(() => {
+    handleSearch(query);
+  }, [filterMode]);
+
+  // Shows desired list of recipes on screen
+  const showCustomRecipeList = (customList: Recipe[]) => {
+    setDisplayedRecipes(customList);
+    setSelectedRecipe(null);
+    console.log(`Showing custom list of ${customList.length} recipes.`);
+  };
+
+  const handleSearch = (text: string) => {
+    setQuery(text);
+    const lowered = text.toLocaleLowerCase();
+
+    const filtered = receitas.filter(item => {
+
+      if (filterMode === 'title') {
+        return item.Nome.toLocaleLowerCase().includes(lowered);
+      }
+      else if (filterMode === 'ingredients') {
+        return item.Ingredientes.toString().toLocaleLowerCase().includes(lowered);
+      } 
+      else{
+        return (
+          item.Nome.toLocaleLowerCase().includes(lowered) ||
+          item.Ingredientes.toString().toLocaleLowerCase().includes(lowered)
+        );
+      }
+    })
+    setDisplayedRecipes(filtered);
+  }
+  const handleSelectRecipe = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+  };
 
   const handleCameraPress = () => {
     alert('Abrir câmera (simulado)');
@@ -148,6 +243,9 @@ export default function inicialPage() {
   const handleFlutuntePress = () => {
     alert ('Adicionar Receita');
   }
+
+const receitas: Recipe[] = allRecipes;
+
 
   //cam
 //camera permission
@@ -180,29 +278,115 @@ async function openCam() {
 
 //uploadImage
   const uploadImage = async (uri: string) => {
-    const fileName = uri.split('/').pop() as string;
-    const fileType = fileName.split('.').pop();
-
+    let fileName = '';
+    let fileType = '';
+    let mimeType = '';
+    
+    console.log('Original URI:', uri);
+    
     const formData = new FormData();
-    formData.append('file', {
-      uri,
-      name: fileName,
-      type: `image/${fileType}`,
-    } as any);
+    if (uri.startsWith('data:')) {  // data URI file (usually when testing via web)
+      try {
+        const mimeTypeMatch = uri.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/);
+        const base64 = uri.split("base64,")[1];
+
+        if (!base64 || !mimeTypeMatch) {
+          console.log("Failed to format data URI: ", uri);
+          return;
+        }
+
+        mimeType = mimeTypeMatch[0];  // image/jpeg
+        fileType = mimeType.split('/')[1]  // jpeg
+        fileName = `temp_img_${Date.now()}.${fileType}`;
+        
+        if (Platform.OS === 'web') {
+          const byteChar = atob(base64);
+          const byteNum = new Array(byteChar.length);
+          for (let i = 0; i < byteChar.length; i++) {
+            byteNum[i] = byteChar.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNum);
+          const blob = new Blob([byteArray], {type: mimeType});
+
+          formData.append('file', blob, fileName);
+          console.log('Web blob created as formData: ', fileName, blob.type)
+        } else {
+          console.error('data URI while platform !== web');
+          return;
+        }
+
+      } catch (err) {
+        console.error("Error at processing data URI: ", err);
+        return;
+      }
+
+    } else {  // Regular uri file (file://...)
+      
+      const extractedFileName = uri.split('/').pop();
+      if (extractedFileName) {
+        fileName = extractedFileName;
+        const extractedFileType = fileName.split('.').pop()?.toLowerCase();
+        if (extractedFileType) {
+          fileType = extractedFileType;
+          mimeType = `image/${fileType}`;
+        } else {
+          console.error('URI invalid file type: ', extractedFileType);
+          return;
+        }
+      } else {
+        console.error('URI invalid file name: ', extractedFileName);
+        return;
+      }
+
+      console.log('FileName:', fileName, 'FileType:', fileType);
+  
+      if (!fileType || !fileName) {
+        console.error('Could not determine file type/name: ', {processedUri: uri, fileName, fileType});
+        return;
+      }
+
+      formData.append('file', {
+        uri: uri,
+        name: fileName,
+        type: `image/${fileType}`,
+      } as any);
+    }
 
     try {
       const response = await fetch(`${apiUrl}/ocr/run-ocr/`, {
         method: 'POST',
         body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
       });
 
+      if (!response.ok) {
+        const fetchError = await response.text();
+        console.error('OCR API error: ', response.status, fetchError);
+        return;
+      }
+
       const result = await response.json();
-      console.log('Resultado do OCR:', result);
+      console.log('OCR result: ', result);
+
+      if (result && result.recipes) {
+        const ocrRecipes: Recipe[] = result.recipes.map((recipe: any) => ({
+          _id: recipe.id,
+          Nome: recipe.Nome,
+          Dificuldade: recipe.Dificuldade,
+          Ingredientes: recipe.Ingredientes.map((ingredient: any) => ({
+            quantidade: ingredient.quantidade || '',
+            ingrediente: ingredient.ingrediente || ''
+          })),
+          Preparo: recipe.Preparo,
+        }));
+        
+        showCustomRecipeList(ocrRecipes);  // Shows recipes compatible to OCR output
+
+      } else {
+        console.error('OCR result is not a valid recipe list and/or is empty.');
+      }
+
     } catch (error) {
-      console.error('Erro ao enviar imagem:', error);
+      console.error('Error sending image: ', error);
     }
   };
 //uploadImage END
@@ -210,33 +394,46 @@ async function openCam() {
 
 // (!) Barra de pesquisa altera por função dependente de mock haardcoded, corrigir
   return (
-    <View style={styles.container}>
+    <View style={stylesDetails.container2}>
       <View style={[styles.header, { flexDirection: 'row', alignItems: 'center' }]}>
         <TextInput
           placeholder="Pesquisar..."
           value={query}
-          onChangeText={() => {
-            onChangeText;
-            console.log("Mudei o texto de pesquisa")}}
-          style={[styles.searchInput, { flex: 1 }]}
+          onChangeText={handleSearch}
+          style={[stylesDetails.searchInput, { flex: 1 }]}
         />
         <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }}
         testID='search-icon' 
          />
       </View>
 
+      {/* Filtros de busca */}
+      <View style={stylesDetails.filterContainer}>
+        <TouchableOpacity
+          style={[stylesDetails.filterButton, filterMode === 'title' && stylesDetails.selected]}
+          onPress={() => setFilterMode("title")}
+        >
+          <Text style={stylesDetails.filterText} > Tiítulo </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[stylesDetails.filterButton, filterMode === 'ingredients' && stylesDetails.selected]}
+          onPress={() => setFilterMode("ingredients")}
+        >
+          <Text style={stylesDetails.filterText}> Ingredientes </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[stylesDetails.filterButton, filterMode === 'all' && stylesDetails.selected]}
+          onPress={() => setFilterMode("all")}
+        >
+          <Text style={stylesDetails.filterText}> Todos </Text>
+        </TouchableOpacity>
+      </View>
 
-      {recipes.length == 0 ?
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Ainda não há receitas registradas :{recipes}(</Text>
-        </View> : (selectedRecipe ? (
-          <View style={styles.emptyContainer}>
-            <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipes(null)}/>
-          </View>) :
-        <View style={styles.emptyContainer}>
-          <RecipeList recipes={recipes} onSelect={setSelectedRecipes}/>
-        </View>)
-      }
+      {selectedRecipe ? (
+        <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />
+      ) : (
+        <RecipeList recipes={displayedRecipes} onSelect={handleSelectRecipe} />
+      )}
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={handlerecipesPress}>
@@ -432,4 +629,96 @@ emptyText: {
   fontWeight: '500',
   marginTop: 40,
 },
+container2: {
+    flex: 1,
+    paddingTop: 50,
+    backgroundColor: '#fff',
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    backgroundColor: '#fff',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  searchInput: {
+    height: 40,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  filterButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    marginHorizontal: 6,
+    backgroundColor: '#eee',
+    borderRadius: 20,
+  },
+  selected: {
+    backgroundColor: '#D62626',
+  },
+  filterText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText2: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#555',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+    paddingTop: 10,
+    paddingBottom: 20,
+    backgroundColor: '#D62626',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: -2 },
+    shadowRadius: 4,
+  },
+  cameraButton: {
+    backgroundColor: '#fff',
+    borderRadius: 35,
+    padding: 18,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+  },
+  flutuanteButton: {
+    position: 'absolute',
+    bottom: 100,
+    right: 18,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#D62626',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
 });
