@@ -1,294 +1,102 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Constants from 'expo-constants';
-import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-const router = useRouter();
-
-type Receita = {
-  id: string;
-  title: string;
-  ingredients: string[];
-  image: any;
-};
-
-  //cards pagina
-const receitas = [
-  {
-    id: 'card1',
-    title: 'STROGONOFF DE Frango', 
-    ingredients: ['Frango', 'Creme de Leite', 'Ketchup', 'Mostarda'],
-    image: require('../../assets/images/strogonoff.png'),
-  },
-  {
-    id: 'card2',
-    title: 'LASANHA Bolonhesa',
-    ingredients: ['Carne', 'Massa', 'Molho de tomate', 'Queijo'],
-    image: require('../../assets/images/lasanha.jpg'),
-  },
-  {
-    id: 'card3',
-    title: 'Coxinha de Frango',
-    ingredients: ['Frango', 'Farinha Panko', 'Ovos'],
-    image: require('../../assets/images/coxinha.jpeg'),
-  },
-];
+import { useRef, useState } from 'react';
+import { Animated, Easing, Image, Modal, Text, TouchableOpacity, View, } from 'react-native';
+import { styles } from '../styles/login.styles';
 
 
+export default function Login() {
+  const router = useRouter();
+  const [showOptions, setShowOptions] = useState(false);
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const translateYAnim = useRef(new Animated.Value(50)).current;
 
-export default function inicialPage() {
-  const [query, setQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(receitas);
-
-  //para pegar ip 
-  const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
-  const localIp = debuggerHost?.split(':')[0];
-
-
-  //state pra guardar o uri da imagem (pode ser útil no futuro )
-  const [imageUri, setImageUri] = useState<string | null>(null);
-
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    const filtered = receitas.filter(item =>
-      item.title.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredData(filtered);
+  const openModal = () => {
+    setShowOptions(true);
+    Animated.parallel([
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateYAnim, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
-  const handleCameraPress = () => {
-    alert('Abrir câmera (simulado)');
+  const closeModal = () => {
+    Animated.parallel([
+      Animated.timing(opacityAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateYAnim, {
+        toValue: 50,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setShowOptions(false));
   };
-
-  const handleReceitasPress = () => {
-    alert('Ir para Receitas');
-  };
-
-  const handlePerfilPress = () => {
-    alert('Ir para Perfil');
-  };
-
-  const handleFlutuntePress = () => {
-    alert ('Adicionar Receita');
-  }
-
-  //cam
-//permissao da cam
-async function getCameraPermission() {
-  const { status } = await ImagePicker.requestCameraPermissionsAsync();
-  if (status !== 'granted') {
-    alert('Permita o acesso a câmera para poder usufruir dessa funcionalidade.');
-  }
-}
-
-
-
-//função pra abrir a camera
-async function openCam() {
-  let result = await ImagePicker.launchCameraAsync({
-    aspect: [4, 3],      // Configuração da proporção da imagem (opcional)
-    quality: 1,          // Qualidade máxima da imagem
-  });
-  //if que verifica se o usuário fechou a camera
-  if (!result.canceled && result.assets && result.assets.length > 0) {
-      const uri = result.assets[0].uri;
-      console.log(uri);
-
-       await uploadImage(uri);
-    }
-}
-
-//camEnd
-
-
-//uploadImage
-  const uploadImage = async (uri: string) => {
-    const fileName = uri.split('/').pop() as string;
-    const fileType = fileName.split('.').pop();
-
-    const formData = new FormData();
-    formData.append('file', {
-      uri,
-      name: fileName,
-      type: `image/${fileType}`,
-    } as any);
-
-    try {
-      const response = await fetch(`http://${localIp}:8000/run-ocr/`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      const result = await response.json();
-      console.log('Resultado do OCR:', result);
-    } catch (error) {
-      console.error('Erro ao enviar imagem:', error);
-    }
-  };
-//uploadImage END
-
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { flexDirection: 'row', alignItems: 'center' }]}>
-        <TextInput
-          placeholder="Pesquisar..."
-          value={query}
-          onChangeText={handleSearch}
-          style={[styles.searchInput, { flex: 1 }]}
+      <View style={styles.logoContainer}>
+        <Image
+        testID="red-logo"
+          source={require('../../assets/images/LogoVermelha.png')}
+          style={styles.logo}
+          resizeMode="contain"
         />
-        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
-    {/* Lista de receitas */}
-      <FlatList
-        data={filteredData}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16, flexGrow: 1 }}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Ainda não há receitas registradas :(</Text>
-          </View>
-        }
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={{
-              backgroundColor: '#D62626',
-              padding: 16,
-              marginBottom: 12,
-              borderRadius: 8,
-              elevation: 3,
-            }}
-          
-          onPress={() => router.push({
-                  pathname: '/detalhes',
-                  params: { id: item.id },
-                  })}
-
-          >
-            <Image source={item.image} style={{ width: '100%', height: 150, borderRadius: 8 }} />
-            <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
-              {item.title}
-            </Text>
-            <Text style={{ fontSize: 14, color: '#000', marginTop: 4 }}>
-              Ingredientes: {item.ingredients.join(', ')}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
-
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={handleReceitasPress}>
-          <Ionicons name="receipt" size={30} color="#FFF" />
+      <View style={styles.textContainer}>
+        <Text style={styles.titleText}>
+          Falta pouco para iniciar a sua jornada na cozinha!
+        </Text>
+        <Text style={styles.subtitleText}>Como deseja continuar?</Text>
+      </View>
+      
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => router.push('/loginUser')}style={styles.otherButton}>
+          <Text style={styles.otherText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
-          <FontAwesome name="camera" size={24} color="#D62626" />
+        <View style={styles.buttonContainer}></View>
+        <TouchableOpacity onPress={() => router.push('/addUser')} style={styles.otherButton}>
+          <Text style={styles.otherText}>Cadastrar</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={handlePerfilPress}>
-          <MaterialCommunityIcons name="account" size={36} color="#FFF" />
+        <View style={styles.buttonContainer}></View>
+        <TouchableOpacity
+        testID="continuar-sem-salvar" 
+        onPress={() => router.push('/menu')}>
+          <Text style={styles.continueText}>
+            Continuar sem salvar minhas receitas
+          </Text>
         </TouchableOpacity>
       </View>
-
-        <TouchableOpacity onPress={handleFlutuntePress} style={styles.flutuanteButton}>
-        <FontAwesome5 name="plus" size={24} color="#FFF" />
+      <Modal visible={showOptions} transparent={true} onRequestClose={closeModal}>
+        <TouchableOpacity
+          testID='modal-overlay'
+          onPress={closeModal}
+          style={styles.modalOverlay}
+          activeOpacity={1}
+        >
+          <Animated.View
+            style={[
+              styles.modalContent,
+              {
+                opacity: opacityAnim,
+                transform: [{ translateY: translateYAnim }],
+              },
+            ]}>
+            <Text style={styles.modalTitle}>Logue com sua conta!</Text>  
+          </Animated.View>
         </TouchableOpacity>
-
-      <StatusBar style="auto" />
+      </Modal>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 50,
-    backgroundColor: '#fff',
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingBottom: 10,
-    backgroundColor: '#fff',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  },
-  searchInput: {
-    height: 40,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#555',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 10,
-    paddingBottom: 20,
-    backgroundColor: '#D62626',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: -2 },
-    shadowRadius: 4,
-  },
-  sideText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  cameraButton: {
-    backgroundColor: '#fff',
-    borderRadius: 35,
-    padding: 18,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-  },
-
-  flutuanteButton: {
-  position: 'absolute',
-  bottom: 100, // Ajuste para ficar acima do footer
-  right: 18,
-  width: 60,
-  height: 60,
-  borderRadius: 30,
-  backgroundColor: '#D62626',
-  justifyContent: 'center',
-  alignItems: 'center',
-  elevation: 8,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 4,
-},
-
-  cameraIcon: {
-    fontSize: 28,
-  },
-});
