@@ -185,21 +185,19 @@ export default function ocrInputPage() {
   
 
   return (
-    <View>
+    <View style={styles.bigContainer}>
     <View style={styles.container1}>
-        <Text style={{
-            fontSize: 24, alignSelf: 'center',
-            fontWeight: 'bold', color: '#D62626', marginBottom: 20,}}>
+        <Text style={styles.text}>
           Ingredientes adicionados:    
           </Text>
-      <ScrollView style={{ marginTop: 20 }}>
+      <ScrollView style={{ margin: 50, marginTop: 20, marginBottom: 30, }}>
         {imageUris.map((uri, index) => (
           <Image
             key={index}
             source={{ uri }}
             style={{
-              width: 100,
-              height: 100,
+              width: '100%',
+              height: 300,
               marginBottom: 10,
               borderRadius: 8,
             }}
@@ -207,16 +205,19 @@ export default function ocrInputPage() {
         ))}
       </ScrollView>
 
-      <View style={styles.buttonsContainer}>
-      <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
-          <FontAwesome name="camera" size={24} color="#D62626" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={initialPagePush} style={styles.cameraButton}>
-          <FontAwesome name="check" size={24} color="#D62626" />
-      </TouchableOpacity>
+    
+    
     </View>
     <View style={styles.footer}>
+         <View style={styles.footerColor}></View>
 
+      <View style={styles.buttonsContainer}>
+      <TouchableOpacity onPress={openCam} style={styles.button}>
+          <FontAwesome name="camera" size={24} color="#D62626" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={initialPagePush} style={styles.button}>
+          <FontAwesome name="check" size={24} color="#D62626" />
+      </TouchableOpacity>
     </View>
     </View>
     </View>
@@ -225,48 +226,61 @@ export default function ocrInputPage() {
 
 //styles
 const styles = StyleSheet.create({
-  cameraButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35, 
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    margin: 3,
-  },
-  container1: {
-    flex: 1,
-    margin: 20,      
-}, buttonsContainer: {
-    flex: 1,   
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-},
-    text:{
-    fontSize: 24, 
-    alignSelf: 'center',
-    fontWeight: 'bold', 
-    color: '#D62626', 
-    marginBottom: 20,    
-},
-   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 10,
-    paddingBottom: 20,
-    backgroundColor: '#D62626',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: -2 },
-    shadowRadius: 4,
-  },
+    button: {
+        width: 60,
+        height: 60,
+        borderRadius: 35, 
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 6,
+        margin: 3,
+    },
+    bigContainer: {
+        flex: 1,
+        margin: 0,      
+    },
+    container1: {
+        flex: 1,
+        margin: 20,      
+    },
+    buttonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        zIndex: 2,
+        paddingLeft: 40,
+        paddingRight: 40,
+        paddingBottom: 20,
+        paddingTop: 8,
+        
+    },
+    text: {
+        fontSize: 24, 
+        alignSelf: 'center',
+        fontWeight: 'bold', 
+        color: '#D62626', 
+        marginBottom: 60,   
+        top: 40, 
+    },
+    footer: {
+        height: 90,
+        width: '100%',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        
+    },footerColor: {
+        height: '100%',
+        width: '100%',
+        backgroundColor: '#D62626',
+        zIndex: 1,
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+    },
 });
