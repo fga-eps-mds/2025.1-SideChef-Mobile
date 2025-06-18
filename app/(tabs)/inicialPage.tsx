@@ -40,7 +40,9 @@ interface RecipeListViewProp{
 }
 
 
-
+const ocrInputPush = () => {
+  router.push('/ocrInputPage');
+}
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   let ingredientsDisplay = '';
@@ -438,7 +440,7 @@ async function openCam() {
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
+        <TouchableOpacity onPress={ocrInputPush} style={styles.cameraButton}>
           <FontAwesome name="camera" size={24} color="#D62626" />
         </TouchableOpacity>
 
