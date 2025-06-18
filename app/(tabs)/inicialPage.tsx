@@ -162,6 +162,7 @@ export default function inicialPage() {
   const params = useLocalSearchParams<{ recipes?: string}>();
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);  // Currently shown recipes
+  const [selectedtRecipeList, setSelectedRecipeList] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [query, setQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'title' | 'ingredients' | 'all'>('all');
@@ -182,6 +183,7 @@ export default function inicialPage() {
 
         const recipesFromApi = response.data.recipes || response.data;
         setAllRecipes(recipesFromApi);
+        setSelectedRecipeList(recipesFromApi);
         setDisplayedRecipes(recipesFromApi);  // Initially, same as allRecipes
     } catch (error) {
         console.error(error);
@@ -207,11 +209,11 @@ export default function inicialPage() {
 
   useEffect(() => {
     handleSearch(query);
-  }, [filterMode, allRecipes]);
+  }, [filterMode, selectedtRecipeList]);
 
   // Shows desired list of recipes on screen
   const showCustomRecipeList = (customList: Recipe[]) => {
-    setAllRecipes(customList);
+    setSelectedRecipeList(customList);
     setDisplayedRecipes(customList);
     setSelectedRecipe(null);
     console.log(`Showing custom list of ${customList.length} recipes: `, customList);
@@ -222,11 +224,11 @@ export default function inicialPage() {
     const lowered = text.toLocaleLowerCase();
 
     if (!text) {
-      setDisplayedRecipes(allRecipes);
+      setDisplayedRecipes(selectedtRecipeList);
       return;
     }
 
-    const filtered = allRecipes.filter(item => {
+    const filtered = selectedtRecipeList.filter(item => {
 
       if (filterMode === 'title') {
         return item.Nome.toLocaleLowerCase().includes(lowered);
@@ -267,8 +269,6 @@ export default function inicialPage() {
   const handleFlutuntePress = () => {
     alert ('Adicionar Receita');
   }
-
-const receitas: Recipe[] = allRecipes;
 
 
   //cam
