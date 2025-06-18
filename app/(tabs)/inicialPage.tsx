@@ -253,8 +253,8 @@ export default function inicialPage() {
     alert('Abrir câmera (simulado)');
   };
 
-  const handlerecipesPress = () => {
-    showCustomRecipeList(allRecipes);
+  const handleRecipesPress = () => {
+    showCustomRecipeList(allRecipes); // Note: needs debugging 
   };
 
   const handlePerfilPress = () => {
@@ -308,7 +308,7 @@ export default function inicialPage() {
       )}
 
       <View style={styles.footer}>
-        <TouchableOpacity onPress={handlerecipesPress}>
+        <TouchableOpacity onPress={handleRecipesPress}>
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
