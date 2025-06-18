@@ -2,7 +2,6 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -171,10 +170,6 @@ export default function inicialPage() {
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
   const localIp = debuggerHost?.split(':')[0];
 
-
-  //state to store the image uri (may be useful in the future)
-  const [imageUri, setImageUri] = useState<string | null>(null);
-
   const fetchData = async () => {
     // Pode ser guardada em um hook
     try {
@@ -269,151 +264,6 @@ export default function inicialPage() {
   const handleFlutuntePress = () => {
     alert ('Adicionar Receita');
   }
-
-
-  //cam
-//camera permission
-async function getCameraPermission() {
-  const { status } = await ImagePicker.requestCameraPermissionsAsync();
-  if (status !== 'granted') {
-    alert('Permita o acesso a câmera para poder usufruir dessa funcionalidade.');
-  }
-}
-
-
-
-//funtion to open the camera
-async function openCam() {
-  let result = await ImagePicker.launchCameraAsync({
-    aspect: [4, 3],      //Image aspect ratio setting (optional)
-    quality: 1,          //Maximum image quality
-  });
-  //if that checks if the user closed the camera
-  if (!result.canceled && result.assets && result.assets.length > 0) {
-      const uri = result.assets[0].uri;
-      console.log(uri);
-
-       await uploadImage(uri);
-    }
-}
-
-//camEnd
-
-
-//uploadImage
-  const uploadImage = async (uri: string) => {
-    let fileName = '';
-    let fileType = '';
-    let mimeType = '';
-    
-    console.log('Original URI:', uri);
-    
-    const formData = new FormData();
-    if (uri.startsWith('data:')) {  // data URI file (usually when testing via web)
-      try {
-        const mimeTypeMatch = uri.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/);
-        const base64 = uri.split("base64,")[1];
-
-        if (!base64 || !mimeTypeMatch) {
-          console.log("Failed to format data URI: ", uri);
-          return;
-        }
-
-        mimeType = mimeTypeMatch[0];  // image/jpeg
-        fileType = mimeType.split('/')[1]  // jpeg
-        fileName = `temp_img_${Date.now()}.${fileType}`;
-        
-        if (Platform.OS === 'web') {
-          const byteChar = atob(base64);
-          const byteNum = new Array(byteChar.length);
-          for (let i = 0; i < byteChar.length; i++) {
-            byteNum[i] = byteChar.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNum);
-          const blob = new Blob([byteArray], {type: mimeType});
-
-          formData.append('file', blob, fileName);
-          console.log('Web blob created as formData: ', fileName, blob.type)
-        } else {
-          console.error('data URI while platform !== web');
-          return;
-        }
-
-      } catch (err) {
-        console.error("Error at processing data URI: ", err);
-        return;
-      }
-
-    } else {  // Regular uri file (file://...)
-      
-      const extractedFileName = uri.split('/').pop();
-      if (extractedFileName) {
-        fileName = extractedFileName;
-        const extractedFileType = fileName.split('.').pop()?.toLowerCase();
-        if (extractedFileType) {
-          fileType = extractedFileType;
-          mimeType = `image/${fileType}`;
-        } else {
-          console.error('URI invalid file type: ', extractedFileType);
-          return;
-        }
-      } else {
-        console.error('URI invalid file name: ', extractedFileName);
-        return;
-      }
-
-      console.log('FileName:', fileName, 'FileType:', fileType);
-  
-      if (!fileType || !fileName) {
-        console.error('Could not determine file type/name: ', {processedUri: uri, fileName, fileType});
-        return;
-      }
-
-      formData.append('file', {
-        uri: uri,
-        name: fileName,
-        type: `image/${fileType}`,
-      } as any);
-    }
-
-    try {
-      const response = await fetch(`${apiUrl}/ocr/run-ocr/`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const fetchError = await response.text();
-        console.error('OCR API error: ', response.status, fetchError);
-        return;
-      }
-
-      const result = await response.json();
-      console.log('OCR result: ', result);
-
-      if (result && result.recipes) {
-        const ocrRecipes: Recipe[] = result.recipes.map((recipe: any) => ({
-          _id: recipe.id,
-          Nome: recipe.Nome,
-          Dificuldade: recipe.Dificuldade,
-          Ingredientes: recipe.Ingredientes.map((ingredient: any) => ({
-            quantidade: ingredient.quantidade || '',
-            ingrediente: ingredient.ingrediente || ''
-          })),
-          Preparo: recipe.Preparo,
-        }));
-        
-        showCustomRecipeList(ocrRecipes);  // Shows recipes compatible to OCR output
-
-      } else {
-        console.error('OCR result is not a valid recipe list and/or is empty.');
-      }
-
-    } catch (error) {
-      console.error('Error sending image: ', error);
-    }
-  };
-//uploadImage END
 
 
 // (!) Barra de pesquisa altera por função dependente de mock haardcoded, corrigir

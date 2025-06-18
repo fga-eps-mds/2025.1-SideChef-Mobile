@@ -192,16 +192,6 @@ export default function ocrInputPage() {
       };
     //uploadImage END
 
-
-    const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);  // Currently shown recipes
-    const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
-    const showCustomRecipeList = (customList: Recipe[]) => {
-    setDisplayedRecipes(customList);
-    setSelectedRecipe(null);
-    console.log(`Showing custom list of ${customList.length} recipes.`);
-  };
-  
-
   return (
     <View style={styles.bigContainer}>
     <View style={styles.container1}>
