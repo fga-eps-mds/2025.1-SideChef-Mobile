@@ -192,6 +192,7 @@ export default function ocrInputPage() {
           </Text>
       <ScrollView style={{ margin: 50, marginTop: 20, marginBottom: 30, }}>
         {imageUris.map((uri, index) => (
+        <View style={styles.card}>
           <Image
             key={index}
             source={{ uri }}
@@ -202,7 +203,18 @@ export default function ocrInputPage() {
               borderRadius: 8,
             }}
           />
+          <View style={styles.cardFooter}>
+            <Text style={{ color: '#888', fontSize: 16, textAlign: 'center' }}>
+              Ingrediente {index + 1}
+            </Text>
+          </View>
+        </View>
         ))}
+        <View style={{ marginTop: 20, alignItems: 'center' }}>
+          <Text style={{ color: '#888', fontSize: 16, textAlign: 'center' }}>
+            Para adicionar um ingrediente, tire uma foto.
+          </Text>
+        </View>
       </ScrollView>
 
     
@@ -282,5 +294,23 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         left: 0,
+    },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        marginBottom: 20,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 4,
+        alignItems: 'center',
+    },
+    cardFooter: {
+        paddingBottom: 10,
+        alignItems: 'center',
+        borderTopWidth: 1,
+        borderTopColor: '#fff',
+        width: '100%',
     },
 });
