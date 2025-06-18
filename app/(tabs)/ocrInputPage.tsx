@@ -32,6 +32,14 @@ export default function ocrInputPage() {
 }
   const [imageUris, setImageUris] = useState<string[]>([]);
     
+  const handleUpload = async () => {
+    if (imageUris.length > 0) {
+      await uploadImages(imageUris);
+    } else {
+      alert("Por favor envie pelo menos uma imagem.");
+    }
+  }
+
     //cam
     //camera permission
     async function getCameraPermission() {
@@ -40,7 +48,6 @@ export default function ocrInputPage() {
         alert('Permita o acesso a câmera para poder usufruir dessa funcionalidade.');
       }
     }
-    
     
     
     //funtion to open the camera
@@ -60,81 +67,86 @@ export default function ocrInputPage() {
     
     //camEnd
     //uploadImage
-      const uploadImage = async (uri: string) => {
-        let fileName = '';
-        let fileType = '';
-        let mimeType = '';
-        
-        console.log('Original URI:', uri);
-        
+      const uploadImages = async (uris: string[]) => {
         const formData = new FormData();
-        if (uri.startsWith('data:')) {  // data URI file (usually when testing via web)
-          try {
-            const mimeTypeMatch = uri.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/);
-            const base64 = uri.split("base64,")[1];
-    
-            if (!base64 || !mimeTypeMatch) {
-              console.log("Failed to format data URI: ", uri);
-              return;
-            }
-    
-            mimeType = mimeTypeMatch[0];  // image/jpeg
-            fileType = mimeType.split('/')[1]  // jpeg
-            fileName = `temp_img_${Date.now()}.${fileType}`;
-            
-            if (Platform.OS === 'web') {
-              const byteChar = atob(base64);
-              const byteNum = new Array(byteChar.length);
-              for (let i = 0; i < byteChar.length; i++) {
-                byteNum[i] = byteChar.charCodeAt(i);
-              }
-              const byteArray = new Uint8Array(byteNum);
-              const blob = new Blob([byteArray], {type: mimeType});
-    
-              formData.append('file', blob, fileName);
-              console.log('Web blob created as formData: ', fileName, blob.type)
-            } else {
-              console.error('data URI while platform !== web');
-              return;
-            }
-    
-          } catch (err) {
-            console.error("Error at processing data URI: ", err);
-            return;
-          }
-    
-        } else {  // Regular uri file (file://...)
+
+        for (const uri of uris) {
           
-          const extractedFileName = uri.split('/').pop();
-          if (extractedFileName) {
-            fileName = extractedFileName;
-            const extractedFileType = fileName.split('.').pop()?.toLowerCase();
-            if (extractedFileType) {
-              fileType = extractedFileType;
-              mimeType = `image/${fileType}`;
-            } else {
-              console.error('URI invalid file type: ', extractedFileType);
+          let fileName = '';
+          let fileType = '';
+          let mimeType = '';
+          
+          console.log('Original URI:', uri);
+          
+          if (uri.startsWith('data:')) {  // data URI file (usually when testing via web)
+            try {
+              const mimeTypeMatch = uri.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/);
+              const base64 = uri.split("base64,")[1];
+      
+              if (!base64 || !mimeTypeMatch) {
+                console.log("Failed to format data URI: ", uri);
+                return;
+              }
+      
+              mimeType = mimeTypeMatch[0];  // image/jpeg
+              fileType = mimeType.split('/')[1]  // jpeg
+              fileName = `temp_img_${Date.now()}.${fileType}`;
+              
+              if (Platform.OS === 'web') {
+                const byteChar = atob(base64);
+                const byteNum = new Array(byteChar.length);
+                for (let i = 0; i < byteChar.length; i++) {
+                  byteNum[i] = byteChar.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNum);
+                const blob = new Blob([byteArray], {type: mimeType});
+      
+                formData.append('files', blob, fileName);
+                console.log('Web blob created as formData: ', fileName, blob.type)
+              } else {
+                console.error('data URI while platform !== web');
+                return;
+              }
+      
+            } catch (err) {
+              console.error("Error at processing data URI: ", err);
               return;
             }
-          } else {
-            console.error('URI invalid file name: ', extractedFileName);
-            return;
-          }
-    
-          console.log('FileName:', fileName, 'FileType:', fileType);
       
-          if (!fileType || !fileName) {
-            console.error('Could not determine file type/name: ', {processedUri: uri, fileName, fileType});
-            return;
+          } else {  // Regular uri file (file://...)
+            
+            const extractedFileName = uri.split('/').pop();
+            if (extractedFileName) {
+              fileName = extractedFileName;
+              const extractedFileType = fileName.split('.').pop()?.toLowerCase();
+              if (extractedFileType) {
+                fileType = extractedFileType;
+                mimeType = `image/${fileType}`;
+              } else {
+                console.error('URI invalid file type: ', extractedFileType);
+                return;
+              }
+            } else {
+              console.error('URI invalid file name: ', extractedFileName);
+              return;
+            }
+      
+            console.log('FileName:', fileName, 'FileType:', fileType);
+        
+            if (!fileType || !fileName) {
+              console.error('Could not determine file type/name: ', {processedUri: uri, fileName, fileType});
+              return;
+            }
+      
+            formData.append('files', {
+              uri: uri,
+              name: fileName,
+              type: `image/${fileType}`,
+            } as any);
           }
-    
-          formData.append('file', {
-            uri: uri,
-            name: fileName,
-            type: `image/${fileType}`,
-          } as any);
+          
         }
-    
+      
         try {
           const response = await fetch(`${apiUrl}/ocr/run-ocr/`, {
             method: 'POST',
@@ -150,9 +162,10 @@ export default function ocrInputPage() {
           const result = await response.json();
           console.log('OCR result: ', result);
     
-          if (result && result.recipes) {
-            const ocrRecipes: Recipe[] = result.recipes.map((recipe: any) => ({
-              _id: recipe.id,
+          if (result && result.recipes && result.recipes.length > 0) {
+
+            const ocrRecipes: Recipe[] = result.recipes.map((recipe: any, index: number) => ({
+              _id: recipe.id || recipe._id || `${recipe.Nome}-${index}`,
               Nome: recipe.Nome,
               Dificuldade: recipe.Dificuldade,
               Ingredientes: recipe.Ingredientes.map((ingredient: any) => ({
@@ -161,16 +174,21 @@ export default function ocrInputPage() {
               })),
               Preparo: recipe.Preparo,
             }));
-            
-            showCustomRecipeList(ocrRecipes);  // Shows recipes compatible to OCR output
-    
+
+            router.push({  // Send recipes as a parameter back to initial page 
+              pathname: "/inicialPage",
+              params: { 'recipes': JSON.stringify(ocrRecipes) }
+            });
+
           } else {
+            alert("Nenhuma receita foi encontrada com todos os ingredientes nas imagens");
             console.error('OCR result is not a valid recipe list and/or is empty.');
           }
-    
         } catch (error) {
           console.error('Error sending image: ', error);
         }
+      
+    
       };
     //uploadImage END
 
@@ -192,9 +210,8 @@ export default function ocrInputPage() {
           </Text>
       <ScrollView style={{ margin: 50, marginTop: 20, marginBottom: 30, }}>
         {imageUris.map((uri, index) => (
-        <View style={styles.card}>
+        <View key={uri} style={styles.card}>
           <Image
-            key={index}
             source={{ uri }}
             style={{
               width: '100%',
@@ -227,7 +244,7 @@ export default function ocrInputPage() {
       <TouchableOpacity onPress={openCam} style={styles.button}>
           <FontAwesome name="camera" size={24} color="#D62626" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={initialPagePush} style={styles.button}>
+      <TouchableOpacity onPress={handleUpload} style={styles.button}>
           <FontAwesome name="check" size={24} color="#D62626" />
       </TouchableOpacity>
     </View>

@@ -3,7 +3,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { FlatList, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -13,8 +13,6 @@ import Constants from 'expo-constants';
 import axios from "axios";
 
 const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
-
-const router = useRouter();
 
 interface Ingredients {
   quantidade: string;
@@ -40,9 +38,6 @@ interface RecipeListViewProp{
 }
 
 
-const ocrInputPush = () => {
-  router.push('/ocrInputPage');
-}
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   let ingredientsDisplay = '';
@@ -163,6 +158,8 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
 
 export default function inicialPage() {
   // state receitas
+  const router = useRouter();
+  const params = useLocalSearchParams<{ recipes?: string}>();
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);  // Currently shown recipes
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
@@ -183,33 +180,53 @@ export default function inicialPage() {
         const response = await axios.get(`${apiUrl}/recipe/getRecipes/`);
         console.log("/recipe/getRecipes/ JSON data: ", JSON.stringify(response.data, null, 2));
 
-        setAllRecipes(response.data);
-        setDisplayedRecipes(response.data);  // Initially, same as allRecipes
+        const recipesFromApi = response.data.recipes || response.data;
+        setAllRecipes(recipesFromApi);
+        setDisplayedRecipes(recipesFromApi);  // Initially, same as allRecipes
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
   }
 
-  useEffect(() =>{          
-    fetchData()
-    }, [])
+  useEffect(() =>{    
+    if (params.recipes) {  // Show OCR filtered recipes in case they're "carried" as parameters in URL
+      try {
+        const ocrRecipes = JSON.parse(params.recipes);
+
+        showCustomRecipeList(ocrRecipes);
+        
+      } catch(err) {
+        alert("Não foi possível processar receitas");
+        console.error("Error while processing ocr recipes", err);
+        fetchData();  // Fallback in case of error
+      }
+    } else {
+      fetchData();
+    }
+  }, [params.recipes]);
 
   useEffect(() => {
     handleSearch(query);
-  }, [filterMode]);
+  }, [filterMode, allRecipes]);
 
   // Shows desired list of recipes on screen
   const showCustomRecipeList = (customList: Recipe[]) => {
+    setAllRecipes(customList);
     setDisplayedRecipes(customList);
     setSelectedRecipe(null);
-    console.log(`Showing custom list of ${customList.length} recipes.`);
+    console.log(`Showing custom list of ${customList.length} recipes: `, customList);
   };
 
   const handleSearch = (text: string) => {
     setQuery(text);
     const lowered = text.toLocaleLowerCase();
 
-    const filtered = receitas.filter(item => {
+    if (!text) {
+      setDisplayedRecipes(allRecipes);
+      return;
+    }
+
+    const filtered = allRecipes.filter(item => {
 
       if (filterMode === 'title') {
         return item.Nome.toLocaleLowerCase().includes(lowered);
@@ -226,6 +243,11 @@ export default function inicialPage() {
     })
     setDisplayedRecipes(filtered);
   }
+
+  const ocrInputPush = () => {
+    router.push('/ocrInputPage');
+  };
+
   const handleSelectRecipe = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
   };
@@ -235,7 +257,7 @@ export default function inicialPage() {
   };
 
   const handlerecipesPress = () => {
-    alert('Ir para recipes');
+    showCustomRecipeList(allRecipes);
   };
 
   const handlePerfilPress = () => {
