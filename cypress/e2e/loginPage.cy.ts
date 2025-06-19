@@ -13,14 +13,14 @@ describe('Tela de Login', () => {
     cy.get('[data-testid="google-icon"]').should('exist'); //verify if the google icon is present
   });
 
-  it('deve redirecionar para a inicialPage"', () => {
+  it('deve redirecionar para a initialPage"', () => {
     //using the testID to find the button
     cy.get('[data-testid="continuar-sem-salvar"]', { timeout: 10000 }).click();
     
     cy.contains('Ainda não há receitas registradas :(', { timeout: 10000 }).should('exist');
 
     //Verify if the URL is correct after clicking the button
-    cy.url({ timeout: 10000 }).should('include', '/inicialPage');
+    cy.url({ timeout: 10000 }).should('include', '/initialPage');
 
     //verify if the "Pesquisar" exists on the new page
     cy.contains('Ainda não há receitas registradas :(', { timeout: 10000 }).should('exist');

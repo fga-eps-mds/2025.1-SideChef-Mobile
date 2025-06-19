@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { styles } from '../styles/addUser.styles';
+import React, { useState } from 'react';
+import { Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import api from '../../services/api';
+import { styles } from '../styles/addUser.styles';
+
+interface User {
+  id: number;
+  name: string;
+  password: string;
+  email: string;
+  cpf: string;
+  created_at: string;
+}
 
 export default function CadastroUsuario() {
   const [cpf, setCpf] = useState('');
@@ -53,18 +62,20 @@ export default function CadastroUsuario() {
     }
 
     try {
-      const novoUsuario = {
+      const newUser = {
         name,
         email,
         password,
         cpf,
       };
 
-      const response = await api.post("/users/", novoUsuario);
+      const response = await api.post<User>("/users/", newUser).then(response => {
+        console.log(response.data);
+      });
       Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
       alert('Sucesso: Usuário cadastrado com sucesso!');
       
-      router.push('/(tabs)/loginUser');
+      router.push('/loginUser');
     } catch (error: any) {
       const msg = error.response?.data?.detail || error.message;
       console.error(error.response?.data || error.message);
@@ -155,7 +166,7 @@ export default function CadastroUsuario() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/inicialPage')}>
+        <TouchableOpacity onPress={() => router.push('/initialPage')}>
           <Text style={styles.footerText}>
             <Text style={styles.link}>Voltar</Text>
           </Text>

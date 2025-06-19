@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from '../styles/loginUser.styles';
-import { Image } from 'react-native';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -52,7 +51,7 @@ export default function LoginPage() {
           Ainda não tem conta? <Text style={styles.link}>Cadastre-se!</Text>
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push('/inicialPage')}>
+      <TouchableOpacity onPress={() => router.push('/initialPage')}>
         <Text style={styles.footerText}>
           <Text style={styles.link}>Voltar</Text>
         </Text>

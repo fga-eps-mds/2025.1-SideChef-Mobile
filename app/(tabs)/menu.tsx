@@ -1,12 +1,12 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { styles } from '../styles/menu.styles';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { styles } from '../styles/menu.styles';
 
 import Constants from 'expo-constants';
 
@@ -105,7 +105,7 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
   )
 }
 
-export default function inicialPage() {
+export default function initialPage() {
   // state receitas
   const [recipes, setRecipes] = useState([])
   const [selectedRecipe, setSelectedRecipes] = useState<Recipe | null>(null)
