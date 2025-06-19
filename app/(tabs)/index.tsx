@@ -25,7 +25,7 @@ import { styles } from '../styles/index.styles';
 
     // next screen navigation in three seconds
     const timeout = setTimeout(() => {
-      router.push('/initialPage');
+      router.push('/menu');
     }, 3000);
 
       return () => clearTimeout(timeout);
