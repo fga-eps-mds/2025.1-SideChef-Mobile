@@ -1,12 +1,13 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { styles as stylesDetails } from '../styles/details.styles';
+import { styles } from '../styles/menu.styles';
 
 import Constants from 'expo-constants';
 
@@ -25,7 +26,8 @@ interface Recipe {
   _id: string;
   Nome: string;
   Dificuldade: string;
-  Ingredientes: Ingredients[];
+  Tipo: string;
+  Ingredientes: string;
   Preparo: string;
 };
 
@@ -33,14 +35,6 @@ interface RecipeListViewProp{
     recipes: Recipe[],
     onSelect: (recipe: Recipe) => void
 }
-
-interface RecipeListViewProp{
-    recipes: Recipe[],
-    onSelect: (recipe: Recipe) => void
-}
-
-
-
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   let ingredientsDisplay = '';
@@ -69,28 +63,28 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   return(
     
      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView contentContainerStyle={stylesDetails.scroll}>
+      <ScrollView contentContainerStyle={styles.scrollDetails}>
     
-        <TouchableOpacity style={stylesDetails.backButton} onPress={() => onBack()}>
+        <TouchableOpacity style={styles.backButtonDetails} onPress={() => onBack()}>
           <Ionicons name="arrow-back" size={24} color="#D62626" />
-          <Text style={stylesDetails.backText}>{recipe.Nome}</Text>
+          <Text style={styles.backTextDetails}>{recipe.Nome}</Text>
         </TouchableOpacity>
 
-        <View style={stylesDetails.card}>
+        <View style={styles.cardDetails}>
             {/* Ainda não há imagem */}
-            <Text style={stylesDetails.title}>{recipe.Nome}</Text>
+            <Text style={styles.titleDetails}>{recipe.Nome}</Text>
             {/* <View style={styles.timeRow}>
               <Ionicons name="time-outline" size={20} color="#fff" />
               <Text style={styles.timeText}>{receita.time}</Text>
             </View> */}
-            <Text style={stylesDetails.sectionTitle}>Ingredientes:</Text>
+            <Text style={styles.sectionTitleDetails}>Ingredientes:</Text>
             <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
             { ingredientsDisplay }
             </Text>
-            <Text style={stylesDetails.sectionTitle}>Modo de Preparo:</Text>
-            <Text style={stylesDetails.preparo}>{recipe.Preparo}</Text>
+            <Text style={styles.sectionTitleDetails}>Modo de Preparo:</Text>
+            <Text style={styles.preparoDetails}>{recipe.Preparo}</Text>
             
-          <View style={stylesDetails.actions}>
+          <View style={styles.actionsDetails}>
             <FontAwesome name="thumbs-up" size={28} color="#fff" />
             <FontAwesome name="thumbs-down" size={28} color="#fff" />
             <Ionicons name="bookmark-outline" size={28} color="#fff" />
@@ -159,7 +153,7 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
   );
 }
 
-export default function inicialPage() {
+export default function initialPage() {
   // state receitas
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);  // Currently shown recipes
@@ -188,9 +182,9 @@ export default function inicialPage() {
     }
   }
 
-  useEffect(() =>{          
-    fetchData()
-    }, [])
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   useEffect(() => {
     handleSearch(query);
@@ -237,14 +231,14 @@ export default function inicialPage() {
   };
 
   const handlePerfilPress = () => {
-    alert('Ir para Perfil');
+    router.push('/addUser');
   };
 
-  const handleFlutuntePress = () => {
-    alert ('Adicionar Receita');
+  const handleFloatPress = () => {
+    alert('Ir para perfil');
   }
 
-const receitas: Recipe[] = allRecipes;
+const receitas: Recipe[] = allRecipes || [];
 
 
   //cam
@@ -402,9 +396,7 @@ async function openCam() {
           onChangeText={handleSearch}
           style={[stylesDetails.searchInput, { flex: 1 }]}
         />
-        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }}
-        testID='search-icon' 
-         />
+        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
       </View>
 
       {/* Filtros de busca */}
@@ -435,290 +427,27 @@ async function openCam() {
         <RecipeList recipes={displayedRecipes} onSelect={handleSelectRecipe} />
       )}
 
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={handlerecipesPress}>
-          <Ionicons name="receipt" size={30} color="#FFF" testID='receipt-icon'/>
+      <SafeAreaView style={styles.footer}>
+        <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}>
+          <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={openCam} style={styles.cameraButton} testID='camera-icon'>
-          <FontAwesome name="camera" size={24} color="#D62626" />
+        <View style= {styles.cameraPadding}>
+        <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
+          <FontAwesome name="camera" size={25} color="#D62626" />
         </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity onPress={handlePerfilPress} testID='perfil-icon'>
-          <MaterialCommunityIcons name="account" size={36} color="#FFF" />
+        <TouchableOpacity onPress={handlePerfilPress} style={styles.iconWrapper}>
+          <FontAwesome5 name="user-alt" size={24} color="#FFF" />
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
 
-        <TouchableOpacity onPress={handleFlutuntePress} style={styles.flutuanteButton} testID='flutunte-icon'>
+        <TouchableOpacity onPress={handleFloatPress} style={styles.floatButton}>
         <FontAwesome5 name="plus" size={24} color="#FFF" />
         </TouchableOpacity>
 
       <StatusBar style="auto" />
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 50,
-    backgroundColor: '#fff',
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingBottom: 10,
-    backgroundColor: '#fff',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  },
-  searchInput: {
-    height: 40,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#555',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 10,
-    paddingBottom: 20,
-    backgroundColor: '#D62626',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: -2 },
-    shadowRadius: 4,
-  },
-  sideText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  cameraButton: {
-    backgroundColor: '#fff',
-    borderRadius: 35,
-    padding: 18,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-  },
-
-  flutuanteButton: {
-  position: 'absolute',
-  bottom: 100, //Adjust to be above the footer
-  right: 18,
-  width: 60,
-  height: 60,
-  borderRadius: 30,
-  backgroundColor: '#D62626',
-  justifyContent: 'center',
-  alignItems: 'center',
-  elevation: 8,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 4,
-},
-
-  cameraIcon: {
-    fontSize: 28,
-  },
-});
-
-const stylesDetails = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: '#D62626',
-    flexGrow: 1,
-  },
-scroll: {
-  flexGrow: 1,
-  paddingVertical: 24,
-  paddingHorizontal: 16,
-  backgroundColor: '#fff',
-},
-card: {
-  backgroundColor: '#D62626',
-  borderRadius: 16,
-  padding: 20,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 4,
-  elevation: 6,
-},
-backButton: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginBottom: 16,
-},
-backText: {
-  color: '#000',
-  fontWeight: 'bold',
-  fontSize: 16,
-  marginLeft: 8,
-},
-image: {
-  width: '100%',
-  height: 180,
-  borderTopLeftRadius: 16,
-  borderTopRightRadius: 16,
-  marginBottom: 16,
-},
-title: {
-  color: '#fff',
-  fontSize: 20,
-  fontWeight: 'bold',
-  textAlign: 'center',
-  marginBottom: 12,
-},
-timeRow: {
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginBottom: 12,
-},
-timeText: {
-  marginLeft: 8,
-  color: '#fff',
-},
-sectionTitle: {
-  fontWeight: 'bold',
-  color: '#fff',
-  fontSize: 16,
-  marginTop: 12,
-  marginBottom: 4,
-},
-ingredient: {
-  color: '#fff',
-  fontSize: 14,
-  marginLeft: 10,
-  marginTop: 2,
-},
-preparo: {
-  color: '#fff',
-  marginTop: 6,
-  lineHeight: 20,
-},
-actions: {
-  flexDirection: 'row',
-  justifyContent: 'space-around',
-  marginTop: 24,
-},
-emptyText: {
-  textAlign: 'center',
-  color: '#555',
-  fontSize: 16,
-  fontWeight: '500',
-  marginTop: 40,
-},
-container2: {
-    flex: 1,
-    paddingTop: 50,
-    backgroundColor: '#fff',
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingBottom: 10,
-    backgroundColor: '#fff',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  },
-  searchInput: {
-    height: 40,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  filterButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    marginHorizontal: 6,
-    backgroundColor: '#eee',
-    borderRadius: 20,
-  },
-  selected: {
-    backgroundColor: '#D62626',
-  },
-  filterText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText2: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#555',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingTop: 10,
-    paddingBottom: 20,
-    backgroundColor: '#D62626',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: -2 },
-    shadowRadius: 4,
-  },
-  cameraButton: {
-    backgroundColor: '#fff',
-    borderRadius: 35,
-    padding: 18,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-  },
-  flutuanteButton: {
-    position: 'absolute',
-    bottom: 100,
-    right: 18,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#D62626',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-});
+};

@@ -1,7 +1,7 @@
 describe('Inicial Page', () => {
   beforeEach(() => {
     // Boa prática: sempre visitar a rota antes de cada teste
-    cy.visit('/inicialPage');
+    cy.visit('/initialPage');
   });
 
   it('deve exibir os elementos da tela inicial', () => {
@@ -74,7 +74,7 @@ describe('Inicial Page', () => {
     }).as('getRecipes'); 
 
     // visit the screen again for the intercept to work properly
-    cy.visit('/inicialPage');
+    cy.visit('/initialPage');
     cy.wait('@getRecipes');
 
     // verify if the recipes are displayed on the page

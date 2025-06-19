@@ -1,7 +1,7 @@
   import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, View } from "react-native";
-import { styles } from './index.styles';
+import { styles } from '../styles/index.styles';
 
   export default function Index() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -23,26 +23,25 @@ import { styles } from './index.styles';
         useNativeDriver: true,
       }).start();
 
-      //navegate to login after 3 seconds
-      const timeout = setTimeout(() => {
-        router.push('/login');
-      }, 3000);
+    // next screen navigation in three seconds
+    const timeout = setTimeout(() => {
+      router.push('/initialPage');
+    }, 3000);
 
       return () => clearTimeout(timeout);
     }, []);
 
-    return (
-      <View style={styles.container}>
-        <Animated.Image
-        testID="splash-logo" // Cypress test ID
-          source={require('../assets/images/logoInteiro.png')}
-          style={{
-            transform: [{ scale: springAnim }],
-            opacity: fadeAnim,
-            ...styles.logo,
-          }}
-          resizeMode="contain"
-        />
-      </View>
-    );
-  }
+  return (
+    <View style={styles.container}>
+      <Animated.Image
+        source={require('../../assets/images/logoInteiro.png')}
+        style={{
+          transform: [{ scale: springAnim }],
+          opacity: fadeAnim,
+          ...styles.logo,
+        }}
+        resizeMode="contain"
+      />
+    </View>
+  );
+}
