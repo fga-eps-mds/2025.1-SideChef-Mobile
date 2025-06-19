@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import api from '../../services/api';
 import { styles } from '../styles/addUser.styles';
 
@@ -91,87 +91,95 @@ export default function CadastroUsuario() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../assets/images/LogoVermelha.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+    >
+      <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/images/LogoVermelha.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Nome completo"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            value={name}
+            onChangeText={setName}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="CPF"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            keyboardType="numeric"
+            maxLength={11}
+            value={cpf}
+            onChangeText={setCpf}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="E-mail"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmar e-mail"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            keyboardType="email-address"
+            value={emailCheck}
+            onChangeText={setEmailCheck}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmar senha"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            secureTextEntry
+            value={passwordCheck}
+            onChangeText={setPasswordCheck}
+          />
+
+          <TouchableOpacity style={styles.button} onPress={handleCadastro}>
+            <Text style={styles.buttonText}>Cadastrar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push('/loginUser')}>
+            <Text style={styles.footerText}>
+              Já possui uma conta?
+              <Text style={styles.link}> Entre!</Text>
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push('/initialPage')}>
+            <Text style={styles.footerText}>
+              <Text style={styles.link}>Voltar</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Nome completo"
-          placeholderTextColor="rgba(0, 0, 0, 0.4)"
-          value={name}
-          onChangeText={setName}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="CPF"
-          placeholderTextColor="rgba(0, 0, 0, 0.4)"
-          keyboardType="numeric"
-          maxLength={11}
-          value={cpf}
-          onChangeText={setCpf}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          placeholderTextColor="rgba(0, 0, 0, 0.4)"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Confirmar e-mail"
-          placeholderTextColor="rgba(0, 0, 0, 0.4)"
-          keyboardType="email-address"
-          value={emailCheck}
-          onChangeText={setEmailCheck}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          placeholderTextColor="rgba(0, 0, 0, 0.4)"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Confirmar senha"
-          placeholderTextColor="rgba(0, 0, 0, 0.4)"
-          secureTextEntry
-          value={passwordCheck}
-          onChangeText={setPasswordCheck}
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleCadastro}>
-          <Text style={styles.buttonText}>Cadastrar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push('/loginUser')}>
-          <Text style={styles.footerText}>
-            Já possui uma conta?
-            <Text style={styles.link}> Entre!</Text>
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push('/initialPage')}>
-          <Text style={styles.footerText}>
-            <Text style={styles.link}>Voltar</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

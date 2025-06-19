@@ -39,6 +39,7 @@ yarn-error.*
 app-example
 .env
 
+.vscode/
 
 android/
 

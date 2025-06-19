@@ -19,7 +19,8 @@ export default {
             foregroundImage: "./assets/images/adaptive-icon.png",
             backgroundColor: "#ffffff"
           },
-          edgeToEdgeEnabled: true
+          edgeToEdgeEnabled: true,
+          softwareKeyboardLayoutMode: "pan",
         },
         web: {
           bundler: "metro",
