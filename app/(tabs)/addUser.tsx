@@ -9,12 +9,10 @@ interface User {
   name: string;
   password: string;
   email: string;
-  cpf: string;
   created_at: string;
 }
 
 export default function CadastroUsuario() {
-  const [cpf, setCpf] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [emailCheck, setEmailCheck] = useState('');
@@ -23,10 +21,6 @@ export default function CadastroUsuario() {
 
   const router = useRouter();
 
-  function cpfVerify(cpf: string): boolean {
-    const digitsOnly = cpf?.trim().replace(/\D/g, '');
-    return digitsOnly.length === 11;
-  }
 
   function emailVerify(email: string): boolean {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,16 +28,12 @@ export default function CadastroUsuario() {
   }
 
   const handleCadastro = async () => {
-    if (!cpf || !email || !password || !emailCheck || !passwordCheck || !name) {
+    if (!email || !password || !emailCheck || !passwordCheck || !name) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       alert('Erro: Preencha todos os campos.');
       return;
     }
-    if (!cpfVerify(cpf)) {
-      Alert.alert('Erro', 'CPF inválido.');
-      alert('Erro: CPF inválido');
-      return;
-    }
+   
     if (!emailVerify(email)) {
       Alert.alert('Erro', 'E-mail inválido.');
       alert('Erro: E-mail inválido');
@@ -66,7 +56,7 @@ export default function CadastroUsuario() {
         name,
         email,
         password,
-        cpf,
+       
       };
 
       const response = await api.post<User>("/users/", newUser).then(response => {
@@ -83,7 +73,7 @@ export default function CadastroUsuario() {
       console.error("Erro detalhado:", error.response?.data || error.message);
       alert("Erro ao cadastrar usuário.");
       if (error.response?.status === 409) {
-      alert("Erro: E-mail ou CPF já cadastrado.");
+      alert("Erro: E-mail já cadastrado.");
         } else {
           alert("Erro ao cadastrar: " + msg);
       }
@@ -114,17 +104,6 @@ export default function CadastroUsuario() {
             value={name}
             onChangeText={setName}
           />
-
-          <TextInput
-            style={styles.input}
-            placeholder="CPF"
-            placeholderTextColor="rgba(0, 0, 0, 0.4)"
-            keyboardType="numeric"
-            maxLength={11}
-            value={cpf}
-            onChangeText={setCpf}
-          />
-
           <TextInput
             style={styles.input}
             placeholder="E-mail"
