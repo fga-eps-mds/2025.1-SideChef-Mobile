@@ -47,4 +47,4 @@ export default {
           API_USER_URL: process.env.API_USER_URL || "http://localhost:8000"
         },
     }
-}
+} 

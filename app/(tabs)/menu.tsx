@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { FlatList, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles as stylesDetails } from '../styles/details.styles';
 import { styles } from '../styles/menu.styles';
+import { Image } from 'react-native';
 
 import Constants from 'expo-constants';
 
@@ -29,6 +30,7 @@ interface Recipe {
   Tipo: string;
   Ingredientes: string;
   Preparo: string;
+  image_url?: string;
 };
 
 interface RecipeListViewProp{
@@ -130,24 +132,31 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
         }
 
         return (
-          <TouchableOpacity
-            style={{
-            backgroundColor: '#D62626',
-            padding: 16,
-            marginBottom: 12,
-            borderRadius: 8,
-            elevation: 3,
-          }}
-            onPress={() => onSelect(item)}
-          >
-            <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
-              {item.Nome}
-            </Text>
-            <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
-              Ingredientes: {ingredientsDisplay}
-            </Text>
-          </TouchableOpacity>
-        );
+  <TouchableOpacity
+    style={{
+      backgroundColor: '#D62626',
+      padding: 16,
+      marginBottom: 12,
+      borderRadius: 8,
+      elevation: 3,
+    }}
+    onPress={() => onSelect(item)}
+  >
+    {item.image_url && (
+      <Image
+        source={{ uri: item.image_url }}
+        style={{ width: '100%', height: 200, borderRadius: 8 }}
+        resizeMode="cover"
+      />
+    )}
+    <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
+      {item.Nome}
+    </Text>
+    <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
+      Ingredientes: {ingredientsDisplay}
+    </Text>
+  </TouchableOpacity>
+);
       }}
     />
   );
