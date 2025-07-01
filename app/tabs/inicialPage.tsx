@@ -67,14 +67,14 @@ export default function inicialPage() {
   };
 
   const handleReceitasPress = () => {
-    alert('Ir para Receitas');
+    router.push("/userRecipies")
   };
   const handlePerfilPress = () => {
-    router.push("/perfil")
+    router.push("/profile")
   };
 
   const handleFlutuntePress = () => {
-    alert ('Adicionar Receita');
+    router.push("/addRecipie")
   }
 
   //cam
@@ -170,7 +170,7 @@ async function openCam() {
             }}
           
           onPress={() => router.push({
-                  pathname: '/detalhes',
+                  pathname: '/tabs/details',
                   params: { id: item.id },
                   })}
 
