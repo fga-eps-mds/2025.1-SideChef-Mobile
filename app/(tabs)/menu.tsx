@@ -244,7 +244,7 @@ export default function initialPage() {
   };
 
   const handleFloatPress = () => {
-    alert('Ir para perfil');
+    router.push('/AddRecipe');
   }
 
 const receitas: Recipe[] = allRecipes || [];
