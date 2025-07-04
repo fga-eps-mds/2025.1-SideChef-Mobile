@@ -54,6 +54,12 @@ export default function CadastroReceita() {
     setIngredients(newIngredients);
   };
 
+  const handleRemoveIngredient = (index: number) => {
+    const newIngredients = ingredients.filter((_, i) => i !== index);
+    setIngredients(newIngredients);
+  };
+
+
   const handleCadastro = async () => {
     if (!name || !type || !difficulty || !prepare || ingredients.some(i => i.trim() === '')) {
       Alert.alert('Erro', 'Preencha todos os campos.');
@@ -61,14 +67,15 @@ export default function CadastroReceita() {
     }
 
     const novaReceita = {
-      name: name,
-      type: type,
-      difficulty: difficulty,
-      ingredients: ingredients.map((i) => ({
+      //THIS NEEDS TO BE CHANGED TO ENGLISH... MODELS IN RECIPE.PY
+      Nome: name,
+      Tipo: type,
+      Dificuldade: difficulty,
+      Ingredientes: ingredients.map((i) => ({
       ingrediente: i,
       quantidade: "",
       })),
-      prepare: prepare,
+      preparo: prepare,
     };
 
     try {
@@ -95,52 +102,60 @@ export default function CadastroReceita() {
         )}
 
         <TextInput style={styles.input} placeholder="Título da Receita" placeholderTextColor="#fff" value={name} onChangeText={setName} />
+          <View style={styles.dropdownWrapperType}>
+            <DropDownPicker
+            open={typeOpen}
+            value={type}
+            items={typeItems}
+            setOpen={setTypeOpen}
+            setValue={setType}
+            setItems={setTypeItems}
+            style={styles.dropdown}
+            textStyle={styles.dropdownText}
+            placeholder="Selecione o tipo"
+            dropDownDirection="AUTO"
+            dropDownContainerStyle={styles.dropdownContainer}
+            labelStyle={styles.dropdownLabel}
+            listItemLabelStyle={styles.dropdownLabel}
+            />
+        </View>
 
-        <Text style={styles.subTitle}>Tipo</Text>
-        <DropDownPicker
-          open={typeOpen}
-          value={type}
-          items={typeItems}
-          setOpen={setTypeOpen}
-          setValue={setType}
-          setItems={setTypeItems}
-          style={styles.dropdown}
-          textStyle={styles.dropdownText}
-          placeholder="Selecione o tipo"
-          dropDownContainerStyle={styles.dropdownContainer}
-          labelStyle={styles.dropdownLabel}
-          listItemLabelStyle={styles.dropdownLabel}
-
-        />
-
-        <Text style={styles.subTitle}>Dificuldade</Text>
-        <DropDownPicker
-          open={difficultyOpen}
-          value={difficulty}
-          items={difficultyItems}
-          setOpen={setDifficultyOpen}
-          setValue={setDifficulty}
-          setItems={setDifficultyItems}
-          style={styles.dropdown}
-          textStyle={styles.dropdownText}
-          placeholder="Selecione a dificuldade"
-          dropDownContainerStyle={styles.dropdownContainer}
-          labelStyle={styles.dropdownLabel}
-          listItemLabelStyle={styles.dropdownLabel}
-
-        />
+        <View style={styles.dropdownWrapperDifficulty}>
+            <DropDownPicker
+            open={difficultyOpen}
+            value={difficulty}
+            items={difficultyItems}
+            setOpen={setDifficultyOpen}
+            setValue={setDifficulty}
+            setItems={setDifficultyItems}
+            style={styles.dropdown}
+            textStyle={styles.dropdownText}
+            placeholder="Selecione a dificuldade"
+            dropDownDirection="AUTO"
+            dropDownContainerStyle={styles.dropdownContainer}
+            labelStyle={styles.dropdownLabel}
+            listItemLabelStyle={styles.dropdownLabel}
+            />
+        </View>
 
         <Text style={styles.subTitle}>Ingredientes</Text>
         {ingredients.map((ing, idx) => (
-          <TextInput
-            key={idx}
-            style={styles.input}
-            placeholder={`Ingrediente ${idx + 1}`}
-            placeholderTextColor="#fff"
-            value={ing}
-            onChangeText={(text) => handleIngredientChange(idx, text)}
-          />
+          <View key={idx} style={styles.ingredientRow}>
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              placeholder={`Ingrediente ${idx + 1}`}
+              placeholderTextColor="#fff"
+              value={ing}
+              onChangeText={(text) => handleIngredientChange(idx, text)}
+            />
+            {ingredients.length > 1 && (
+             <TouchableOpacity onPress={() => handleRemoveIngredient(idx)} style={styles.removeButton}>
+              <Text style={styles.removeButtonText}>❌</Text>
+             </TouchableOpacity>
+            )}
+          </View>
         ))}
+
         <TouchableOpacity style={styles.addButton} onPress={handleAddIngredient}>
           <Text style={styles.addButtonText}>+ Adicionar Ingrediente</Text>
         </TouchableOpacity>

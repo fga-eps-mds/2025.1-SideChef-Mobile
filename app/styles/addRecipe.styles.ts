@@ -108,6 +108,32 @@ export const styles = StyleSheet.create({
   dropdownLabel: {
     color: '#000',
     fontSize: 16,
-}
+  },
+  dropdownWrapperType: {
+    zIndex: 3000, // lower than the other, if needed to change in order to fix overlapping
+    elevation: 3,
+  },
 
-});
+  dropdownWrapperDifficulty: {
+    zIndex: 2000, // lower than the other, if needed to change in order to fix overlapping
+    elevation: 2,
+  },
+
+  ingredientRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  removeButton: {
+    marginLeft: 8,
+    backgroundColor: '#fff',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  removeButtonText: {
+    color: '#d00',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  });
