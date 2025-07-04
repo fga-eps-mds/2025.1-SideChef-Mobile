@@ -3,41 +3,84 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-  },
-  form: {
-    marginTop: 20,
-    gap: 16,
-  },
-  input: {
-    backgroundColor: '#f2f2f2',
-    padding: 12,
-    borderRadius: 8,
-    fontSize: 16,
-    color: '#333',
-  },
-  button: {
     backgroundColor: '#D62626',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
+    padding: 20,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 16,
+    alignSelf: 'center',
   },
-  footerText: {
-    marginTop: 16,
-    fontSize: 14,
-    color: '#333',
-    textAlign: 'center',
+  imagePicker: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 16,
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  link: {
+  imagePickerText: {
     color: '#D62626',
     fontWeight: 'bold',
+    fontSize: 16,
+  },
+  imagePreview: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 16,
+  },
+  input: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 16,
+    color: '#fff',
+    marginBottom: 12,
+  },
+  subTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  addButton: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  addButtonText: {
+    color: '#D62626',
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  cancelButton: {
+    backgroundColor: '#fff',
+    flex: 1,
+    padding: 14,
+    marginRight: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  saveButton: {
+    backgroundColor: '#fff',
+    flex: 1,
+    padding: 14,
+    marginLeft: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#D62626',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
