@@ -1,4 +1,3 @@
-// CadastroReceita.tsx
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -7,6 +6,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../styles/addRecipe.styles';
 import api from '../../services/api';
 
+//Need to change the var's name to english in RecipeService recipe.py!!!
 export default function CadastroReceita() {
   const [name, setName] = useState('');
   const [type, setType] = useState('');
