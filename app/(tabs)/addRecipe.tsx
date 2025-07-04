@@ -106,6 +106,8 @@ export default function CadastroReceita() {
           placeholder="Selecione o tipo"
           dropDownContainerStyle={styles.dropdownContainer}
           labelStyle={styles.dropdownLabel}
+          listItemLabelStyle={styles.dropdownLabel}
+
         />
 
         <Text style={styles.subTitle}>Dificuldade</Text>
@@ -121,6 +123,8 @@ export default function CadastroReceita() {
           placeholder="Selecione a dificuldade"
           dropDownContainerStyle={styles.dropdownContainer}
           labelStyle={styles.dropdownLabel}
+          listItemLabelStyle={styles.dropdownLabel}
+
         />
 
         <Text style={styles.subTitle}>Ingredientes</Text>
