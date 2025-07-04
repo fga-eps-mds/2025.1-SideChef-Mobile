@@ -1,3 +1,4 @@
+// addRecipe.styles.ts
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -83,4 +84,31 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  dropdown: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderWidth: 0,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    height: 50,
+    marginBottom: 12,
+  },
+  dropdownText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  dropdownContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginBottom: 16,
+    zIndex: 1000,
+  },
+  dropdownPlaceholder: {
+    color: '#000',
+    fontWeight: 'normal',
+  },
+  dropdownLabel: {
+    color: '#000',
+    fontSize: 16,
+}
+
 });

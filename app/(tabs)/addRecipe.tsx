@@ -1,17 +1,33 @@
+// CadastroReceita.tsx
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../styles/addRecipe.styles';
 import api from '../../services/api';
 
 export default function CadastroReceita() {
-  const [nome, setNome] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [dificuldade, setDificuldade] = useState('');
-  const [ingredientes, setIngredientes] = useState<string[]>(['']);
-  const [preparo, setPreparo] = useState('');
+  const [name, setName] = useState('');
+  const [type, setType] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [ingredients, setIngredients] = useState<string[]>(['']);
+  const [prepare, setPrepare] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+
+  const [typeOpen, setTypeOpen] = useState(false);
+  const [difficultyOpen, setDifficultyOpen] = useState(false);
+
+  const [typeItems, setTypeItems] = useState([
+    { label: 'Doce', value: 'Doce' },
+    { label: 'Salgada', value: 'Salgada' },
+  ]);
+
+  const [difficultyItems, setDifficultyItems] = useState([
+    { label: 'Fácil', value: 'Fácil' },
+    { label: 'Médio', value: 'Médio' },
+    { label: 'Difícil', value: 'Difícil' },
+  ]);
 
   const router = useRouter();
 
@@ -29,27 +45,27 @@ export default function CadastroReceita() {
   };
 
   const handleAddIngredient = () => {
-    setIngredientes([...ingredientes, '']);
+    setIngredients([...ingredients, '']);
   };
 
   const handleIngredientChange = (index: number, value: string) => {
-    const newIngredients = [...ingredientes];
+    const newIngredients = [...ingredients];
     newIngredients[index] = value;
-    setIngredientes(newIngredients);
+    setIngredients(newIngredients);
   };
 
   const handleCadastro = async () => {
-    if (!nome || !tipo || !dificuldade || !preparo || ingredientes.some(i => i.trim() === '')) {
+    if (!name || !type || !difficulty || !prepare || ingredients.some(i => i.trim() === '')) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
 
     const novaReceita = {
-      Nome: nome,
-      Tipo: tipo,
-      Dificuldade: dificuldade,
-      Ingredientes: ingredientes,
-      Preparo: preparo,
+      Nome: name,
+      Tipo: type,
+      Dificuldade: difficulty,
+      Ingredientes: ingredients,
+      Preparo: prepare,
     };
 
     try {
@@ -75,14 +91,40 @@ export default function CadastroReceita() {
           <Image source={{ uri: imageUri }} style={styles.imagePreview} resizeMode="cover" />
         )}
 
-        <TextInput style={styles.input} placeholder="Título da Receita" placeholderTextColor="#fff" value={nome} onChangeText={setNome} />
+        <TextInput style={styles.input} placeholder="Título da Receita" placeholderTextColor="#fff" value={name} onChangeText={setName} />
 
-        <TextInput style={styles.input} placeholder="Tipo" placeholderTextColor="#fff" value={tipo} onChangeText={setTipo} />
+        <Text style={styles.subTitle}>Tipo</Text>
+        <DropDownPicker
+          open={typeOpen}
+          value={type}
+          items={typeItems}
+          setOpen={setTypeOpen}
+          setValue={setType}
+          setItems={setTypeItems}
+          style={styles.dropdown}
+          textStyle={styles.dropdownText}
+          placeholder="Selecione o tipo"
+          dropDownContainerStyle={styles.dropdownContainer}
+          labelStyle={styles.dropdownLabel}
+        />
 
-        <TextInput style={styles.input} placeholder="Dificuldade" placeholderTextColor="#fff" value={dificuldade} onChangeText={setDificuldade} />
+        <Text style={styles.subTitle}>Dificuldade</Text>
+        <DropDownPicker
+          open={difficultyOpen}
+          value={difficulty}
+          items={difficultyItems}
+          setOpen={setDifficultyOpen}
+          setValue={setDifficulty}
+          setItems={setDifficultyItems}
+          style={styles.dropdown}
+          textStyle={styles.dropdownText}
+          placeholder="Selecione a dificuldade"
+          dropDownContainerStyle={styles.dropdownContainer}
+          labelStyle={styles.dropdownLabel}
+        />
 
         <Text style={styles.subTitle}>Ingredientes</Text>
-        {ingredientes.map((ing, idx) => (
+        {ingredients.map((ing, idx) => (
           <TextInput
             key={idx}
             style={styles.input}
@@ -102,8 +144,8 @@ export default function CadastroReceita() {
           multiline
           placeholder="Descreva o modo de preparo"
           placeholderTextColor="#fff"
-          value={preparo}
-          onChangeText={setPreparo}
+          value={prepare}
+          onChangeText={setPrepare}
         />
 
         <View style={styles.buttonContainer}>
