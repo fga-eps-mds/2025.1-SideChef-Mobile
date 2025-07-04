@@ -61,11 +61,14 @@ export default function CadastroReceita() {
     }
 
     const novaReceita = {
-      Nome: name,
-      Tipo: type,
-      Dificuldade: difficulty,
-      Ingredientes: ingredients,
-      Preparo: prepare,
+      name: name,
+      type: type,
+      difficulty: difficulty,
+      ingredients: ingredients.map((i) => ({
+      ingrediente: i,
+      quantidade: "",
+      })),
+      prepare: prepare,
     };
 
     try {
