@@ -75,7 +75,8 @@ export default function CadastroReceita() {
       ingrediente: i,
       quantidade: "",
       })),
-      preparo: prepare,
+      Preparo: prepare,
+      image_url: imageUri
     };
 
     try {
