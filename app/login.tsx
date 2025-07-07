@@ -86,7 +86,7 @@ export default function Login() {
     </TouchableOpacity>
 
 
-    <TouchableOpacity onPress={() => router.navigate('/(tabs)/inicialPage')}>
+    <TouchableOpacity onPress={() => router.navigate('/tabs/inicialPage')}>
     <Text style={{fontSize: 16, fontWeight: 'light', color: '#A9A9A9', marginTop: 30, marginHorizontal: 40, textAlign: 'center'}}>
             Continuar sem salvar minhas receitas
             </Text>
