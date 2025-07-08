@@ -1,10 +1,18 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import api from '../../services/api';
 import { styles } from '../styles/addUser.styles';
 
+interface User {
+  id: number;
+  name: string;
+  password: string;
+  email: string;
+  created_at: string;
+}
+
 export default function CadastroUsuario() {
-  const [cpf, setCpf] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [emailCheck, setEmailCheck] = useState('');
@@ -13,113 +21,120 @@ export default function CadastroUsuario() {
 
   const router = useRouter();
 
-  function cpfVerify(cpf: string): boolean {
-    const digitsOnly = cpf?.trim().replace(/\D/g, '');
-    return digitsOnly.length === 11;
-  }
-
 
   function emailVerify(email: string): boolean {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   }
 
-
-  const handleCadastro = () => {
-    if (!cpf || !email || !password || !emailCheck || !passwordCheck || !name) {
-      console.log('Erro: campos faltando');
+  const handleCadastro = async () => {
+    if (!email || !password || !emailCheck || !passwordCheck || !name) {
       Alert.alert('Erro', 'Preencha todos os campos.');
+      alert('Erro: Preencha todos os campos.');
       return;
     }
-    if (!cpfVerify(cpf)) {
-      console.log('Erro: CPF inválido');
-      Alert.alert('Erro', 'CPF invalido.');
-      return;
-    }
+   
     if (!emailVerify(email)) {
-      console.log('Erro: email inválido');
       Alert.alert('Erro', 'E-mail inválido.');
+      alert('Erro: E-mail inválido');
       return;
     }
     if (email !== emailCheck) {
-      console.log('Erro: emails não coincidem');
       Alert.alert('Erro', 'E-mails não coincidem.');
+      alert('Erro: E-mails não coincidem.');
       return;
     }
     if (password !== passwordCheck) {
-      console.log('Erro: senhas não coincidem');
       Alert.alert('Erro', 'Senhas não coincidem.');
+      alert('Erro: Senhas não coincidem.');
+      
       return;
     }
 
-      console.log('Todos os dados são válidos');
-      (Alert. alert('Sucesso', 'Usuario cadastrado com sucesso'));
-      router.push('/(tabs)/loginUser');
+    try {
+      const newUser = {
+        name,
+        email,
+        password,
+       
+      };
 
+      const response = await api.post<User>("/users/", newUser).then(response => {
+        console.log(response.data);
+      });
+      Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
+      alert('Sucesso: Usuário cadastrado com sucesso!');
+      
+      router.push('/loginUser');
+    } catch (error: any) {
+      const msg = error.response?.data?.detail || error.message;
+      console.error(error.response?.data || error.message);
+      Alert.alert("Erro", "Erro ao cadastrar usuário.");
+      console.error("Erro detalhado:", error.response?.data || error.message);
+      alert("Erro ao cadastrar usuário.");
+      if (error.response?.status === 409) {
+      alert("Erro: E-mail já cadastrado.");
+        } else {
+          alert("Erro ao cadastrar: " + msg);
+      }
+    }
   };
 
   return (
-<View style={styles.container}>
-  <View style={styles.logoContainer}>
-                <Image
-                  source={require('../../assets/images/LogoVermelha.png')}
-                  testID="logo-icon"
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-          </View>
- 
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+    >
+      <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../assets/images/LogoVermelha.png')}
+            testID="logo-icon"
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
 
-  <View style={styles.form}>
-    <TextInput
-      style={styles.input}
-      testID='input-name'
-      placeholder="Nome completo"
-      placeholderTextColor="rgba(0, 0, 0, 0.4)"
-      value={name}
-      onChangeText={setName}
-    />
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            testID='input-name'
+            placeholder="Nome completo"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
+            style={styles.input}
+            testID='input-email'
+            placeholder="E-mail"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-    <TextInput
-      style={styles.input}
-      testID='input-CPF'
-      placeholder="CPF"
-      placeholderTextColor="rgba(0, 0, 0, 0.4)"
-      keyboardType="numeric"
-      maxLength={11}
-      value={cpf}
-      onChangeText={setCpf}
-    />
+          <TextInput
+            style={styles.input}
+            testID='input-check-email'
+            placeholder="Confirmar e-mail"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            keyboardType="email-address"
+            value={emailCheck}
+            onChangeText={setEmailCheck}
+          />
 
-    <TextInput
-      style={styles.input}
-      testID='input-email'
-      placeholder="E-mail"
-      placeholderTextColor="rgba(0, 0, 0, 0.4)"
-      keyboardType="email-address"
-      value={email}
-      onChangeText={setEmail}
-    />
-
-    <TextInput
-      style={styles.input}
-      testID='input-check-email'
-      placeholder="Confirmar e-mail"
-      placeholderTextColor="rgba(0, 0, 0, 0.4)"
-      keyboardType="email-address"
-      value={emailCheck}
-      onChangeText={setEmailCheck}
-    />
-
-    <TextInput
-      style={styles.input}
-      testID='input-password'
-      placeholder="Senha"
-      placeholderTextColor="rgba(0, 0, 0, 0.4)"
-      secureTextEntry
-      value={password}
-      onChangeText={setPassword}
-    />
+          <TextInput
+            style={styles.input}
+            testID='input-password'
+            placeholder="Senha"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
     <TextInput
       style={styles.input}
@@ -131,23 +146,26 @@ export default function CadastroUsuario() {
       onChangeText={setPasswordCheck}
     />
 
-    <TouchableOpacity style={styles.button} onPress={handleCadastro}
-      testID='cadastrar-button'>
-      <Text style={styles.buttonText}>Cadastrar</Text>
-    </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleCadastro}
+            testID='cadastrar-button'>
+            <Text style={styles.buttonText}>Cadastrar</Text>
+          </TouchableOpacity>
 
-    <TouchableOpacity onPress={() => router.push('/loginUser')}>
-      <Text style={styles.footerText}>
-        Já possui uma conta?
-      <Text style={styles.link}> Entre!</Text>
-      </Text>
-    </TouchableOpacity>
-    <TouchableOpacity onPress={() => router.push('/inicialPage')}>
+          <TouchableOpacity onPress={() => router.push('/loginUser')}>
+            <Text style={styles.footerText}>
+              Já possui uma conta?
+              <Text style={styles.link}> Entre!</Text>
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push('/initialPage')}>
             <Text style={styles.footerText}>
               <Text style={styles.link}>Voltar</Text>
             </Text>
-    </TouchableOpacity>
-  </View>
-</View>
+          </TouchableOpacity>
+        </View>
+      </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

@@ -5,7 +5,6 @@ describe('Menu', () => {
 
   it('deve exibir os elementos do menu', () => {
     // verify if there is everything that should be on the page
-    cy.contains('Ainda não há receitas registradas :(').should('exist');
 
     cy.get('input[placeholder="Pesquisar..."]').should('exist');
     cy.get('input[placeholder="Pesquisar..."]').should('have.value', '');

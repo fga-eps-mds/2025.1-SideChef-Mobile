@@ -9,9 +9,6 @@ describe('Página de Cadastro', () => {
     cy.get('input[placeholder="Nome completo"]').should('exist');
     cy.get('input[placeholder="Nome completo"]').should('have.value', '');
 
-    cy.get('input[placeholder="CPF"]').should('exist');
-    cy.get('input[placeholder="CPF"]').should('have.value', '');
-
     cy.get('input[placeholder="E-mail"]').should('exist');
     cy.get('input[placeholder="E-mail"]').should('have.value', '');
 
@@ -35,13 +32,7 @@ describe('Página de Cadastro', () => {
     cy.get('[data-testid="input-name"]').should('not.be.disabled');
     cy.get('[data-testid="input-name"]').click().type('João Marcelo');
     cy.get('[data-testid="input-name"]').should('have.value', 'João Marcelo');
-    
-    //CPF
-    cy.get('[data-testid="input-CPF"]', { timeout: 10000 }).should('exist');
-    cy.wait(100);
-    cy.get('[data-testid="input-CPF"]').should('not.be.disabled');
-    cy.get('[data-testid="input-CPF"]').click().type('12345678901');
-    cy.get('[data-testid="input-CPF"]').should('have.value', '12345678901');
+
 
     //email
     cy.get('[data-testid="input-email"]', { timeout: 10000 }).should('exist');
