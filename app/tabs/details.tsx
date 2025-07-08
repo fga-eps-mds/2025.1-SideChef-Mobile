@@ -1,5 +1,6 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -51,6 +52,17 @@ export default function DetalhesPage() {
 
   const receita = receitas.find(r => r.id === id);
 
+  const [checked, setChecked] = useState<boolean[]>(() =>
+  new Array(receita?.ingredients?.length || 0).fill(false)
+);
+
+const toggleChecked = (index: number) => {
+  const newChecked = [...checked];
+  newChecked[index] = !newChecked[index];
+  setChecked(newChecked);
+};
+
+
   if (!receita) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -75,33 +87,45 @@ export default function DetalhesPage() {
  <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
   <ScrollView contentContainerStyle={styles.scroll}>
     
-    <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-      <Ionicons name="arrow-back" size={24} color="#D62626" />
-      <Text style={styles.backText}>{receita.title}</Text>
-    </TouchableOpacity>
+    <View style={styles.topBar}>
+      <TouchableOpacity onPress={() => router.back()}>
+        <Ionicons name="arrow-back" size={24} color="#000" />
+      </TouchableOpacity>
+      <Ionicons name="bookmark-outline" size={24} color="#000" />
+    </View>
 
-    <View style={styles.card}>
-      <Image source={receita.image} style={styles.image} />
+
+    <Image source={receita.image} style={styles.image} />
+
+    <View style={{ paddingHorizontal: 16, paddingBottom: 32 }}>
 
       <Text style={styles.title}>{receita.title}</Text>
 
-      <View style={styles.timeRow}>
-        <Ionicons name="time-outline" size={20} color="#fff" />
-        <Text style={styles.timeText}>{receita.time}</Text>
-      </View>
+      <Text style={styles.sectionTitle}>Ingredientes</Text>
+{receita.ingredients.map((ing, i) => (
+  <TouchableOpacity key={i} style={styles.ingredientItem} onPress={() => toggleChecked(i)}>
+    <Ionicons
+      name={checked[i] ? 'checkbox' : 'square-outline'}
+      size={20}
+      color={checked[i] ? '#D62626' : '#999'}
+      style={{ marginRight: 8 }}
+    />
+    <Text style={{ flex: 1 }}>{ing}</Text>
+  </TouchableOpacity>
+))}
 
-      <Text style={styles.sectionTitle}>Ingredientes:</Text>
-      {receita.ingredients.map((ing, i) => (
-        <Text key={i} style={styles.ingredient}>- {ing}</Text>
-      ))}
+      <Text style={styles.sectionTitle}>Modo de preparo</Text>
+      {receita.preparo.split(/\n/).map((step, i) => (
+        <Text key={i} style={styles.preparo}>
+          <Text style={{ fontWeight: 'bold' }}>{i + 1}.</Text> {step.trim()}
+        </Text>
+))}
 
-      <Text style={styles.sectionTitle}>Modo de Preparo:</Text>
-      <Text style={styles.preparo}>{receita.preparo}</Text>
 
       <View style={styles.actions}>
-        <FontAwesome name="thumbs-up" size={28} color="#fff" />
-        <FontAwesome name="thumbs-down" size={28} color="#fff" />
-        <Ionicons name="bookmark-outline" size={28} color="#fff" />
+        <FontAwesome name="thumbs-up" size={28} color="#000" />
+        <FontAwesome name="thumbs-down" size={28} color="#000" />
+        <Ionicons name="bookmark-outline" size={28} color="#000" />
       </View>
     </View>
   </ScrollView>
@@ -122,14 +146,8 @@ scroll: {
   backgroundColor: '#fff',
 },
 card: {
-  backgroundColor: '#D62626',
-  borderRadius: 16,
-  padding: 20,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 4,
-  elevation: 6,
+  paddingHorizontal: 16,
+  paddingBottom: 32,
 },
 backButton: {
   flexDirection: 'row',
@@ -150,11 +168,10 @@ image: {
   marginBottom: 16,
 },
 title: {
-  color: '#fff',
-  fontSize: 20,
+  color: '#000',
+  fontSize: 24,
   fontWeight: 'bold',
-  textAlign: 'center',
-  marginBottom: 12,
+  marginBottom: 16,
 },
 timeRow: {
   flexDirection: 'row',
@@ -168,7 +185,7 @@ timeText: {
 },
 sectionTitle: {
   fontWeight: 'bold',
-  color: '#fff',
+  color: '#000',
   fontSize: 16,
   marginTop: 12,
   marginBottom: 4,
@@ -180,7 +197,7 @@ ingredient: {
   marginTop: 2,
 },
 preparo: {
-  color: '#fff',
+  color: '#000', 
   marginTop: 6,
   lineHeight: 20,
 },
@@ -196,4 +213,20 @@ emptyText: {
   fontWeight: '500',
   marginTop: 40,
 },
+topBar: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingHorizontal: 16,
+  paddingVertical: 12,
+},
+ingredientItem: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#F6F6F6',
+  padding: 12,
+  borderRadius: 8,
+  marginBottom: 8,
+},
+
 });
