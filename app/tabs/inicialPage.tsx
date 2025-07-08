@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -104,7 +105,12 @@ export default function InicialPage() {
     Constants.manifest2?.extra?.expoGo?.debuggerHost ||
     Constants.manifest?.debuggerHost;
   const localIp = debuggerHost?.split(':')[0];
+
+  //state for searching
   const [searchActive, setSearchActive] = useState(false);
+
+  //side bar state
+  const [showSidebar, setShowSidebar] = useState(false)
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -158,16 +164,70 @@ export default function InicialPage() {
       style={{ flex: 1 }}
     >
       <View style={styles.container}>
+
+        {showSidebar && (
+          <TouchableOpacity
+            style={styles.overlay}
+            activeOpacity={1}
+            onPress={() => setShowSidebar(false)} // fecha quando clica fora
+          >
+            <View style={styles.sidebar}>
+              {/*bottons*/}
+              {/*logo*/}
+              <Image
+                  source={require('../../assets/images/SideChef-05.png')}
+                  style={styles.sideBarlogoImage}
+              />
+              <TouchableOpacity onPress={() => setShowSidebar(false)}
+                style={styles.closeMenuButton}
+                >
+                <Feather name="menu" size={24} color="#000" />
+              </TouchableOpacity>
+
+              <View style={styles.divider} />
+
+              <View style={styles.sidebarItem}>
+                <Feather name="book" size={20} color="#333" style={styles.sidebarIcon} />
+                <Text style={styles.sidebarText}>Minhas Receitas</Text>
+              </View>
+
+              <View style={styles.divider} />
+
+              <View style={styles.sidebarItem}>
+                <Feather name="settings" size={20} color="#333" style={styles.sidebarIcon} />
+                <Text style={styles.sidebarText}>Configurações</Text>
+              </View>
+
+              <View style={styles.divider} />
+
+              <View style={styles.sidebarItem}>
+                <Feather name="log-out" size={20} color="#333" style={styles.sidebarIcon} />
+                <Text style={styles.sidebarText}>Desconectar</Text>
+              </View>
+
+              <View style={styles.divider} />
+            </View>
+          </TouchableOpacity>
+        )}
         {/* Topo */}
         <View style={styles.topBar}>
           {!searchActive ? (
             <>
+               {/*menu icon*/}
+              <TouchableOpacity onPress={() => setShowSidebar(true)}
+                style={styles.openMenuButton}
+                >
+                <Feather name="menu" size={24} color="#000" />
+              </TouchableOpacity>
+
+              {/*logo*/}
               <View style={styles.logoContainer}>
                 <Image
                   source={require('../../assets/images/SideChef-05.png')}
                   style={styles.logoImage}
                 />
               </View>
+              {/*search icon*/}
               <TouchableOpacity onPress={() => setSearchActive(true)}>
                 <Ionicons name="search" size={24} color="#000" />
               </TouchableOpacity>
@@ -338,4 +398,74 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginRight: 8,
   },
+  sidebar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: 265,
+    backgroundColor: '#fff',
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 8,
+    zIndex: 10,
+  },
+  
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 10,
+  },
+  openMenuButton: {
+    top: 10, 
+    left: 20,    
+    elevation: 10 ,
+  },
+  closeMenuButton: {
+    top: -20, 
+    left: 190, 
+  },
+  sideBarlogoImage: {
+    width: 120,
+    height: 40,
+    resizeMode: 'contain',
+    left: 0,
+    top: 10,
+  },
+  sidebarItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  },
+  
+  sidebarIcon: {
+    marginRight: 10,
+  },
+  
+  sidebarText: {
+    fontSize: 18,
+    color: '#333',
+  },
+  
+  divider: {
+    height: 1,
+    backgroundColor: '#ccc',
+    opacity: 10,
+    marginHorizontal: 0,
+    marginVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    elevation: 1, // necessário para Android
+  },
+  
 });
