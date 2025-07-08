@@ -1,6 +1,6 @@
 describe('Página de Adicionar Receitas', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:8082/addRecipe');
+    cy.visit('/addRecipe');
   });
 
   it('deve exibir os elementos da "add_recipe', () => {

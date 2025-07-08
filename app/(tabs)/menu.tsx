@@ -405,7 +405,8 @@ async function openCam() {
           onChangeText={handleSearch}
           style={[stylesDetails.searchInput, { flex: 1 }]}
         />
-        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }} />
+        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }}
+        testID="search-icon" />
       </View>
 
       {/* Filtros de busca */}
@@ -437,22 +438,26 @@ async function openCam() {
       )}
 
       <SafeAreaView style={styles.footer}>
-        <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}>
+        <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}
+          testID="receipt-icon">
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
         <View style= {styles.cameraPadding}>
         <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
-          <FontAwesome name="camera" size={25} color="#D62626" />
+          <FontAwesome name="camera" size={25} color="#D62626"
+          testID='camera-icon' />
         </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={handlePerfilPress} style={styles.iconWrapper}>
+        <TouchableOpacity onPress={handlePerfilPress} style={styles.iconWrapper}
+          testID="perfil-icon">
           <FontAwesome5 name="user-alt" size={24} color="#FFF" />
         </TouchableOpacity>
       </SafeAreaView>
 
-        <TouchableOpacity onPress={handleFloatPress} style={styles.floatButton}>
+        <TouchableOpacity onPress={handleFloatPress} style={styles.floatButton}
+        testID="flutunte-icon">
         <FontAwesome5 name="plus" size={24} color="#FFF" />
         </TouchableOpacity>
 

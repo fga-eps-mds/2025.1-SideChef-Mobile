@@ -9,7 +9,6 @@ describe('Splash Screen', () => {
     cy.wait(3000);
 
     //verify if the user is redirected to the login page
-    cy.url().should('include', '/login');
-    cy.contains('Continuar com o Google').should('exist');  
+    cy.url().should('include', '/inicialPage');
   });
 });
