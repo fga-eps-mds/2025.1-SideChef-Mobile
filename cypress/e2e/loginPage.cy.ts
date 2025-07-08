@@ -1,6 +1,6 @@
 describe('Página Inicial', () => {
   beforeEach(() => { //before each test, the Inicial page is visited
-    cy.visit('/inicialPage');
+    cy.visit('/initialPage');
   });
 
   it('deve exibir os elementos da tela de login', () => { //verify if there is everything that should be on the page

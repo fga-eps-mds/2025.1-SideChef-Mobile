@@ -81,7 +81,7 @@ describe('Menu', () => {
     cy.contains('Arroz com Pequi').should('exist');
   });
 
-  it('deve expandir e colapsar o card da receita ao clicar', () => {
+  it('deve expandir e retornar o card da receita ao clicar', () => {
   cy.intercept('GET', '**/getRecipes', {
     statusCode: 200,
     body: [
@@ -98,14 +98,13 @@ describe('Menu', () => {
   cy.visit('/menu');
   cy.wait('@getRecipes');
 
-  // Primeiro verifica que os detalhes ainda NÃO estão visíveis
-  cy.contains('Ingredientes').should('not.exist');
-  cy.contains('Preparo').should('not.exist');
+  //First verify if the card's informations are not visible;
+  cy.contains('Modo de Preparo:').should('not.exist');
 
-  // Clica no card (supondo que o título do card seja o nome da receita)
+  //Click in the card to open it
   cy.contains('Pizza de Calabresa').click();
 
-  // Agora os detalhes DEVEM aparecer
+  //Now the details should apear
   cy.contains('Ingredientes').should('exist');
   cy.contains('calabresa').should('exist');
   cy.contains('queijo').should('exist');
@@ -113,11 +112,10 @@ describe('Menu', () => {
   cy.contains('Preparo').should('exist');
   cy.contains('Asse por 30 minutos.').should('exist');
 
-  // Clica de novo para colapsar
+  //click again to close
   cy.contains('Pizza de Calabresa').click();
 });
 
 
-  //Need to test when you click in the cards, and when you unclick it too!
 });
 
