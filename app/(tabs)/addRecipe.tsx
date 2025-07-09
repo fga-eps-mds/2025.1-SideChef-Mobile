@@ -61,32 +61,34 @@ export default function CadastroReceita() {
 
 
   const handleCadastro = async () => {
+    console.log("Função handleCadastro foi chamada");
     if (!name || !type || !difficulty || !prepare || ingredients.some(i => i.trim() === '')) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
 
-    const novaReceita = {
-      //THIS NEEDS TO BE CHANGED TO ENGLISH... MODELS IN RECIPE.PY
-      Nome: name,
-      Tipo: type,
-      Dificuldade: difficulty,
-      Ingredientes: ingredients.map((i) => ({
-      ingrediente: i,
-      quantidade: "",
-      })),
-      Preparo: prepare,
-      image_url: imageUri
-    };
+   const newRecipe = {
+    name,
+    type,
+    difficulty,
+    ingredients: ingredients.map((i) => ({
+      name: i,
+      quantity: "",
+    })),
+    prepare,
+    image_url: imageUri
+  };
 
     try {
-      await api.post('/recipe/createRecipes/', novaReceita);
-      Alert.alert('Sucesso', 'Receita cadastrada com sucesso!');
-      router.replace('/initialPage');
-    } catch (error: any) {
-      const msg = error.response?.data?.detail || error.message;
-      Alert.alert("Erro ao cadastrar receita", msg);
-    }
+  console.log("Enviando receita para o backend:", newRecipe);
+  await api.post('/recipe/createRecipes/', newRecipe);
+  Alert.alert('Sucesso', 'Receita cadastrada com sucesso!');
+  router.replace('/initialPage');
+} catch (error: any) {
+  console.error("Erro ao cadastrar receita:", error);
+  const msg = error.response?.data?.detail || error.message;
+  Alert.alert("Erro ao cadastrar receita", msg);
+}
   };
 
   return (
