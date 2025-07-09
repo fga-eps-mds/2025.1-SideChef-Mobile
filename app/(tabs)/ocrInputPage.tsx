@@ -19,6 +19,7 @@ interface Recipe {
   Dificuldade: string;
   Ingredientes: Ingredients[];
   Preparo: string;
+  image_url?: string;
 };
 
 export default function ocrInputPage() {
@@ -168,6 +169,7 @@ export default function ocrInputPage() {
                 ingrediente: ingredient.ingrediente || ''
               })),
               Preparo: recipe.Preparo,
+              image_url: recipe.image_url,
             }));
 
             router.push({  // Send recipes as a parameter back to menu
