@@ -19,7 +19,8 @@ export default {
             foregroundImage: "./assets/images/adaptive-icon.png",
             backgroundColor: "#ffffff"
           },
-          edgeToEdgeEnabled: true
+          edgeToEdgeEnabled: true,
+          softwareKeyboardLayoutMode: "pan",
         },
         web: {
           bundler: "metro",
@@ -43,6 +44,7 @@ export default {
         },
         extra: {
           API_BASE_URL: process.env.API_BASE_URL || "http://localhost:8000",
+          API_USER_URL: process.env.API_USER_URL || "http://localhost:8000"
         },
     }
-}
+} 
