@@ -107,7 +107,16 @@ const toggleChecked = (index: number) => {
     
 
 
-    <Image source={receita.image} style={styles.image} />
+    <View style={{ width: '100%' }}>
+  <Image
+    source={receita.image}
+    style={{
+      width: '100%',
+      height: 220,
+      resizeMode: 'cover',
+    }}
+  />
+</View>
 
     <View style={{ paddingHorizontal: 16, paddingBottom: 32 }}>
 
@@ -153,7 +162,6 @@ const styles = StyleSheet.create({
 scroll: {
   flexGrow: 1,
   paddingVertical: 24,
-  paddingHorizontal: 16,
   backgroundColor: '#fff',
 },
 card: {
@@ -173,10 +181,10 @@ backText: {
 },
 image: {
   width: '100%',
-  height: 180,
-  borderTopLeftRadius: 16,
-  borderTopRightRadius: 16,
-  marginBottom: 16,
+  height: 220, 
+  resizeMode: 'cover',
+  borderBottomLeftRadius: 0,
+  borderBottomRightRadius: 0,
 },
 title: {
   color: '#333',
