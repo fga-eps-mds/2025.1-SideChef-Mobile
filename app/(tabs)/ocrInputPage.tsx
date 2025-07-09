@@ -3,14 +3,10 @@ import { View, StyleSheet, Platform, Image, ScrollView, Text, TouchableOpacity }
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
-
 import Constants from 'expo-constants';
 
 const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
-
 const router = useRouter();
-
 
 interface Ingredients {
   quantidade: string;
@@ -25,10 +21,9 @@ interface Recipe {
   Preparo: string;
 };
 
-
 export default function ocrInputPage() {
     const initialPagePush = () => {
-        router.push('/inicialPage');
+        router.push('/menu');
 }
   const [imageUris, setImageUris] = useState<string[]>([]);
     
@@ -50,7 +45,7 @@ export default function ocrInputPage() {
     }
     
     
-    //funtion to open the camera
+    //function to open the camera
     async function openCam() {
       let result = await ImagePicker.launchCameraAsync({
         aspect: [4, 3],      //Image aspect ratio setting (optional)
@@ -175,8 +170,8 @@ export default function ocrInputPage() {
               Preparo: recipe.Preparo,
             }));
 
-            router.push({  // Send recipes as a parameter back to initial page 
-              pathname: "/inicialPage",
+            router.push({  // Send recipes as a parameter back to menu
+              pathname: "/menu",
               params: { 'recipes': JSON.stringify(ocrRecipes) }
             });
 
