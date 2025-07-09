@@ -1,10 +1,9 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    paddingTop: 15,
     backgroundColor: '#fff',
   },
   header: {
@@ -18,34 +17,27 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   searchInput: {
-    height: 40,
     backgroundColor: '#f0f0f0',
     borderRadius: 8,
+    height: 40,
     paddingHorizontal: 10,
   },
   emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 50,
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#555',
+    fontSize: 16,
+    color: '#999',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingHorizontal: 40,
-    position: 'relative',
-    backgroundColor: '#D62626',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: -2 },
-    shadowRadius: 4,
+    paddingVertical: 14,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#ddd',
   },
   sideText: {
     fontSize: 16,
@@ -172,4 +164,146 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginTop: 40,
-}});
+  },
+  logoText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  searchBar: {
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
+  recipeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+  },
+  recipeImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    marginLeft: 10,
+  },
+  recipeTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  recipeLevel: {
+    color: '#D62626',
+    fontWeight: 'bold',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  recipeIngredients: {
+    fontSize: 13,
+    color: '#555',
+    marginTop: 4,
+  },
+  centerButton: {
+    backgroundColor: '#D62626',
+    padding: 14,
+    borderRadius: 30,
+  },
+  topBar: {
+    marginTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logoContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  logoImage: {
+    width: 120,
+    height: 40,
+    resizeMode: 'contain',
+  },
+  searchTopContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchInputTop: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    height: 40,
+    paddingHorizontal: 10,
+    marginRight: 8,
+  },
+  sidebar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: 265,
+    backgroundColor: '#fff',
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 8,
+    zIndex: 10,
+  },
+  
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 10,
+  },
+  openMenuButton: {
+    top: 10, 
+    left: 20,    
+    elevation: 10 ,
+  },
+  closeMenuButton: {
+    top: -20, 
+    left: 190, 
+  },
+  sideBarlogoImage: {
+    width: 120,
+    height: 40,
+    resizeMode: 'contain',
+    left: 0,
+    top: 10,
+  },
+  sidebarItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  },
+  
+  sidebarIcon: {
+    marginRight: 10,
+  },
+  
+  sidebarText: {
+    fontSize: 18,
+    color: '#333',
+  },
+  
+  divider: {
+    height: 1,
+    backgroundColor: '#ccc',
+    opacity: 10,
+    marginHorizontal: 0,
+    marginVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    elevation: 1, // necessário para Android
+  },
+});

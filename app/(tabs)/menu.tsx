@@ -1,3 +1,5 @@
+import { Feather } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -5,7 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { FlatList, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView } from 'react-native';
 import { styles as stylesDetails } from '../styles/details.styles';
 import { styles } from '../styles/menu.styles';
 import { Image } from 'react-native';
@@ -17,6 +19,21 @@ import axios from "axios";
 const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
 const router = useRouter();
+
+interface ChildStateProps {
+  setFunc: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+interface ChildFuncProps {
+  func: ()=>void;
+}
+
+interface TopBarProps extends ChildStateProps, ChildFuncProps {
+  setFuncSec: React.Dispatch<React.SetStateAction<boolean>>;
+  func: ()=>void;
+  query: string;
+  isSearch: boolean;
+}
 
 interface Ingredients {
   quantidade: string;
@@ -36,7 +53,90 @@ interface Recipe {
 interface RecipeListViewProp{
     recipes: Recipe[],
     onSelect: (recipe: Recipe) => void
+
 }
+
+const TopBar = ({setFunc, setFuncSec, func, query, isSearch} : TopBarProps) => {
+    return(
+        <View style={styles.topBar}>
+          {!isSearch ? (
+            <>
+               {/*menu icon*/}
+              <TouchableOpacity onPress={() => setFunc(true)}
+                style={styles.openMenuButton}
+                >
+                <Feather name="menu" size={24} color="#000" />
+              </TouchableOpacity>
+
+              {/*logo*/}
+              <View style={styles.logoContainer}>
+                <Image
+                  source={require('../../assets/images/SideChef-05.png')}
+                  style={styles.logoImage}
+                />
+              </View>
+              {/*search icon*/}
+              <TouchableOpacity onPress={() => setFuncSec(true)}>
+                <Ionicons name="search" size={24} color="#000" />
+              </TouchableOpacity>
+            </>
+          ) : (
+            <View style={styles.searchTopContainer}>
+              <TextInput
+                autoFocus
+                placeholder="Pesquisar..."
+                value={query}
+                onChangeText={func}
+                style={styles.searchInputTop}
+              />
+              <TouchableOpacity onPress={() => setFuncSec(false)}>
+                <Ionicons name="close" size={24} color="#000" />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+    )
+}
+
+const SideBar = ({setFunc}: ChildStateProps) => {
+  return(
+    <TouchableOpacity
+      style={styles.overlay}
+      activeOpacity={1}
+      onPress={() => setFunc(false)} // fecha quando clica fora
+    >
+      <View style={styles.sidebar}>
+        {/*bottons*/}
+        {/*logo*/}
+        <Image
+            source={require('../../assets/images/SideChef-05.png')}
+            style={styles.sideBarlogoImage}
+        />
+        <TouchableOpacity onPress={() => setFunc(false)}
+          style={styles.closeMenuButton}
+          >
+          <Feather name="menu" size={24} color="#000" />
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <View style={styles.sidebarItem}>
+          <Feather name="book" size={20} color="#333" style={styles.sidebarIcon} />
+          <Text style={styles.sidebarText}>Minhas Receitas</Text>
+        </View>
+        <View style={styles.divider} />
+        <View style={styles.sidebarItem}>
+          <Feather name="settings" size={20} color="#333" style={styles.sidebarIcon} />
+          <Text style={styles.sidebarText}>Configurações</Text>
+        </View>
+        <View style={styles.divider} />
+        <View style={styles.sidebarItem}>
+          <Feather name="log-out" size={20} color="#333" style={styles.sidebarIcon} />
+          <Text style={styles.sidebarText}>Desconectar</Text>
+        </View>
+        <View style={styles.divider} />
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   let ingredientsDisplay = '';
@@ -102,6 +202,11 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
     <FlatList
       data={recipes}
       keyExtractor={(item) => item._id} 
+      ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhuma receita encontrada :(</Text>
+            </View>
+          }
       
       renderItem={({ item }) => {
         
@@ -132,34 +237,45 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
         }
 
         return (
-  <TouchableOpacity
-    style={{
-      backgroundColor: '#D62626',
-      padding: 16,
-      marginBottom: 12,
-      borderRadius: 8,
-      elevation: 3,
-    }}
-    onPress={() => onSelect(item)}
-  >
-    {item.image_url && (
-      <Image
-        source={{ uri: item.image_url }}
-        style={{ width: '100%', height: 200, borderRadius: 8 }}
-        resizeMode="cover"
-      />
-    )}
-    <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', marginTop: 8 }}>
-      {item.Nome}
-    </Text>
-    <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
-      Ingredientes: {ingredientsDisplay}
-    </Text>
-  </TouchableOpacity>
-);
+          <TouchableOpacity
+            style={
+              styles.recipeCard}
+            onPress={() => onSelect(item)}
+          >
+            {item.image_url && (
+              <Image
+                source={{ uri: item.image_url }}
+                style={styles.recipeImage}
+                resizeMode="cover"
+              />
+            )}
+            <Text style={styles.recipeTitle}>
+              {item.Nome}
+            </Text>
+            <Text style={styles.recipeIngredients}>
+              Ingredientes: {ingredientsDisplay}
+            </Text>
+          </TouchableOpacity>
+        );
       }}
     />
   );
+}
+
+const Footer = ({func}: ChildFuncProps) => {
+    return(
+    <View style={styles.footer}>
+      <TouchableOpacity>
+        <Ionicons name="home" size={24} color="#D62626" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={func} style={styles.centerButton}>
+        <FontAwesome name="camera" size={24} color="#fff" />
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <MaterialCommunityIcons name="account" size={28} color="#D62626" />
+      </TouchableOpacity>
+    </View>
+    )
 }
 
 export default function initialPage() {
@@ -169,6 +285,12 @@ export default function initialPage() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [query, setQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'title' | 'ingredients' | 'all'>('all');
+
+  // searchBar state
+  const [showSidebar, setShowSidebar] = useState<boolean>(false)
+
+  // search active
+  const [searchActive, setSearchActive] = useState(false);
 
   //to get ip
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
@@ -397,71 +519,49 @@ async function openCam() {
 
 // (!) Barra de pesquisa altera por função dependente de mock haardcoded, corrigir
   return (
-    <View style={stylesDetails.container2}>
-      <View style={[styles.header, { flexDirection: 'row', alignItems: 'center' }]}>
-        <TextInput
-          placeholder="Pesquisar..."
-          value={query}
-          onChangeText={handleSearch}
-          style={[stylesDetails.searchInput, { flex: 1 }]}
-        />
-        <Ionicons name="search" size={24} color="#D62626" style={{ marginLeft: 10 }}
-        testID="search-icon" />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
+      <View style={stylesDetails.container2}>
+        {showSidebar && <SideBar setFunc={setShowSidebar}/>}
+        <TopBar setFunc={setSearchActive} setFuncSec={setShowSidebar} func={handleSearch} query={query} isSearch={searchActive}/>
+        
+
+        
+
+        {selectedRecipe ? (
+          <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />
+        ) : (
+          <RecipeList recipes={displayedRecipes} onSelect={handleSelectRecipe} />
+        )}
+
+        <SafeAreaView style={styles.footer}>
+          <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}
+            testID="receipt-icon">
+            <Ionicons name="receipt" size={30} color="#FFF" />
+          </TouchableOpacity>
+
+          <View style= {styles.cameraPadding}>
+          <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
+            <FontAwesome name="camera" size={25} color="#D62626"
+            testID='camera-icon' />
+          </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity onPress={handlePerfilPress} style={styles.iconWrapper}
+            testID="perfil-icon">
+            <FontAwesome5 name="user-alt" size={24} color="#FFF" />
+          </TouchableOpacity>
+        </SafeAreaView>
+
+          <TouchableOpacity onPress={handleFloatPress} style={styles.floatButton}
+          testID="flutunte-icon">
+          <FontAwesome5 name="plus" size={24} color="#FFF" />
+          </TouchableOpacity>
+
+        <StatusBar style="auto" />
       </View>
-
-      {/* Filtros de busca */}
-      <View style={stylesDetails.filterContainer}>
-        <TouchableOpacity
-          style={[stylesDetails.filterButton, filterMode === 'title' && stylesDetails.selected]}
-          onPress={() => setFilterMode("title")}
-        >
-          <Text style={stylesDetails.filterText} > Tiítulo </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[stylesDetails.filterButton, filterMode === 'ingredients' && stylesDetails.selected]}
-          onPress={() => setFilterMode("ingredients")}
-        >
-          <Text style={stylesDetails.filterText}> Ingredientes </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[stylesDetails.filterButton, filterMode === 'all' && stylesDetails.selected]}
-          onPress={() => setFilterMode("all")}
-        >
-          <Text style={stylesDetails.filterText}> Todos </Text>
-        </TouchableOpacity>
-      </View>
-
-      {selectedRecipe ? (
-        <RecipeView recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />
-      ) : (
-        <RecipeList recipes={displayedRecipes} onSelect={handleSelectRecipe} />
-      )}
-
-      <SafeAreaView style={styles.footer}>
-        <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}
-          testID="receipt-icon">
-          <Ionicons name="receipt" size={30} color="#FFF" />
-        </TouchableOpacity>
-
-        <View style= {styles.cameraPadding}>
-        <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
-          <FontAwesome name="camera" size={25} color="#D62626"
-          testID='camera-icon' />
-        </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity onPress={handlePerfilPress} style={styles.iconWrapper}
-          testID="perfil-icon">
-          <FontAwesome5 name="user-alt" size={24} color="#FFF" />
-        </TouchableOpacity>
-      </SafeAreaView>
-
-        <TouchableOpacity onPress={handleFloatPress} style={styles.floatButton}
-        testID="flutunte-icon">
-        <FontAwesome5 name="plus" size={24} color="#FFF" />
-        </TouchableOpacity>
-
-      <StatusBar style="auto" />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
