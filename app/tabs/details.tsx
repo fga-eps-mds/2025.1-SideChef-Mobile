@@ -47,8 +47,13 @@ Incorpore o creme de leite e retire do fogo antes de ferver.`,
   },
 ];
 
+
 export default function DetalhesPage() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
+  const [favorito, setFavorito] = useState(false);
+
+  const toggleFavorito = () => setFavorito(!favorito);
 
   const receita = receitas.find(r => r.id === id);
 
@@ -61,6 +66,7 @@ const toggleChecked = (index: number) => {
   newChecked[index] = !newChecked[index];
   setChecked(newChecked);
 };
+
 
 
   if (!receita) {
@@ -86,13 +92,19 @@ const toggleChecked = (index: number) => {
   return (
  <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
   <ScrollView contentContainerStyle={styles.scroll}>
+  <View style={styles.topBar}>
+    <TouchableOpacity onPress={() => router.back()}>
+      <Ionicons name="arrow-back" size={24} color="#000" />
+    </TouchableOpacity>
+    <TouchableOpacity onPress={toggleFavorito}>
+  <Ionicons
+    name={favorito ? 'star' : 'star-outline'}
+    size={28}
+    color={favorito ? '#D62626' : '#000'}
+  />
+</TouchableOpacity>
+  </View>
     
-    <View style={styles.topBar}>
-      <TouchableOpacity onPress={() => router.back()}>
-        <Ionicons name="arrow-back" size={24} color="#000" />
-      </TouchableOpacity>
-      <Ionicons name="bookmark-outline" size={24} color="#000" />
-    </View>
 
 
     <Image source={receita.image} style={styles.image} />
@@ -125,7 +137,6 @@ const toggleChecked = (index: number) => {
       <View style={styles.actions}>
         <FontAwesome name="thumbs-up" size={28} color="#000" />
         <FontAwesome name="thumbs-down" size={28} color="#000" />
-        <Ionicons name="bookmark-outline" size={28} color="#000" />
       </View>
     </View>
   </ScrollView>
@@ -168,10 +179,11 @@ image: {
   marginBottom: 16,
 },
 title: {
-  color: '#000',
-  fontSize: 24,
-  fontWeight: 'bold',
-  marginBottom: 16,
+  color: '#333',
+  fontSize: 26,
+  fontWeight: '700',
+  marginBottom: 20,
+  marginTop: 20,
 },
 timeRow: {
   flexDirection: 'row',
@@ -184,27 +196,29 @@ timeText: {
   color: '#fff',
 },
 sectionTitle: {
-  fontWeight: 'bold',
-  color: '#000',
-  fontSize: 16,
-  marginTop: 12,
-  marginBottom: 4,
+  fontWeight: '600',
+  color: 'black',
+  fontSize: 23,
+  marginTop: 20,
+  marginBottom: 8,
 },
 ingredient: {
   color: '#fff',
-  fontSize: 14,
+  fontSize: 16,
   marginLeft: 10,
   marginTop: 2,
 },
 preparo: {
-  color: '#000', 
-  marginTop: 6,
-  lineHeight: 20,
+  color: '#444',
+  fontSize: 18,
+  lineHeight: 26,
+  marginTop: 8,
 },
 actions: {
   flexDirection: 'row',
   justifyContent: 'space-around',
-  marginTop: 24,
+  marginTop: 34,
+  gap: 32,
 },
 emptyText: {
   textAlign: 'center',

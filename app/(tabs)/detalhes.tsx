@@ -54,7 +54,7 @@ export default function DetalhesPage() {
   if (!receita) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <ScrollView contentContainerStyle={[styles.scroll, { alignItems: 'center' }]}>
         <View>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="#000" />
@@ -73,7 +73,7 @@ export default function DetalhesPage() {
 
   return (
  <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-  <ScrollView contentContainerStyle={styles.scroll}>
+  <ScrollView contentContainerStyle={[styles.scroll, { alignItems: 'center' }]}>
     
     <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
       <Ionicons name="arrow-back" size={24} color="#D62626" />
@@ -101,7 +101,7 @@ export default function DetalhesPage() {
       <View style={styles.actions}>
         <FontAwesome name="thumbs-up" size={28} color="#fff" />
         <FontAwesome name="thumbs-down" size={28} color="#fff" />
-        <Ionicons name="bookmark-outline" size={28} color="#fff" />
+        <Ionicons name="star-outline" size={28} color="#fff" />
       </View>
     </View>
   </ScrollView>
@@ -130,6 +130,8 @@ card: {
   shadowOpacity: 0.3,
   shadowRadius: 4,
   elevation: 6,
+  maxWidth: 500,
+  alignSelf: 'center',
 },
 backButton: {
   flexDirection: 'row',
@@ -151,7 +153,7 @@ image: {
 },
 title: {
   color: '#fff',
-  fontSize: 20,
+  fontSize: 24,
   fontWeight: 'bold',
   textAlign: 'center',
   marginBottom: 12,
@@ -170,12 +172,13 @@ sectionTitle: {
   fontWeight: 'bold',
   color: '#fff',
   fontSize: 16,
-  marginTop: 12,
+  marginTop: 22,
   marginBottom: 4,
 },
 ingredient: {
-  color: '#fff',
-  fontSize: 14,
+  color: '#fefefe',
+  fontSize: 16,
+  fontWeight: '500',
   marginLeft: 10,
   marginTop: 2,
 },
@@ -188,6 +191,7 @@ actions: {
   flexDirection: 'row',
   justifyContent: 'space-around',
   marginTop: 24,
+  maxWidth: 250,
 },
 emptyText: {
   textAlign: 'center',
