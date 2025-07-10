@@ -1,8 +1,9 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { FlatList, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -15,8 +16,6 @@ import Constants from 'expo-constants';
 import axios from "axios";
 
 const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
-
-const router = useRouter();
 
 interface Ingredients {
   quantidade: string;
@@ -37,6 +36,13 @@ interface RecipeListViewProp{
     recipes: Recipe[],
     onSelect: (recipe: Recipe) => void
 }
+
+interface RecipeListViewProp{
+    recipes: Recipe[],
+    onSelect: (recipe: Recipe) => void
+}
+
+
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   let ingredientsDisplay = '';
@@ -164,8 +170,11 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
 
 export default function initialPage() {
   // state receitas
+  const router = useRouter();
+  const params = useLocalSearchParams<{ recipes?: string}>();
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([])
   const [displayedRecipes, setDisplayedRecipes] = useState<Recipe[]>([]);  // Currently shown recipes
+  const [selectedtRecipeList, setSelectedRecipeList] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [query, setQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'title' | 'ingredients' | 'all'>('all');
@@ -174,43 +183,60 @@ export default function initialPage() {
   const debuggerHost = Constants.manifest2?.extra?.expoGo?.debuggerHost || Constants.manifest?.debuggerHost;
   const localIp = debuggerHost?.split(':')[0];
 
-
-  //state to store the image uri (may be useful in the future)
-  const [imageUri, setImageUri] = useState<string | null>(null);
-
   const fetchData = async () => {
     // Pode ser guardada em um hook
     try {
         const response = await axios.get(`${apiUrl}/recipe/getRecipes/`);
         console.log("/recipe/getRecipes/ JSON data: ", JSON.stringify(response.data, null, 2));
 
-        setAllRecipes(response.data);
-        setDisplayedRecipes(response.data);  // Initially, same as allRecipes
+        const recipesFromApi = response.data.recipes || response.data;
+        setAllRecipes(recipesFromApi);
+        setSelectedRecipeList(recipesFromApi);
+        setDisplayedRecipes(recipesFromApi);  // Initially, same as allRecipes
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
   }
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(() =>{    
+    if (params.recipes) {  // Show OCR filtered recipes in case they're "carried" as parameters in URL
+      try {
+        const ocrRecipes = JSON.parse(params.recipes);
+
+        showCustomRecipeList(ocrRecipes);
+        
+      } catch(err) {
+        alert("Não foi possível processar receitas");
+        console.error("Error while processing ocr recipes", err);
+        fetchData();  // Fallback in case of error
+      }
+    } else {
+      fetchData();
+    }
+  }, [params.recipes]);
 
   useEffect(() => {
     handleSearch(query);
-  }, [filterMode]);
+  }, [filterMode, selectedtRecipeList]);
 
   // Shows desired list of recipes on screen
   const showCustomRecipeList = (customList: Recipe[]) => {
+    setSelectedRecipeList(customList);
     setDisplayedRecipes(customList);
     setSelectedRecipe(null);
-    console.log(`Showing custom list of ${customList.length} recipes.`);
+    console.log(`Showing custom list of ${customList.length} recipes: `, customList);
   };
 
   const handleSearch = (text: string) => {
     setQuery(text);
     const lowered = text.toLocaleLowerCase();
 
-    const filtered = receitas.filter(item => {
+    if (!text) {
+      setDisplayedRecipes(selectedtRecipeList);
+      return;
+    }
+
+    const filtered = selectedtRecipeList.filter(item => {
 
       if (filterMode === 'title') {
         return item.Nome.toLocaleLowerCase().includes(lowered);
@@ -227,6 +253,11 @@ export default function initialPage() {
     })
     setDisplayedRecipes(filtered);
   }
+
+  const ocrInputPush = () => {
+    router.push('/ocrInputPage');
+  };
+
   const handleSelectRecipe = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
   };
@@ -235,8 +266,8 @@ export default function initialPage() {
     alert('Abrir câmera (simulado)');
   };
 
-  const handlerecipesPress = () => {
-    alert('Ir para recipes');
+  const handleRecipesPress = () => {
+    showCustomRecipeList(allRecipes); // Note: needs debugging 
   };
 
   const handlePerfilPress = () => {
@@ -246,153 +277,6 @@ export default function initialPage() {
   const handleFloatPress = () => {
     router.push('/addRecipe');
   }
-
-const receitas: Recipe[] = allRecipes || [];
-
-
-  //cam
-//camera permission
-async function getCameraPermission() {
-  const { status } = await ImagePicker.requestCameraPermissionsAsync();
-  if (status !== 'granted') {
-    alert('Permita o acesso a câmera para poder usufruir dessa funcionalidade.');
-  }
-}
-
-
-
-//funtion to open the camera
-async function openCam() {
-  let result = await ImagePicker.launchCameraAsync({
-    aspect: [4, 3],      //Image aspect ratio setting (optional)
-    quality: 1,          //Maximum image quality
-  });
-  //if that checks if the user closed the camera
-  if (!result.canceled && result.assets && result.assets.length > 0) {
-      const uri = result.assets[0].uri;
-      console.log(uri);
-
-       await uploadImage(uri);
-    }
-}
-
-//camEnd
-
-
-//uploadImage
-  const uploadImage = async (uri: string) => {
-    let fileName = '';
-    let fileType = '';
-    let mimeType = '';
-    
-    console.log('Original URI:', uri);
-    
-    const formData = new FormData();
-    if (uri.startsWith('data:')) {  // data URI file (usually when testing via web)
-      try {
-        const mimeTypeMatch = uri.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/);
-        const base64 = uri.split("base64,")[1];
-
-        if (!base64 || !mimeTypeMatch) {
-          console.log("Failed to format data URI: ", uri);
-          return;
-        }
-
-        mimeType = mimeTypeMatch[0];  // image/jpeg
-        fileType = mimeType.split('/')[1]  // jpeg
-        fileName = `temp_img_${Date.now()}.${fileType}`;
-        
-        if (Platform.OS === 'web') {
-          const byteChar = atob(base64);
-          const byteNum = new Array(byteChar.length);
-          for (let i = 0; i < byteChar.length; i++) {
-            byteNum[i] = byteChar.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNum);
-          const blob = new Blob([byteArray], {type: mimeType});
-
-          formData.append('file', blob, fileName);
-          console.log('Web blob created as formData: ', fileName, blob.type)
-        } else {
-          console.error('data URI while platform !== web');
-          return;
-        }
-
-      } catch (err) {
-        console.error("Error at processing data URI: ", err);
-        return;
-      }
-
-    } else {  // Regular uri file (file://...)
-      
-      const extractedFileName = uri.split('/').pop();
-      if (extractedFileName) {
-        fileName = extractedFileName;
-        const extractedFileType = fileName.split('.').pop()?.toLowerCase();
-        if (extractedFileType) {
-          fileType = extractedFileType;
-          mimeType = `image/${fileType}`;
-        } else {
-          console.error('URI invalid file type: ', extractedFileType);
-          return;
-        }
-      } else {
-        console.error('URI invalid file name: ', extractedFileName);
-        return;
-      }
-
-      console.log('FileName:', fileName, 'FileType:', fileType);
-  
-      if (!fileType || !fileName) {
-        console.error('Could not determine file type/name: ', {processedUri: uri, fileName, fileType});
-        return;
-      }
-
-      formData.append('file', {
-        uri: uri,
-        name: fileName,
-        type: `image/${fileType}`,
-      } as any);
-    }
-
-    try {
-      const response = await fetch(`${apiUrl}/ocr/run-ocr/`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const fetchError = await response.text();
-        console.error('OCR API error: ', response.status, fetchError);
-        return;
-      }
-
-      const result = await response.json();
-      console.log('OCR result: ', result);
-
-      if (result && result.recipes) {
-        const ocrRecipes: Recipe[] = result.recipes.map((recipe: any) => ({
-          _id: recipe.id,
-          Nome: recipe.Nome,
-          Dificuldade: recipe.Dificuldade,
-          Ingredientes: recipe.Ingredientes.map((ingredient: any) => ({
-            quantidade: ingredient.quantidade || '',
-            ingrediente: ingredient.ingrediente || ''
-          })),
-          Preparo: recipe.Preparo,
-        }));
-        
-        showCustomRecipeList(ocrRecipes);  // Shows recipes compatible to OCR output
-
-      } else {
-        console.error('OCR result is not a valid recipe list and/or is empty.');
-      }
-
-    } catch (error) {
-      console.error('Error sending image: ', error);
-    }
-  };
-//uploadImage END
 
 
 // (!) Barra de pesquisa altera por função dependente de mock haardcoded, corrigir
@@ -438,13 +322,13 @@ async function openCam() {
       )}
 
       <SafeAreaView style={styles.footer}>
-        <TouchableOpacity onPress={handlerecipesPress} style={styles.iconWrapper}
+        <TouchableOpacity onPress={handleRecipesPress} style={styles.iconWrapper}
           testID="receipt-icon">
           <Ionicons name="receipt" size={30} color="#FFF" />
         </TouchableOpacity>
 
         <View style= {styles.cameraPadding}>
-        <TouchableOpacity onPress={openCam} style={styles.cameraButton}>
+        <TouchableOpacity onPress={ocrInputPush} style={styles.cameraButton}>
           <FontAwesome name="camera" size={25} color="#D62626"
           testID='camera-icon' />
         </TouchableOpacity>
