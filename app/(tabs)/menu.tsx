@@ -9,7 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { FlatList, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView } from 'react-native';
 import { styles as stylesDetails } from '../styles/details.styles';
-import { styles } from '../styles/menu.styles';
+import { styles, detailStyles } from '../styles/menu.styles';
 import { Image } from 'react-native';
 
 import Constants from 'expo-constants';
@@ -45,7 +45,7 @@ interface Recipe {
   Nome: string;
   Dificuldade: string;
   Tipo: string;
-  Ingredientes: Ingredients[];
+  Ingredientes: Ingredients[]; //
   Preparo: string;
   image_url: string;
 };
@@ -163,30 +163,33 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
       ingredientsDisplay = 'Invalid data'; 
     }
   return(
-    
-     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView contentContainerStyle={styles.scrollDetails}>
-    
-        <TouchableOpacity style={styles.backButtonDetails} onPress={() => onBack()}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView contentContainerStyle={detailStyles.scroll}>
+
+        <TouchableOpacity style={detailStyles.backButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#D62626" />
-          <Text style={styles.backTextDetails}>{recipe.Nome}</Text>
+          <Text style={detailStyles.backText}>{recipe.Nome}</Text>
         </TouchableOpacity>
 
-        <View style={styles.cardDetails}>
-            {/* Ainda não há imagem */}
-            <Text style={styles.titleDetails}>{recipe.Nome}</Text>
-            {/* <View style={styles.timeRow}>
-              <Ionicons name="time-outline" size={20} color="#fff" />
-              <Text style={styles.timeText}>{receita.time}</Text>
-            </View> */}
-            <Text style={styles.sectionTitleDetails}>Ingredientes:</Text>
-            <Text style={{ fontSize: 14, color: '#fff', marginTop: 4 }}>
-            { ingredientsDisplay }
-            </Text>
-            <Text style={styles.sectionTitleDetails}>Modo de Preparo:</Text>
-            <Text style={styles.preparoDetails}>{recipe.Preparo}</Text>
-            
-          <View style={styles.actionsDetails}>
+        <View style={detailStyles.card}>
+          <Image source={{uri: recipe.image_url}} style={detailStyles.image} />
+
+          <Text style={detailStyles.title}>{recipe.Nome}</Text>
+
+          {/* <View style={detailStyles.timeRow}>
+            <Ionicons name="time-outline" size={20} color="#fff" />
+            <Text style={detailStyles.timeText}>{recipe.time}</Text>
+          </View> */}
+
+          <Text style={detailStyles.sectionTitle}>Ingredientes:</Text>
+          {recipe.Ingredientes.map((ing, i) => (
+            <Text key={i} style={detailStyles.ingredient}>- {ing}</Text>
+          ))}
+
+          <Text style={detailStyles.sectionTitle}>Modo de Preparo:</Text>
+          <Text style={detailStyles.preparo}>{recipe.Preparo}</Text>
+        
+          <View style={detailStyles.actions}>
             <FontAwesome name="thumbs-up" size={28} color="#fff" />
             <FontAwesome name="thumbs-down" size={28} color="#fff" />
             <Ionicons name="bookmark-outline" size={28} color="#fff" />
