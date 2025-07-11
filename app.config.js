@@ -45,8 +45,8 @@ export default {
             typedRoutes: true
         },
         extra: {
-          API_BASE_URL: process.env.API_BASE_URL || "http://localhost:8080",
-          API_USER_URL: process.env.API_USER_URL || "http://localhost:8080"
+          API_BASE_URL: process.env.API_BASE_URL || "http://localhost:8001",
+          API_USER_URL: process.env.API_USER_URL || "http://localhost:8001"
         },
     }
 } 
