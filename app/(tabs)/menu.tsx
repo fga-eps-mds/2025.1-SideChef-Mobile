@@ -8,7 +8,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { FlatList, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles as stylesDetails } from '../styles/details.styles';
 import { styles, detailStyles } from '../styles/menu.styles';
 import { Image } from 'react-native';
@@ -19,7 +18,6 @@ import axios from "axios";
 
 const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
-const insets = useSafeAreaInsets();
 
 const router = useRouter();
 
