@@ -5,6 +5,8 @@ import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../styles/addRecipe.styles';
 import api from '../../services/api';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, { Path, G } from 'react-native-svg';
 
 //Need to change the var's name to english in RecipeService recipe.py!!!
 export default function CadastroReceita() {
