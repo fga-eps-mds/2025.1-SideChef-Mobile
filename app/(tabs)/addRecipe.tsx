@@ -31,6 +31,8 @@ export default function CadastroReceita() {
     { label: 'Difícil', value: 'Difícil' },
   ]);
 
+  const [selectedDifficulty, setSelectedDifficulty] = useState('');
+
   const router = useRouter();
 
   const handleImagePick = async () => {
@@ -64,7 +66,7 @@ export default function CadastroReceita() {
 
   const handleCadastro = async () => {
     console.log("Função handleCadastro foi chamada");
-    if (!name || !type || !difficulty || !prepare || ingredients.some(i => i.trim() === '')) {
+    if (!name || !difficulty || !prepare || ingredients.some(i => i.trim() === '')) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
@@ -94,19 +96,28 @@ export default function CadastroReceita() {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Adicionar Receitas</Text>
 
-        <TouchableOpacity style={styles.imagePicker} onPress={handleImagePick}>
-          <Text style={styles.imagePickerText}>+ Adicionar foto</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Criar Receita</Text>
+      </View>
+      <ScrollView contentContainerStyle={styles.container}>
+
+        <TouchableOpacity style={styles.imagePickerContainer} onPress={handleImagePick}>
+          <View style={styles.imagePickerContent}>
+            <Text style={styles.imagePickerText}>+ Adicionar foto</Text>
+          </View>
         </TouchableOpacity>
 
         {imageUri && (
           <Image source={{ uri: imageUri }} style={styles.imagePreview} resizeMode="cover" />
         )}
 
-        <TextInput style={styles.input} placeholder="Título da Receita" placeholderTextColor="#fff" value={name} onChangeText={setName} />
+        <Text style={styles.subTitle}>Título da Receita</Text>
+        <TextInput style={styles.input} placeholder="e.x.: Bolo Simples" placeholderTextColor="#974E52" value={name} onChangeText={setName} />
+
+        {/*
           <View style={styles.dropdownWrapperType}>
             <DropDownPicker
             open={typeOpen}
@@ -142,20 +153,38 @@ export default function CadastroReceita() {
             listItemLabelStyle={styles.dropdownLabel}
             />
         </View>
+        */}
 
         <Text style={styles.subTitle}>Ingredientes</Text>
         {ingredients.map((ing, idx) => (
           <View key={idx} style={styles.ingredientRow}>
             <TextInput
               style={[styles.input, { flex: 1 }]}
+              placeholder={`Qtd (e.x.: 200g)`}
+              placeholderTextColor="#974E52"
+              value={ing}
+              onChangeText={(text) => handleIngredientChange(idx, text)}
+            />
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
               placeholder={`Ingrediente ${idx + 1}`}
-              placeholderTextColor="#fff"
+              placeholderTextColor="#974E52"
               value={ing}
               onChangeText={(text) => handleIngredientChange(idx, text)}
             />
             {ingredients.length > 1 && (
              <TouchableOpacity onPress={() => handleRemoveIngredient(idx)} style={styles.removeButton}>
-              <Text style={styles.removeButtonText}>❌</Text>
+              <Svg style={styles.svgRemoveIcon} width={24} height={24} viewBox="0 0 24 24" fill="none">
+                <G>
+                  <Path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM15.75 12C15.75 12.4142 15.4142 12.75 15 12.75H9C8.58579 12.75 8.25 12.4142 8.25 12C8.25 11.5858 8.58579 11.25 9 11.25H15C15.4142 11.25 15.75 11.5858 15.75 12Z"
+                    fill={'#974E52'}
+                  />
+                </G>
+              </Svg>
+              
              </TouchableOpacity>
             )}
           </View>
@@ -169,21 +198,38 @@ export default function CadastroReceita() {
         <TextInput
           style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
           multiline
-          placeholder="Descreva o modo de preparo"
-          placeholderTextColor="#fff"
+          placeholder="Descreva o modo de preparo..."
+          placeholderTextColor="#974E52"
           value={prepare}
           onChangeText={setPrepare}
         />
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.cancelButton} onPress={() => router.push('/menu')}>
-            <Text style={styles.buttonText}>Cancelar</Text>
+          <TouchableOpacity style={[styles.difficultyButton, selectedDifficulty === 'Iniciante' && styles.selectedButton]} 
+            onPress={() => setSelectedDifficulty('Iniciante')}
+          >
+            <Text style={[styles.buttonText, selectedDifficulty === 'Iniciante' && styles.selectedButtonText]}>Iniciante</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.saveButton} onPress={handleCadastro}>
-            <Text style={styles.buttonText}>Salvar</Text>
+
+          <TouchableOpacity style={[styles.difficultyButton, selectedDifficulty === 'Intermediário' && styles.selectedButton]} 
+            onPress={() => setSelectedDifficulty('Intermediário')}
+          >
+            <Text style={[styles.buttonText, selectedDifficulty === 'Intermediário' && styles.selectedButtonText]}>Intermediário</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.difficultyButton, selectedDifficulty === 'Avançado' && styles.selectedButton]} 
+            onPress={() => setSelectedDifficulty('Avançado')}
+          >
+            <Text style={[styles.buttonText, selectedDifficulty === 'Avançado' && styles.selectedButtonText]}>Avançado</Text>
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity style={styles.saveButton} onPress={handleCadastro}>
+          <Text style={styles.saveButtonText}>Salvar Receita</Text>
+        </TouchableOpacity>
+        
       </ScrollView>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
