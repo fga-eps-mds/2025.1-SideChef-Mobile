@@ -5,6 +5,8 @@ import * as ImagePicker from 'expo-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../styles/addRecipe.styles';
 import api from '../../services/api';
+import axios from 'axios';
+import Constants from 'expo-constants';
 
 //Need to change the var's name to english in RecipeService recipe.py!!!
 export default function CadastroReceita() {
@@ -12,7 +14,7 @@ export default function CadastroReceita() {
   const [type, setType] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [ingredients, setIngredients] = useState<string[]>(['']);
-  const [prepare, setPrepare] = useState('');
+  const [preparation, setPrepare] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
 
   const [typeOpen, setTypeOpen] = useState(false);
@@ -30,6 +32,8 @@ export default function CadastroReceita() {
   ]);
 
   const router = useRouter();
+  const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
+
 
   const handleImagePick = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -62,28 +66,28 @@ export default function CadastroReceita() {
 
   const handleCadastro = async () => {
     console.log("Função handleCadastro foi chamada");
-    if (!name || !type || !difficulty || !prepare || ingredients.some(i => i.trim() === '')) {
+    if (!name || !type || !difficulty || !preparation || ingredients.some(i => i.trim() === '')) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
 
    const newRecipe = {
-    name,
-    type,
-    difficulty,
-    ingredients: ingredients.map((i) => ({
-      name: i,
+    Name: name,
+    Type: type,
+    Difficulty: difficulty,
+    Ingredients: ingredients.map((i) => ({
+      ingredient: i,
       quantity: "",
     })),
-    prepare,
+    Preparation: preparation,
     image_url: imageUri
   };
 
     try {
   console.log("Enviando receita para o backend:", newRecipe);
-  await api.post('/recipe/createRecipes/', newRecipe);
+  await axios.post(`${apiUrl}/recipe/createRecipes`, newRecipe);
   Alert.alert('Sucesso', 'Receita cadastrada com sucesso!');
-  router.replace('/initialPage');
+  router.replace('/menu');
 } catch (error: any) {
   console.error("Erro ao cadastrar receita:", error);
   const msg = error.response?.data?.detail || error.message;
@@ -169,7 +173,7 @@ export default function CadastroReceita() {
           multiline
           placeholder="Descreva o modo de preparo"
           placeholderTextColor="#fff"
-          value={prepare}
+          value={preparation}
           onChangeText={setPrepare}
         />
 
