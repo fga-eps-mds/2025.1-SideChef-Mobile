@@ -3,12 +3,12 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { FlatList, Platform, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { styles as stylesDetails } from '../styles/details.styles';
 import { styles, detailStyles } from '../styles/menu.styles';
 import { Image } from 'react-native';
@@ -18,6 +18,8 @@ import Constants from 'expo-constants';
 import axios from "axios";
 
 const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
+
+const insets = useSafeAreaInsets();
 
 const router = useRouter();
 
@@ -37,17 +39,17 @@ interface TopBarProps extends ChildStateProps {
 }
 
 interface Ingredients {
-  quantidade: string;
-  ingrediente: string;
+  quantity: string;
+  ingredient: string;
 }
 
 interface Recipe {
   _id: string;
-  Nome: string;
-  Dificuldade: string;
-  Tipo: string;
-  Ingredientes: Ingredients[]; //
-  Preparo: string;
+  Name: string;
+  Difficulty: string;
+  Type: string;
+  Ingredients: Ingredients[]; //
+  Preparation: string;
   image_url: string;
 };
 
@@ -141,14 +143,14 @@ const SideBar = ({setFunc}: ChildStateProps) => {
 
 const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
   let ingredientsDisplay = '';
-    if (Array.isArray(recipe.Ingredientes)) {
-      if (recipe.Ingredientes.length > 0) {
-        if (typeof recipe.Ingredientes[0] === 'string') {
-          ingredientsDisplay = recipe.Ingredientes.join(', ');
+    if (Array.isArray(recipe.Ingredients)) {
+      if (recipe.Ingredients.length > 0) {
+        if (typeof recipe.Ingredients[0] === 'string') {
+          ingredientsDisplay = recipe.Ingredients.join(', ');
 
-        } else if (typeof recipe.Ingredientes[0] === 'object') {
-          ingredientsDisplay = recipe.Ingredientes.map((ing: Ingredients) => 
-            `${ing.quantidade || ''} ${ing.ingrediente || ''}`.trim()
+        } else if (typeof recipe.Ingredients[0] === 'object') {
+          ingredientsDisplay = recipe.Ingredients.map((ing: Ingredients) => 
+            `${ing.quantity || ''} ${ing.ingredient || ''}`.trim()
           ).filter(s => s.length > 0).join('; ');
           
           if (!ingredientsDisplay) { 
@@ -160,7 +162,7 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
       } else {
         ingredientsDisplay = 'Nenhum ingrediente cadastrado :(';
       }
-    } else if (recipe.Ingredientes) {
+    } else if (recipe.Ingredients) {
       ingredientsDisplay = 'Invalid data'; 
     }
   return(
@@ -169,13 +171,13 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
 
         <TouchableOpacity style={detailStyles.backButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#D62626" />
-          <Text style={detailStyles.backText}>{recipe.Nome}</Text>
+          <Text style={detailStyles.backText}>{recipe.Name}</Text>
         </TouchableOpacity>
 
         <View style={detailStyles.card}>
           <Image source={{uri: recipe.image_url}} style={detailStyles.image} />
 
-          <Text style={detailStyles.title}>{recipe.Nome}</Text>
+          <Text style={detailStyles.title}>{recipe.Name}</Text>
 
           {/* <View style={detailStyles.timeRow}>
             <Ionicons name="time-outline" size={20} color="#fff" />
@@ -183,12 +185,14 @@ const RecipeView = ({recipe, onBack}: {recipe: Recipe, onBack: () => void}) => {
           </View> */}
 
           <Text style={detailStyles.sectionTitle}>Ingredientes:</Text>
-          {recipe.Ingredientes.map((ing, i) => (
-            <Text key={i} style={detailStyles.ingredient}>- {ing}</Text>
+          {recipe.Ingredients.map((ing, i) => (
+            <Text key={i} style={detailStyles.ingredient}>
+              - {typeof ing === 'string' ? ing : `${ing.quantity || ''} ${ing.ingredient || ''}`.trim()}
+            </Text>
           ))}
 
           <Text style={detailStyles.sectionTitle}>Modo de Preparo:</Text>
-          <Text style={detailStyles.preparo}>{recipe.Preparo}</Text>
+          <Text style={detailStyles.preparo}>{recipe.Preparation}</Text>
         
           <View style={detailStyles.actions}>
             <FontAwesome name="thumbs-up" size={28} color="#fff" />
@@ -214,18 +218,18 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
           }
       
       renderItem={({ item }) => {
-        
-        console.log(`Displaying recipe: ${item.Nome}, Ingredients:`, item.Ingredientes);
+
+        console.log(`Displaying recipe: ${item.Name}, Ingredients:`, item.Ingredients);
 
         let ingredientsDisplay = '';
-        if (Array.isArray(item.Ingredientes)) {
-          if (item.Ingredientes.length > 0) {
-            if (typeof item.Ingredientes[0] === 'string') {
-              ingredientsDisplay = item.Ingredientes.join(', ');
+        if (Array.isArray(item.Ingredients)) {
+          if (item.Ingredients.length > 0) {
+            if (typeof item.Ingredients[0] === 'string') {
+              ingredientsDisplay = item.Ingredients.join(', ');
 
-            } else if (typeof item.Ingredientes[0] === 'object') {
-              ingredientsDisplay = item.Ingredientes.map((ing: Ingredients) => 
-                `${ing.quantidade || ''} ${ing.ingrediente || ''}`.trim()
+            } else if (typeof item.Ingredients[0] === 'object') {
+              ingredientsDisplay = item.Ingredients.map((ing: Ingredients) => 
+                `${ing.quantity || ''} ${ing.ingredient || ''}`.trim()
               ).filter(s => s.length > 0).join('; ');
               
               if (!ingredientsDisplay) { 
@@ -237,7 +241,7 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
           } else {
             ingredientsDisplay = 'Nenhum ingrediente cadastrado :(';
           }
-        } else if (item.Ingredientes) {
+        } else if (item.Ingredients) {
           ingredientsDisplay = 'Invalid data'; 
         }
 
@@ -249,10 +253,12 @@ const RecipeList = ({recipes, onSelect }: RecipeListViewProp) =>{
               }
             >
               <View style={{ flex: 1 }}>
-                <Text style={styles.recipeLevel}>INICIANTE</Text>
-                <Text style={styles.recipeTitle}>{item.Nome}</Text>
+                <Text style={styles.recipeLevel}>{item.Difficulty}</Text>
+                <Text style={styles.recipeTitle}>{item.Name}</Text>
                 <Text numberOfLines={1} style={styles.recipeIngredients}>
-                  {item.Ingredientes.join(', ')}
+                  {item.Ingredients.map((ing: Ingredients) => 
+                `${ing.quantity || ''} ${ing.ingredient || ''}`.trim()
+              ).join(', ')}
                 </Text>
               </View>
               <Image source={{uri: item.image_url}} style={styles.recipeImage} />
@@ -356,15 +362,15 @@ export default function initialPage() {
     const filtered = selectedtRecipeList.filter(item => {
 
       if (filterMode === 'title') {
-        return item.Nome.toLocaleLowerCase().includes(lowered);
+        return item.Name.toLocaleLowerCase().includes(lowered);
       }
       else if (filterMode === 'ingredients') {
-        return item.Ingredientes.toString().toLocaleLowerCase().includes(lowered);
+        return item.Ingredients.toString().toLocaleLowerCase().includes(lowered);
       } 
       else{
         return (
-          item.Nome.toLocaleLowerCase().includes(lowered) ||
-          item.Ingredientes.toString().toLocaleLowerCase().includes(lowered)
+          item.Name.toLocaleLowerCase().includes(lowered) ||
+          item.Ingredients.toString().toLocaleLowerCase().includes(lowered)
         );
       }
     })

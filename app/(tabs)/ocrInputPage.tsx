@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Constants from 'expo-constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 const router = useRouter();
@@ -190,6 +191,7 @@ export default function ocrInputPage() {
     //uploadImage END
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
     <View style={styles.bigContainer}>
     <View style={styles.container1}>
         <Text style={styles.text}>
@@ -237,6 +239,7 @@ export default function ocrInputPage() {
     </View>
     </View>
     </View>
+    </SafeAreaView>
   );
 }
 
