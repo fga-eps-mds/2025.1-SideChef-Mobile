@@ -15,9 +15,21 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     fontFamily: 'Plus Jakarta Sans',
-    marginBottom: 10,
+    marginBottom: 8,
     fontWeight: 'bold',
     fontSize: 24,
+  },
+  cancelButton: {
+    position: 'absolute',
+    left: 16,
+    paddingLeft: 10,
+    paddingTop: 4,
+  },
+  cancelButtonText: {
+    fontSize: 36, 
+    fontWeight: 'ultralight',
+    color: '#555',
+    lineHeight: 36,
   },
   container: {
     flexGrow: 1,
@@ -121,14 +133,6 @@ export const styles = StyleSheet.create({
   },
   selectedButtonText: {
     color: '#fff',
-  },
-  cancelButton: {
-    backgroundColor: '#fff',
-    flex: 1,
-    padding: 14,
-    marginRight: 10,
-    borderRadius: 10,
-    alignItems: 'center',
   },
   saveButton: {
     backgroundColor: '#E92933',

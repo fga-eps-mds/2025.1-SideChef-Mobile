@@ -100,6 +100,10 @@ export default function CadastroReceita() {
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 
       <View style={styles.header}>
+        <TouchableOpacity style={styles.cancelButton} onPress={() => router.push('/menu')}>
+          <Text style={styles.cancelButtonText}>{'\u00D7'}</Text>
+
+        </TouchableOpacity>
         <Text style={styles.headerText}>Criar Receita</Text>
       </View>
       <ScrollView contentContainerStyle={styles.container}>
