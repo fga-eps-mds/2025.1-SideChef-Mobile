@@ -56,10 +56,9 @@ export default function CadastroUsuario() {
         name,
         email,
         password,
-       
       };
 
-      const response = await api.post<User>("/users/", newUser).then(response => {
+      const response = await api.post<User>("api/users/", newUser).then(response => {
         console.log(response.data);
       });
       Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
