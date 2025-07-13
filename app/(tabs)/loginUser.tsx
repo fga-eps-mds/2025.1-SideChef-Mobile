@@ -51,7 +51,7 @@ export default function LoginPage() {
           Ainda não tem conta? <Text style={styles.link}>Cadastre-se!</Text>
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push('/initialPage')}>
+      <TouchableOpacity onPress={() => router.push('/menu')}>
         <Text style={styles.footerText}>
           <Text style={styles.link}>Voltar</Text>
         </Text>
