@@ -8,7 +8,7 @@ services:
       - "19001:19001"
       - "19002:19002"
       - "19006:19006"
-      - "8081:8081"
+      - "8082:8082"
     volumes:
       - ./:/app
       - node_modules:/app/node_modules

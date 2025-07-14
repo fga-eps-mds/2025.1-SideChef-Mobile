@@ -1,0 +1,398 @@
+import { StyleSheet, Platform } from 'react-native';
+
+export const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    backgroundColor: '#fff',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+  },
+  searchInput: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    height: 40,
+    paddingHorizontal: 10,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#999',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingVertical: 14,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#ddd',
+  },
+  sideText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  iconWrapper: {
+    padding: 10,
+  },
+  cameraButton: {
+    backgroundColor: '#fff',
+    borderRadius: 35,
+    padding: 16,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+  },
+  cameraPadding: {
+    padding: 5
+  },
+  floatButton: {
+    position: 'absolute',
+    bottom: 80, //Adjust to be above the footer
+    right: 17,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#D62626',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+},
+
+  cameraIcon: {
+    fontSize: 28,
+  },
+  containerDetails: {
+    padding: 16,
+    backgroundColor: '#D62626',
+    flexGrow: 1,
+  },
+  scrollDetails: {
+    flexGrow: 1,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+  },
+  cardDetails: {
+    backgroundColor: '#D62626',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+    },
+  backButtonDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  backTextDetails: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginLeft: 8,
+  },
+  imageDetails: {
+    width: '100%',
+    height: 180,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    marginBottom: 16,
+  },
+  titleDetails: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  timeRowDetails: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  timeTextDetails: {
+    marginLeft: 8,
+    color: '#fff', 
+  },
+  sectionTitleDetails: {
+    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  ingredientDetails: {
+    color: '#fff',
+    fontSize: 14,
+    marginLeft: 10,
+    marginTop: 2,
+  },
+  preparoDetails: {
+    color: '#fff',
+    marginTop: 6,
+    lineHeight: 20,
+  },
+  actionsDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 24,
+  },
+  emptyTextDetails: {
+    textAlign: 'center',
+    color: '#555',
+    fontSize: 16,
+    fontWeight: '500',
+    marginTop: 40,
+  },
+  logoText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  searchBar: {
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
+  recipeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+  },
+  recipeImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    marginLeft: 10,
+  },
+  recipeTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  recipeLevel: {
+    color: '#D62626',
+    fontWeight: 'bold',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  recipeIngredients: {
+    fontSize: 13,
+    color: '#555',
+    marginTop: 4,
+  },
+  centerButton: {
+    backgroundColor: '#D62626',
+    padding: 14,
+    borderRadius: 30,
+  },
+  topBar: {
+    marginTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logoContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  logoImage: {
+    width: 120,
+    height: 40,
+    resizeMode: 'contain',
+  },
+  searchTopContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchInputTop: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    height: 40,
+    paddingHorizontal: 10,
+    marginRight: 8,
+  },
+  sidebar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: 265,
+    backgroundColor: '#fff',
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 8,
+    zIndex: 10,
+  },
+  
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 10,
+  },
+  openMenuButton: {
+    top: 10, 
+    left: 20,    
+    elevation: 10 ,
+  },
+  closeMenuButton: {
+    top: -20, 
+    left: 190, 
+  },
+  sideBarlogoImage: {
+    width: 120,
+    height: 40,
+    resizeMode: 'contain',
+    left: 0,
+    top: 10,
+  },
+  sidebarItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+  },
+  
+  sidebarIcon: {
+    marginRight: 10,
+  },
+  
+  sidebarText: {
+    fontSize: 18,
+    color: '#333',
+  },
+  
+  divider: {
+    height: 1,
+    backgroundColor: '#ccc',
+    opacity: 10,
+    marginHorizontal: 0,
+    marginVertical: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    elevation: 1, // necessário para Android
+  },
+});
+
+export const detailStyles = StyleSheet.create({
+  container: {
+    padding: 16,
+    backgroundColor: '#D62626',
+    flexGrow: 1,
+  },
+scroll: {
+  flexGrow: 1,
+  paddingVertical: 24,
+  paddingHorizontal: 16,
+  backgroundColor: '#fff',
+},
+card: {
+  backgroundColor: '#D62626',
+  borderRadius: 16,
+  padding: 20,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.3,
+  shadowRadius: 4,
+  elevation: 6,
+},
+backButton: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: 16,
+},
+backText: {
+  color: '#000',
+  fontWeight: 'bold',
+  fontSize: 16,
+  marginLeft: 8,
+},
+image: {
+  width: '100%',
+  height: 180,
+  borderTopLeftRadius: 16,
+  borderTopRightRadius: 16,
+  marginBottom: 16,
+},
+title: {
+  color: '#fff',
+  fontSize: 20,
+  fontWeight: 'bold',
+  textAlign: 'center',
+  marginBottom: 12,
+},
+timeRow: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 12,
+},
+timeText: {
+  marginLeft: 8,
+  color: '#fff',
+},
+sectionTitle: {
+  fontWeight: 'bold',
+  color: '#fff',
+  fontSize: 16,
+  marginTop: 12,
+  marginBottom: 4,
+},
+ingredient: {
+  color: '#fff',
+  fontSize: 14,
+  marginLeft: 10,
+  marginTop: 2,
+},
+preparo: {
+  color: '#fff',
+  marginTop: 6,
+  lineHeight: 20,
+},
+actions: {
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+  marginTop: 24,
+},
+emptyText: {
+  textAlign: 'center',
+  color: '#555',
+  fontSize: 16,
+  fontWeight: '500',
+  marginTop: 40,
+},
+});
