@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ImageBackground, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../styles/addRecipe.styles';
 import api from '../../services/api';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,29 +10,18 @@ import Svg, { Path, G } from 'react-native-svg';
 //Need to change the var's name to english in RecipeService recipe.py!!!
 export default function CadastroReceita() {
   const [name, setName] = useState('');
-  const [type, setType] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [ingredients, setIngredients] = useState<string[]>(['']);
+  const [ingredientsQtd, setIngredientsQtd] = useState<string[]>(['']);
   const [prepare, setPrepare] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  const [typeOpen, setTypeOpen] = useState(false);
-  const [difficultyOpen, setDifficultyOpen] = useState(false);
-
-  const [typeItems, setTypeItems] = useState([
-    { label: 'Doce', value: 'Doce' },
-    { label: 'Salgada', value: 'Salgada' },
-  ]);
-
-  const [difficultyItems, setDifficultyItems] = useState([
-    { label: 'Fácil', value: 'Fácil' },
-    { label: 'Médio', value: 'Médio' },
-    { label: 'Difícil', value: 'Difícil' },
-  ]);
 
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
 
   const router = useRouter();
+
+  
 
   const handleImagePick = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -58,6 +46,12 @@ export default function CadastroReceita() {
     setIngredients(newIngredients);
   };
 
+  const handleIngredientQtdChange = (index: number, value: string) => {
+    const newIngredientsQtd = [...ingredientsQtd];
+    newIngredientsQtd[index] = value;
+    setIngredientsQtd(newIngredientsQtd);
+  };
+
   const handleRemoveIngredient = (index: number) => {
     const newIngredients = ingredients.filter((_, i) => i !== index);
     setIngredients(newIngredients);
@@ -65,20 +59,20 @@ export default function CadastroReceita() {
 
 
   const handleCadastro = async () => {
+    const validIngredients = ingredients
+      .map((name, idx) => ({ name: name.trim(), quantity: ingredientsQtd[idx]?.trim() }))
+      .filter(ing => ing.name !== '' && ing.quantity !== '');
+
     console.log("Função handleCadastro foi chamada");
-    if (!name || !difficulty || !prepare || ingredients.some(i => i.trim() === '')) {
+    if (!name || !difficulty || !prepare ||  validIngredients.length === 0 || !imageUri) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
 
    const newRecipe = {
     name,
-    type,
     difficulty,
-    ingredients: ingredients.map((i) => ({
-      name: i,
-      quantity: "",
-    })),
+    ingredients: validIngredients,
     prepare,
     image_url: imageUri
   };
@@ -108,67 +102,33 @@ export default function CadastroReceita() {
       </View>
       <ScrollView contentContainerStyle={styles.container}>
 
-        <TouchableOpacity style={styles.imagePickerContainer} onPress={handleImagePick}>
-          <View style={styles.imagePickerContent}>
-            <Text style={styles.imagePickerText}>+ Adicionar foto</Text>
-          </View>
-        </TouchableOpacity>
+        <TouchableOpacity style={styles.imagePreview} onPress={handleImagePick}>
+            {imageUri ? (
+              <ImageBackground
+                source={{ uri: imageUri }}
+                style={styles.imagePreview}
+                imageStyle={{ borderRadius: 10 }}
+                resizeMode="cover"
+              >
+                <View style={styles.overlay}>
+                  <Text style={styles.imagePickerText}>+ Alterar foto</Text>
+                </View>
+              </ImageBackground>
+            ) : (
+              <View style={[styles.imagePreview, styles.imagePickerPlaceholder]}>
+                <Text style={styles.imagePickerText}>+ Adicionar foto</Text>
+              </View>
+            )}
+          </TouchableOpacity>
 
-        {imageUri && (
-          <Image source={{ uri: imageUri }} style={styles.imagePreview} resizeMode="cover" />
-        )}
+
 
         <Text style={styles.subTitle}>Título da Receita</Text>
         <TextInput style={styles.input} placeholder="e.x.: Bolo Simples" placeholderTextColor="#974E52" value={name} onChangeText={setName} />
 
-        {/*
-          <View style={styles.dropdownWrapperType}>
-            <DropDownPicker
-            open={typeOpen}
-            value={type}
-            items={typeItems}
-            setOpen={setTypeOpen}
-            setValue={setType}
-            setItems={setTypeItems}
-            style={styles.dropdown}
-            textStyle={styles.dropdownText}
-            placeholder="Selecione o tipo"
-            dropDownDirection="AUTO"
-            dropDownContainerStyle={styles.dropdownContainer}
-            labelStyle={styles.dropdownLabel}
-            listItemLabelStyle={styles.dropdownLabel}
-            />
-        </View>
-
-        <View style={styles.dropdownWrapperDifficulty}>
-            <DropDownPicker
-            open={difficultyOpen}
-            value={difficulty}
-            items={difficultyItems}
-            setOpen={setDifficultyOpen}
-            setValue={setDifficulty}
-            setItems={setDifficultyItems}
-            style={styles.dropdown}
-            textStyle={styles.dropdownText}
-            placeholder="Selecione a dificuldade"
-            dropDownDirection="AUTO"
-            dropDownContainerStyle={styles.dropdownContainer}
-            labelStyle={styles.dropdownLabel}
-            listItemLabelStyle={styles.dropdownLabel}
-            />
-        </View>
-        */}
-
         <Text style={styles.subTitle}>Ingredientes</Text>
         {ingredients.map((ing, idx) => (
           <View key={idx} style={styles.ingredientRow}>
-            <TextInput
-              style={[styles.input, { flex: 1 }]}
-              placeholder={`Qtd (e.x.: 200g)`}
-              placeholderTextColor="#974E52"
-              value={ing}
-              onChangeText={(text) => handleIngredientChange(idx, text)}
-            />
             <TextInput
               style={[styles.input, { flex: 1 }]}
               placeholder={`Ingrediente ${idx + 1}`}
@@ -176,7 +136,14 @@ export default function CadastroReceita() {
               value={ing}
               onChangeText={(text) => handleIngredientChange(idx, text)}
             />
-            {ingredients.length > 1 && (
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              placeholder={`Qtd (e.x.: 200g)`}
+              placeholderTextColor="#974E52"
+              value={ingredientsQtd[idx]}
+              onChangeText={(text) => handleIngredientQtdChange(idx, text)}
+            />
+            {ingredients.length > 1 && idx !== ingredients.length - 1 &&  (
              <TouchableOpacity onPress={() => handleRemoveIngredient(idx)} style={styles.removeButton}>
               <Svg style={styles.svgRemoveIcon} width={24} height={24} viewBox="0 0 24 24" fill="none">
                 <G>
@@ -210,19 +177,19 @@ export default function CadastroReceita() {
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.difficultyButton, selectedDifficulty === 'Iniciante' && styles.selectedButton]} 
-            onPress={() => setSelectedDifficulty('Iniciante')}
+            onPress={() => {setSelectedDifficulty('Iniciante'); setDifficulty('Iniciante');}}
           >
             <Text style={[styles.buttonText, selectedDifficulty === 'Iniciante' && styles.selectedButtonText]}>Iniciante</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.difficultyButton, selectedDifficulty === 'Intermediário' && styles.selectedButton]} 
-            onPress={() => setSelectedDifficulty('Intermediário')}
+            onPress={() => {setSelectedDifficulty('Intermediário'); setDifficulty('Intermediário');}}
           >
             <Text style={[styles.buttonText, selectedDifficulty === 'Intermediário' && styles.selectedButtonText]}>Intermediário</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.difficultyButton, selectedDifficulty === 'Avançado' && styles.selectedButton]} 
-            onPress={() => setSelectedDifficulty('Avançado')}
+            onPress={() => {setSelectedDifficulty('Avançado'); setDifficulty('Avançado');}}
           >
             <Text style={[styles.buttonText, selectedDifficulty === 'Avançado' && styles.selectedButtonText]}>Avançado</Text>
           </TouchableOpacity>

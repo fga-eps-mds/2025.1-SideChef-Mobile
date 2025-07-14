@@ -209,4 +209,20 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  });
+  overlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.2)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 10,
+},
+imagePickerPlaceholder: {
+  borderWidth: 2,
+  borderStyle: 'dashed',
+  borderColor: '#A9A9A9',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#E6E6E6',
+},
+
+});
