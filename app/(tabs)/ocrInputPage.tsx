@@ -10,16 +10,16 @@ const apiUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 const router = useRouter();
 
 interface Ingredients {
-  quantidade: string;
-  ingrediente: string;
+  quantity: string;
+  ingredient: string;
 }
 
 interface Recipe {
   _id: string;
-  Nome: string;
-  Dificuldade: string;
-  Ingredientes: Ingredients[];
-  Preparo: string;
+  Name: string;
+  Difficulty: string;
+  Ingredients: Ingredients[];
+  Preparation: string;
   image_url?: string;
 };
 
@@ -162,14 +162,14 @@ export default function ocrInputPage() {
           if (result && result.recipes && result.recipes.length > 0) {
 
             const ocrRecipes: Recipe[] = result.recipes.map((recipe: any, index: number) => ({
-              _id: recipe.id || recipe._id || `${recipe.Nome}-${index}`,
-              Nome: recipe.Nome,
-              Dificuldade: recipe.Dificuldade,
-              Ingredientes: recipe.Ingredientes.map((ingredient: any) => ({
-                quantidade: ingredient.quantidade || '',
-                ingrediente: ingredient.ingrediente || ''
+              _id: recipe.id || recipe._id || `${recipe.Name}-${index}`,
+              Name: recipe.Name,
+              Difficulty: recipe.Difficulty,
+              Ingredients: recipe.Ingredients.map((ingredient: any) => ({
+                quantity: ingredient.quantity || '',
+                ingredient: ingredient.ingredient || ''
               })),
-              Preparo: recipe.Preparo,
+              Preparation: recipe.Preparation,
               image_url: recipe.image_url,
             }));
 
