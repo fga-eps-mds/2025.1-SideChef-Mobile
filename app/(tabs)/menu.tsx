@@ -64,6 +64,7 @@ const TopBar = ({setFunc, setFuncSec, funcSearch, query, isSearch} : TopBarProps
             <>
                {/*menu icon*/}
               <TouchableOpacity onPress={() => setFunc(true)}
+                testID="menu-icon"
                 style={styles.openMenuButton}
                 >
                 <Feather name="menu" size={24} color="#000" />
@@ -73,11 +74,13 @@ const TopBar = ({setFunc, setFuncSec, funcSearch, query, isSearch} : TopBarProps
               <View style={styles.logoContainer}>
                 <Image
                   source={require('../../assets/images/SideChef-05.png')}
+                  testID='logo-icon'
                   style={styles.logoImage}
                 />
               </View>
               {/*search icon*/}
-              <TouchableOpacity onPress={() => setFuncSec(true)}>
+              <TouchableOpacity onPress={() => setFuncSec(true)}
+                testID='search-icon'> 
                 <Ionicons name="search" size={24} color="#000" />
               </TouchableOpacity>
             </>
@@ -90,8 +93,9 @@ const TopBar = ({setFunc, setFuncSec, funcSearch, query, isSearch} : TopBarProps
                 onChangeText={funcSearch}
                 style={styles.searchInputTop}
               />
-              <TouchableOpacity onPress={() => setFuncSec(false)}>
-                <Ionicons name="close" size={24} color="#000" />
+              <TouchableOpacity onPress={() => setFuncSec(false)}
+                testID='close-icon'>
+                <Ionicons name="close" size={24} color="#00 0" />
               </TouchableOpacity>
             </View>
           )}
@@ -105,8 +109,9 @@ const SideBar = ({setFunc}: ChildStateProps) => {
       style={styles.overlay}
       activeOpacity={1}
       onPress={() => setFunc(false)} // fecha quando clica fora
+      testID='overlay'
     >
-      <View style={styles.sidebar}>
+      <View style={styles.sidebar} testID="sidebar">
         {/*bottons*/}
         {/*logo*/}
         <Image

@@ -1,14 +1,10 @@
 describe('Menu', () => {
   beforeEach(() => {
-    cy.visit('/menu');
+    cy.visit('/menu'); // ajuste a rota conforme necessário
   });
 
   it('deve exibir os elementos do menu', () => {
-    // verify if there is everything that should be on the page
-
-    cy.get('input[placeholder="Pesquisar..."]').should('exist');
-    cy.get('input[placeholder="Pesquisar..."]').should('have.value', '');
-
+    cy.get('[data-testid="logo-icon"]').should('exist');
     cy.get('[data-testid="search-icon"]').should('exist');
     cy.get('[data-testid="receipt-icon"]').should('exist');
     cy.get('[data-testid="camera-icon"]').should('exist');
@@ -16,106 +12,120 @@ describe('Menu', () => {
     cy.get('[data-testid="flutunte-icon"]').should('exist');
   });
 
-  it('deve exibir alerta ao clicar no botão flutuante (+)', () => {
-    
-    // simulates click on flutunte "+" button
+  it('deve redirecionar ao criar receitas quando clicar no botão flutuante (+)', () => {
     cy.get('[data-testid="flutunte-icon"]').click();
-    
-    // intercepts alerts for testing
-    cy.on('window:alert', (text) => {
-      expect(text).to.equal('Ir para perfil');
-    });
-
+    cy.url({ timeout: 10000 }).should('include', '/addRecipe');
   });
-   
-  it('deve exibir alerta ao clicar no botão de receitas', () => {
-    
-    // simulates click on receipt button
+
+  it('deve recarregar as receitas ao clicar no botão de receitas', () => {
+    cy.intercept('GET', '**/getRecipes', {
+      statusCode: 200,
+      body: [
+        {
+          Name: 'Nova Receita',
+          Type: 'Doce',
+          Difficulty: 'Fácil',
+          Ingredients: [
+            { quantity: '1', ingredient: 'ovo' },
+            { quantity: '2 colheres', ingredient: 'açúcar' }
+          ],
+          Preparation: 'Misture tudo.',
+          _id: '1',
+          image_url: 'https://via.placeholder.com/150'
+        }
+      ]
+    }).as('getRecipes');
+
     cy.get('[data-testid="receipt-icon"]').click();
-    
-    //intercepts alerts for testing
-    cy.on('window:alert', (text) => {
-      expect(text).to.equal('Ir para recipes');
-    });
+    cy.wait('@getRecipes');
+    cy.contains('Nova Receita').should('exist');
   });
 
   it('deve redirecionar ao cadastro ao clicar no botão de perfil', () => {
-
-    //simulates clicking on the profile button
-    cy.get('[data-testid="perfil-icon"]', { timeout: 10000 }).click();
-
+    cy.get('[data-testid="perfil-icon"]').click();
     cy.url({ timeout: 10000 }).should('include', '/addUser');
-    
   });
 
-
-
-  it('deve exibir receitas sem o backend rodando', () => {
-    // this test mocks the backend response for the recipe list
-    cy.intercept('GET', '**/getRecipes', {  // intercept the GET request to getRecipes
-      statusCode: 200,                      // this is what the backend would return
+  it('deve exibir receitas sem o backend rodando (mock)', () => {
+    cy.intercept('GET', '**/getRecipes', {
+      statusCode: 200,
       body: [
         {
-          Nome: 'Pizza de Calabresa', 
-          tipo: 'Salgado',
-          Dificuldade: 'Fácil',
-          Ingredientes: ['calabresa', 'queijo', 'molho'],   // this var's are in portuguese because in "RECIPE_SERVICE" it is also in portuguese. Need to change it!
-          Preparo: 'Asse por 30 minutos.'
+          Name: 'Pizza de Calabresa',
+          Type: 'Salgado',
+          Difficulty: 'Fácil',
+          Ingredients: [
+            { quantity: '', ingredient: 'calabresa' },
+            { quantity: '', ingredient: 'queijo' },
+            { quantity: '', ingredient: 'molho' }
+          ],
+          Preparation: 'Asse por 30 minutos.',
+          _id: '2',
+          image_url: 'https://via.placeholder.com/150'
         },
         {
-          Nome: 'Arroz com Pequi',
-          tipo: 'Salgado',
-          Dificuldade: 'Médio',
-          Ingredientes: ['arroz', 'pequi', 'alho'],
-          Preparo: 'Cozinhe por 20 minutos.'
+          Name: 'Arroz com Pequi',
+          Type: 'Salgado',
+          Difficulty: 'Médio',
+          Ingredients: [
+            { quantity: '', ingredient: 'arroz' },
+            { quantity: '', ingredient: 'pequi' },
+            { quantity: '', ingredient: 'alho' }
+          ],
+          Preparation: 'Cozinhe por 20 minutos.',
+          _id: '3',
+          image_url: 'https://via.placeholder.com/150'
         }
       ]
-    }).as('getRecipes'); 
+    }).as('getRecipes');
 
-    // visit the screen again for the intercept to work properly
     cy.visit('/menu');
     cy.wait('@getRecipes');
 
-    // verify if the recipes are displayed on the page
-    cy.contains('Pizza de Calabresa', { timeout: 10000 }).should('exist');
+    cy.contains('Pizza de Calabresa').should('exist');
     cy.contains('Arroz com Pequi').should('exist');
   });
 
   it('deve expandir e retornar o card da receita ao clicar', () => {
-  cy.intercept('GET', '**/getRecipes', {
-    statusCode: 200,
-    body: [
-      {
-        Nome: 'Pizza de Calabresa',
-        tipo: 'Salgado',
-        Dificuldade: 'Fácil',
-        Ingredientes: ['calabresa', 'queijo', 'molho'],
-        Preparo: 'Asse por 30 minutos.'
-      }
-    ]
-  }).as('getRecipes');
+    cy.intercept('GET', '**/getRecipes', {
+      statusCode: 200,
+      body: [
+        {
+          Name: 'Pizza de Calabresa',
+          Type: 'Salgado',
+          Difficulty: 'Fácil',
+          Ingredients: [
+            { quantity: '', ingredient: 'calabresa' },
+            { quantity: '', ingredient: 'queijo' },
+            { quantity: '', ingredient: 'molho' }
+          ],
+          Preparation: 'Asse por 30 minutos.',
+          _id: '4',
+          image_url: 'https://via.placeholder.com/150'
+        }
+      ]
+    }).as('getRecipes');
 
-  cy.visit('/menu');
-  cy.wait('@getRecipes');
+    cy.visit('/menu');
+    cy.wait('@getRecipes');
 
-  //First verify if the card's informations are not visible;
-  cy.contains('Modo de Preparo:').should('not.exist');
+    cy.contains('Modo de Preparo:').should('not.exist');
+    cy.contains('Pizza de Calabresa').click();
 
-  //Click in the card to open it
-  cy.contains('Pizza de Calabresa').click();
+    cy.contains('Ingredientes').should('exist');
+    cy.contains('calabresa').should('exist');
+    cy.contains('queijo').should('exist');
+    cy.contains('molho').should('exist');
+    cy.contains('Preparo').should('exist');
+    cy.contains('Asse por 30 minutos.').should('exist');
 
-  //Now the details should apear
-  cy.contains('Ingredientes').should('exist');
-  cy.contains('calabresa').should('exist');
-  cy.contains('queijo').should('exist');
-  cy.contains('molho').should('exist');
-  cy.contains('Preparo').should('exist');
-  cy.contains('Asse por 30 minutos.').should('exist');
+    cy.get('[data-testid="logo-icon"]').click(); // fecha a visualização
+  });
 
-  //click again to close
-  cy.contains('Pizza de Calabresa').click();
+  it('deve ativar e desativar a barra de pesquisa', () => {
+    cy.get('[data-testid="search-icon"]').click();
+    cy.get('input[placeholder="Pesquisar..."]').should('exist').type('bolo');
+    cy.get('[data-testid="close-icon"]').click();
+    cy.get('input[placeholder="Pesquisar..."]').should('not.exist');
+  });
 });
-
-
-});
-
